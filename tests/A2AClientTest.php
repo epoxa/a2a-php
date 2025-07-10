@@ -1,0 +1,136 @@
+<?php
+
+declare(strict_types=1);
+
+namespace A2A\Tests;
+
+use PHPUnit\Framework\TestCase;
+use A2A\A2AClient;
+use A2A\Models\AgentCard;
+use A2A\Models\Message;
+use A2A\Utils\HttpClient;
+use A2A\Exceptions\A2AException;
+
+class A2AClientTest extends TestCase
+{
+    private A2AClient $client;
+    private AgentCard $agentCard;
+    private HttpClient $httpClient;
+    private TestLogger $logger;
+
+    protected function setUp(): void
+    {
+        $this->agentCard = new AgentCard(
+            'client-agent-001',
+            'Client Agent',
+            'Test client agent'
+        );
+
+        $this->httpClient = $this->createMock(HttpClient::class);
+        $this->logger = new TestLogger();
+
+        $this->client = new A2AClient(
+            $this->agentCard,
+            $this->httpClient,
+            $this->logger
+        );
+    }
+
+    public function testSendMessage(): void
+    {
+        $message = new Message('Hello World', 'text');
+        $expectedResponse = [
+            'jsonrpc' => '2.0',
+            'id' => 1,
+            'result' => ['status' => 'received']
+        ];
+
+        $this->httpClient
+            ->expects($this->once())
+            ->method('post')
+            ->with(
+                'http://example.com/api',
+                $this->callback(function ($request) use ($message) {
+                    return $request['method'] === 'send_message' &&
+                        $request['params']['from'] === 'client-agent-001' &&
+                        $request['params']['message']['id'] === $message->getId();
+                })
+            )
+            ->willReturn($expectedResponse);
+
+        $response = $this->client->sendMessage('http://example.com/api', $message);
+
+        $this->assertEquals($expectedResponse, $response);
+        $this->assertTrue($this->logger->hasRecordThatContains('info', 'Message sent'));
+    }
+
+    public function testGetAgentCard(): void
+    {
+        $remoteCardData = [
+            'jsonrpc' => '2.0',
+            'id' => 1,
+            'result' => [
+                'id' => 'remote-agent-001',
+                'name' => 'Remote Agent',
+                'description' => 'A remote agent',
+                'version' => '1.0.0',
+                'capabilities' => ['messaging'],
+                'metadata' => []
+            ]
+        ];
+
+        $this->httpClient
+            ->expects($this->once())
+            ->method('post')
+            ->willReturn($remoteCardData);
+
+        $remoteCard = $this->client->getAgentCard('http://example.com/api');
+
+        $this->assertEquals('remote-agent-001', $remoteCard->getId());
+        $this->assertEquals('Remote Agent', $remoteCard->getName());
+    }
+
+    public function testPing(): void
+    {
+        $this->httpClient
+            ->expects($this->once())
+            ->method('post')
+            ->willReturn([
+                'jsonrpc' => '2.0',
+                'id' => 1,
+                'result' => ['status' => 'pong']
+            ]);
+
+        $result = $this->client->ping('http://example.com/api');
+
+        $this->assertTrue($result);
+    }
+
+    public function testPingFailure(): void
+    {
+        $this->httpClient
+            ->expects($this->once())
+            ->method('post')
+            ->willThrowException(new \Exception('Connection failed'));
+
+        $result = $this->client->ping('http://example.com/api');
+
+        $this->assertFalse($result);
+        $this->assertTrue($this->logger->hasRecordThatContains('warning', 'Ping failed'));
+    }
+
+    public function testSendMessageFailure(): void
+    {
+        $message = new Message('Hello World', 'text');
+
+        $this->httpClient
+            ->expects($this->once())
+            ->method('post')
+            ->willThrowException(new \Exception('Network error'));
+
+        $this->expectException(A2AException::class);
+        $this->expectExceptionMessage('Failed to send message: Network error');
+
+        $this->client->sendMessage('http://example.com/api', $message);
+    }
+}
