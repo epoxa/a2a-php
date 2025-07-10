@@ -17,7 +17,7 @@ https://github.com/a2aproject/A2A
 ## Installation
 
 ```bash
-composer require a2a/a2a-php
+composer require andreibesleaga/a2a-php
 ```
 
 ## Quick Start
