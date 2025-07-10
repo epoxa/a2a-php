@@ -7,7 +7,7 @@ https://github.com/a2aproject/A2A
 ## Features
 
 -  A2A Protocol implementation
--  Modern PHP 8.0+ with strict typing
+-  Modern PHP 8.0+
 -  PSR-4 autoloading
 -  Test coverage
 -  JSON-RPC 2.0 support
