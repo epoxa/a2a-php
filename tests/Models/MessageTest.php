@@ -84,4 +84,64 @@ class MessageTest extends TestCase
         $this->assertEquals('greeting', $message->getType());
         $this->assertEquals(['lang' => 'en'], $message->getMetadata());
     }
+
+    public function testFromProtocolArray(): void
+    {
+        $data = [
+            'messageId' => 'msg-789',
+            'parts' => [
+                ['type' => 'text', 'content' => 'Protocol message', 'metadata' => []]
+            ],
+            'metadata' => ['source' => 'protocol']
+        ];
+
+        $message = Message::fromArray($data);
+
+        $this->assertEquals('msg-789', $message->getId());
+        $this->assertEquals('Protocol message', $message->getContent());
+        $this->assertEquals(['source' => 'protocol'], $message->getMetadata());
+    }
+
+    public function testToProtocolArray(): void
+    {
+        $message = new Message('Test content', 'text', 'msg-123');
+        $message->setMetadata('key', 'value');
+        $message->addExtension('ext1');
+        $message->addReferenceTaskId('task-456');
+
+        $array = $message->toProtocolArray();
+
+        $this->assertEquals('message', $array['kind']);
+        $this->assertEquals('msg-123', $array['messageId']);
+        $this->assertEquals('user', $array['role']);
+        $this->assertEquals(['key' => 'value'], $array['metadata']);
+        $this->assertEquals(['ext1'], $array['extensions']);
+        $this->assertEquals(['task-456'], $array['referenceTaskIds']);
+    }
+
+    public function testMessageExtensions(): void
+    {
+        $message = new Message('Test');
+        $message->addExtension('extension1');
+        $message->addExtension('extension2');
+
+        $this->assertEquals(['extension1', 'extension2'], $message->getExtensions());
+    }
+
+    public function testReferenceTaskIds(): void
+    {
+        $message = new Message('Test');
+        $message->addReferenceTaskId('task-1');
+        $message->addReferenceTaskId('task-2');
+
+        $this->assertEquals(['task-1', 'task-2'], $message->getReferenceTaskIds());
+    }
+
+    public function testContextAndTaskIds(): void
+    {
+        $message = new Message('Test', 'text', null, [], 'context-123', 'task-456');
+
+        $this->assertEquals('context-123', $message->getContextId());
+        $this->assertEquals('task-456', $message->getTaskId());
+    }
 }

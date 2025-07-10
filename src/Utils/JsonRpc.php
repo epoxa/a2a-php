@@ -10,7 +10,7 @@ class JsonRpc
 {
     private const VERSION = '2.0';
 
-    public function createRequest(string $method, array $params = [], $id = null): array
+    public function createRequest(string $method, array $params = [], mixed $id = null): array
     {
         $request = [
             'jsonrpc' => self::VERSION,
@@ -25,7 +25,7 @@ class JsonRpc
         return $request;
     }
 
-    public function createResponse($id, $result): array
+    public function createResponse(mixed $id, mixed $result): array
     {
         return [
             'jsonrpc' => self::VERSION,
@@ -34,7 +34,7 @@ class JsonRpc
         ];
     }
 
-    public function createError($id, string $message, int $code = -32603): array
+    public function createError(mixed $id, string $message, int $code = -32603): array
     {
         return [
             'jsonrpc' => self::VERSION,

@@ -53,7 +53,7 @@ class A2AClientTest extends TestCase
                 $this->callback(function ($request) use ($message) {
                     return $request['method'] === 'send_message' &&
                         $request['params']['from'] === 'client-agent-001' &&
-                        $request['params']['message']['id'] === $message->getId();
+                        $request['params']['message']['messageId'] === $message->getId();
                 })
             )
             ->willReturn($expectedResponse);
@@ -132,5 +132,52 @@ class A2AClientTest extends TestCase
         $this->expectExceptionMessage('Failed to send message: Network error');
 
         $this->client->sendMessage('http://example.com/api', $message);
+    }
+
+    public function testGetAgentCardFailure(): void
+    {
+        $this->httpClient
+            ->expects($this->once())
+            ->method('post')
+            ->willThrowException(new \Exception('Connection timeout'));
+
+        $this->expectException(A2AException::class);
+        $this->expectExceptionMessage('Failed to get agent card: Connection timeout');
+
+        $this->client->getAgentCard('http://example.com/api');
+    }
+
+    public function testGetTaskSuccess(): void
+    {
+        $taskData = [
+            'jsonrpc' => '2.0',
+            'id' => 1,
+            'result' => [
+                'id' => 'task-123',
+                'description' => 'Test task',
+                'status' => ['state' => 'submitted']
+            ]
+        ];
+
+        $this->httpClient
+            ->expects($this->once())
+            ->method('post')
+            ->willReturn($taskData);
+
+        $task = $this->client->getTask('task-123');
+        $this->assertNotNull($task);
+        $this->assertEquals('task-123', $task->getId());
+    }
+
+    public function testGetTaskFailure(): void
+    {
+        $this->httpClient
+            ->expects($this->once())
+            ->method('post')
+            ->willThrowException(new \Exception('Task service unavailable'));
+
+        $task = $this->client->getTask('task-123');
+        $this->assertNull($task);
+        $this->assertTrue($this->logger->hasRecordThatContains('error', 'Failed to get task'));
     }
 }

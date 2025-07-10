@@ -103,4 +103,36 @@ class AgentCardTest extends TestCase
         $this->assertEquals(['tasks', 'messaging'], $card->getCapabilities());
         $this->assertEquals(['type' => 'worker'], $card->getMetadata());
     }
+
+    public function testExtensions(): void
+    {
+        $card = new AgentCard('agent-123', 'Test Agent');
+        $extension = ['name' => 'test-ext', 'version' => '1.0'];
+        $card->addExtension($extension);
+
+        $this->assertEquals([$extension], $card->getExtensions());
+    }
+
+    public function testAdditionalInterfaces(): void
+    {
+        $card = new AgentCard('agent-123', 'Test Agent');
+        $card->addInterface('ws://localhost:8080', 'websocket');
+        $card->addInterface('grpc://localhost:9090', 'grpc');
+
+        $expected = [
+            ['url' => 'ws://localhost:8080', 'transport' => 'websocket'],
+            ['url' => 'grpc://localhost:9090', 'transport' => 'grpc']
+        ];
+
+        $this->assertEquals($expected, $card->getAdditionalInterfaces());
+    }
+
+    public function testSupportsAuthenticatedExtendedCard(): void
+    {
+        $card = new AgentCard('agent-123', 'Test Agent', '', '1.0.0', [], [], [], true);
+        $this->assertTrue($card->supportsAuthenticatedExtendedCard());
+
+        $card2 = new AgentCard('agent-456', 'Test Agent 2');
+        $this->assertFalse($card2->supportsAuthenticatedExtendedCard());
+    }
 }

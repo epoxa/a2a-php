@@ -134,4 +134,33 @@ class JsonRpcTest extends TestCase
         $this->assertTrue($this->jsonRpc->isValidRequest($validRequest));
         $this->assertFalse($this->jsonRpc->isValidRequest($invalidRequest));
     }
+
+    public function testCreateResponseWithNullId(): void
+    {
+        $response = $this->jsonRpc->createResponse(null, ['result' => 'success']);
+
+        $expected = [
+            'jsonrpc' => '2.0',
+            'id' => null,
+            'result' => ['result' => 'success']
+        ];
+
+        $this->assertEquals($expected, $response);
+    }
+
+    public function testCreateErrorWithNullId(): void
+    {
+        $error = $this->jsonRpc->createError(null, 'Something went wrong', -32000);
+
+        $expected = [
+            'jsonrpc' => '2.0',
+            'id' => null,
+            'error' => [
+                'code' => -32000,
+                'message' => 'Something went wrong'
+            ]
+        ];
+
+        $this->assertEquals($expected, $error);
+    }
 }

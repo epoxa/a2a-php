@@ -6,6 +6,8 @@ namespace A2A;
 
 use A2A\Models\AgentCard;
 use A2A\Models\Message;
+use A2A\Models\Task;
+use A2A\Models\PushNotificationConfig;
 use A2A\Utils\HttpClient;
 use A2A\Utils\JsonRpc;
 use A2A\Exceptions\A2AException;
@@ -33,7 +35,7 @@ class A2AClient
         $jsonRpc = new JsonRpc();
         $request = $jsonRpc->createRequest('send_message', [
             'from' => $this->agentCard->getId(),
-            'message' => $message->toArray()
+            'message' => $message->toProtocolArray()
         ], 1);
 
         try {
@@ -76,6 +78,67 @@ class A2AClient
         } catch (\Exception $e) {
             $this->logger->warning('Ping failed', [
                 'to' => $agentUrl,
+                'error' => $e->getMessage()
+            ]);
+            return false;
+        }
+    }
+
+    public function getTask(string $taskId, ?int $historyLength = null): ?Task
+    {
+        $jsonRpc = new JsonRpc();
+        $params = ['id' => $taskId];
+        if ($historyLength !== null) {
+            $params['historyLength'] = $historyLength;
+        }
+        $request = $jsonRpc->createRequest('tasks/get', $params, 1);
+
+        try {
+            $response = $this->httpClient->post('', $request);
+            if (isset($response['result'])) {
+                return Task::fromArray($response['result']);
+            }
+            return null;
+        } catch (\Exception $e) {
+            $this->logger->error('Failed to get task', [
+                'task_id' => $taskId,
+                'error' => $e->getMessage()
+            ]);
+            return null;
+        }
+    }
+
+    public function cancelTask(string $taskId): bool
+    {
+        $jsonRpc = new JsonRpc();
+        $request = $jsonRpc->createRequest('tasks/cancel', ['id' => $taskId], 1);
+
+        try {
+            $response = $this->httpClient->post('', $request);
+            return isset($response['result']);
+        } catch (\Exception $e) {
+            $this->logger->error('Failed to cancel task', [
+                'task_id' => $taskId,
+                'error' => $e->getMessage()
+            ]);
+            return false;
+        }
+    }
+
+    public function setPushNotificationConfig(string $taskId, PushNotificationConfig $config): bool
+    {
+        $jsonRpc = new JsonRpc();
+        $request = $jsonRpc->createRequest('tasks/pushNotificationConfig/set', [
+            'taskId' => $taskId,
+            'pushNotificationConfig' => $config->toArray()
+        ], 1);
+
+        try {
+            $response = $this->httpClient->post('', $request);
+            return isset($response['result']);
+        } catch (\Exception $e) {
+            $this->logger->error('Failed to set push notification config', [
+                'task_id' => $taskId,
                 'error' => $e->getMessage()
             ]);
             return false;

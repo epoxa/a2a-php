@@ -6,6 +6,7 @@ namespace A2A;
 
 use A2A\Models\AgentCard;
 use A2A\Models\Task;
+use A2A\Models\TaskState;
 use A2A\Models\Message;
 use A2A\Models\Part;
 use A2A\Utils\JsonRpc;
@@ -13,7 +14,9 @@ use A2A\Utils\HttpClient;
 use A2A\Exceptions\A2AException;
 use A2A\Exceptions\InvalidRequestException;
 use A2A\Exceptions\TaskNotFoundException;
+use A2A\Exceptions\A2AErrorCodes;
 use A2A\Interfaces\MessageHandlerInterface;
+use A2A\TaskManager;
 use Ramsey\Uuid\Uuid;
 use Psr\Log\LoggerInterface;
 use Psr\Log\NullLogger;
@@ -25,16 +28,19 @@ class A2AProtocol
     private string $agentId;
     private AgentCard $agentCard;
     private array $messageHandlers = [];
+    private TaskManager $taskManager;
 
     public function __construct(
         AgentCard $agentCard,
         ?HttpClient $httpClient = null,
-        ?LoggerInterface $logger = null
+        ?LoggerInterface $logger = null,
+        ?TaskManager $taskManager = null
     ) {
         $this->agentCard = $agentCard;
         $this->agentId = $agentCard->getId();
         $this->httpClient = $httpClient ?? new HttpClient();
         $this->logger = $logger ?? new NullLogger();
+        $this->taskManager = $taskManager ?? new TaskManager();
     }
 
     public function getAgentCard(): AgentCard
@@ -60,7 +66,7 @@ class A2AProtocol
         $jsonRpc = new JsonRpc();
         $request = $jsonRpc->createRequest('send_message', [
             'from' => $this->agentId,
-            'message' => $message->toArray()
+            'message' => $message->toProtocolArray()
         ]);
 
         try {
@@ -87,8 +93,13 @@ class A2AProtocol
             $parsedRequest = $jsonRpc->parseRequest($request);
 
             switch ($parsedRequest['method']) {
+                case 'message/send':
                 case 'send_message':
                     return $this->handleMessage($parsedRequest['params'], $parsedRequest['id']);
+                case 'tasks/get':
+                    return $this->handleGetTask($parsedRequest['params'], $parsedRequest['id']);
+                case 'tasks/cancel':
+                    return $this->handleCancelTask($parsedRequest['params'], $parsedRequest['id']);
                 case 'get_agent_card':
                     return $jsonRpc->createResponse($parsedRequest['id'], $this->agentCard->toArray());
                 case 'ping':
@@ -146,5 +157,55 @@ class A2AProtocol
             'message_id' => $message->getId(),
             'timestamp' => time()
         ];
+    }
+
+    private function handleGetTask(array $params, $requestId): array
+    {
+        $jsonRpc = new JsonRpc();
+        $taskId = $params['id'] ?? null;
+        
+        if (!$taskId) {
+            return $jsonRpc->createError($requestId, 'Missing task ID', A2AErrorCodes::INVALID_AGENT_RESPONSE);
+        }
+
+        $task = $this->taskManager->getTask($taskId);
+        if (!$task) {
+            return $jsonRpc->createError($requestId, 'Task not found', A2AErrorCodes::TASK_NOT_FOUND);
+        }
+
+        $historyLength = $params['historyLength'] ?? null;
+        $taskArray = $task->toArray();
+        
+        if ($historyLength !== null) {
+            $taskArray['history'] = array_map(
+                fn($msg) => $msg->toArray(),
+                $task->getHistory($historyLength)
+            );
+        }
+
+        return $jsonRpc->createResponse($requestId, $taskArray);
+    }
+
+    private function handleCancelTask(array $params, $requestId): array
+    {
+        $jsonRpc = new JsonRpc();
+        $taskId = $params['id'] ?? null;
+        
+        if (!$taskId) {
+            return $jsonRpc->createError($requestId, 'Missing task ID', A2AErrorCodes::INVALID_AGENT_RESPONSE);
+        }
+
+        $result = $this->taskManager->cancelTask($taskId);
+        
+        if (isset($result['error'])) {
+            return $jsonRpc->createError($requestId, $result['error']['message'], $result['error']['code']);
+        }
+
+        return $jsonRpc->createResponse($requestId, $result['result']);
+    }
+
+    public function getTaskManager(): TaskManager
+    {
+        return $this->taskManager;
     }
 }

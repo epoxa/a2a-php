@@ -74,7 +74,7 @@ class A2AServerTest extends TestCase
             'method' => 'send_message',
             'params' => [
                 'from' => 'client-agent',
-                'message' => $message->toArray()
+                'message' => $message->toProtocolArray()
             ],
             'id' => 3
         ];
@@ -117,7 +117,7 @@ class A2AServerTest extends TestCase
             'method' => 'send_message',
             'params' => [
                 'from' => 'client-agent',
-                'message' => $message->toArray()
+                'message' => $message->toProtocolArray()
             ],
             'id' => 5
         ];
@@ -127,5 +127,57 @@ class A2AServerTest extends TestCase
         // Should still return success despite handler error
         $this->assertEquals('received', $response['result']['status']);
         $this->assertTrue($this->logger->hasRecordThatContains('error', 'Message handler failed'));
+    }
+
+    public function testHandleInvalidJsonRpc(): void
+    {
+        $request = [
+            'method' => 'test',
+            'id' => 1
+            // Missing jsonrpc field
+        ];
+
+        $response = $this->server->handleRequest($request);
+
+        $this->assertEquals('2.0', $response['jsonrpc']);
+        $this->assertArrayHasKey('error', $response);
+    }
+
+    public function testHandleEmptyRequest(): void
+    {
+        $response = $this->server->handleRequest([]);
+
+        $this->assertEquals('2.0', $response['jsonrpc']);
+        $this->assertArrayHasKey('error', $response);
+    }
+
+    public function testMultipleMessageHandlers(): void
+    {
+        $handler1Called = false;
+        $handler2Called = false;
+
+        $this->server->addMessageHandler(function ($message, $fromAgent) use (&$handler1Called) {
+            $handler1Called = true;
+        });
+
+        $this->server->addMessageHandler(function ($message, $fromAgent) use (&$handler2Called) {
+            $handler2Called = true;
+        });
+
+        $message = new Message('Test', 'text');
+        $request = [
+            'jsonrpc' => '2.0',
+            'method' => 'send_message',
+            'params' => [
+                'from' => 'client-agent',
+                'message' => $message->toProtocolArray()
+            ],
+            'id' => 6
+        ];
+
+        $this->server->handleRequest($request);
+
+        $this->assertTrue($handler1Called);
+        $this->assertTrue($handler2Called);
     }
 }

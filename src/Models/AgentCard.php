@@ -12,6 +12,9 @@ class AgentCard
     private string $version;
     private array $capabilities;
     private array $metadata;
+    private array $extensions = [];
+    private array $additionalInterfaces = [];
+    private bool $supportsAuthenticatedExtendedCard = false;
 
     public function __construct(
         string $id,
@@ -19,7 +22,9 @@ class AgentCard
         string $description = '',
         string $version = '1.0.0',
         array $capabilities = [],
-        array $metadata = []
+        array $metadata = [],
+        array $extensions = [],
+        bool $supportsAuthenticatedExtendedCard = false
     ) {
         $this->id = $id;
         $this->name = $name;
@@ -27,6 +32,8 @@ class AgentCard
         $this->version = $version;
         $this->capabilities = $capabilities;
         $this->metadata = $metadata;
+        $this->extensions = $extensions;
+        $this->supportsAuthenticatedExtendedCard = $supportsAuthenticatedExtendedCard;
     }
 
     public function getId(): string
@@ -74,6 +81,31 @@ class AgentCard
     public function hasCapability(string $capability): bool
     {
         return in_array($capability, $this->capabilities);
+    }
+
+    public function getExtensions(): array
+    {
+        return $this->extensions;
+    }
+
+    public function addExtension(array $extension): void
+    {
+        $this->extensions[] = $extension;
+    }
+
+    public function getAdditionalInterfaces(): array
+    {
+        return $this->additionalInterfaces;
+    }
+
+    public function addInterface(string $url, string $transport): void
+    {
+        $this->additionalInterfaces[] = ['url' => $url, 'transport' => $transport];
+    }
+
+    public function supportsAuthenticatedExtendedCard(): bool
+    {
+        return $this->supportsAuthenticatedExtendedCard;
     }
 
     public function toArray(): array

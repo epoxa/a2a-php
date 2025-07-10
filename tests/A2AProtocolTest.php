@@ -8,6 +8,7 @@ use PHPUnit\Framework\TestCase;
 use A2A\A2AProtocol;
 use A2A\Models\AgentCard;
 use A2A\Models\Message;
+use A2A\Models\TaskState;
 use A2A\Utils\HttpClient;
 
 class A2AProtocolTest extends TestCase
@@ -53,7 +54,7 @@ class A2AProtocolTest extends TestCase
         $this->assertNotEmpty($task->getId());
         $this->assertEquals('Test task', $task->getDescription());
         $this->assertEquals(['priority' => 'high'], $task->getContext());
-        $this->assertEquals('pending', $task->getStatus());
+        $this->assertEquals(TaskState::SUBMITTED, $task->getStatus());
 
         // Verify that the task creation was logged
         $this->assertTrue($this->logger->hasRecordThatContains('info', 'Task created'));
@@ -98,7 +99,7 @@ class A2AProtocolTest extends TestCase
             'method' => 'send_message',
             'params' => [
                 'from' => 'sender-agent',
-                'message' => $message->toArray()
+                'message' => $message->toProtocolArray()
             ],
             'id' => 3
         ];
@@ -109,7 +110,9 @@ class A2AProtocolTest extends TestCase
         $this->assertEquals(3, $response['id']);
 
         $this->assertArrayHasKey('result', $response);
-        $this->assertEquals(['status' => 'received'], $response['result']);
+        $this->assertEquals('received', $response['result']['status']);
+        $this->assertEquals($message->getId(), $response['result']['message_id']);
+        $this->assertArrayHasKey('timestamp', $response['result']);
 
         // Verify that the message receipt was logged
         $this->assertTrue($this->logger->hasRecordThatContains('info', 'Message received'));
