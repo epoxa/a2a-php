@@ -4,13 +4,13 @@ A PHP implementation of the AI A2A (Agent-to-Agent) Protocol, providing a robust
 
 ## Features
 
-- ✅ A2A Protocol implementation
-- ✅ Modern PHP 8.0+ with strict typing
-- ✅ PSR-4 autoloading
-- ✅ Test coverage
-- ✅ JSON-RPC 2.0 support
-- ✅ HTTP client abstraction
-- ✅ Logging
+-  A2A Protocol implementation
+-  Modern PHP 8.0+ with strict typing
+-  PSR-4 autoloading
+-  Test coverage
+-  JSON-RPC 2.0 support
+-  HTTP client abstraction
+-  Logging
 
 ## Installation
 
@@ -218,4 +218,4 @@ See the `examples/` directory for complete working examples:
 
 ## License
 
-MIT License - see LICENSE file for details.
+Apache License - see LICENSE file for details.
