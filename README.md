@@ -1,7 +1,8 @@
 # A2A PHP SDK
 
 A PHP implementation of the A2A (Agent-to-Agent) Protocol, providing a SDK for building PHP AI agent-based applications.
-https://a2aproject.github.io/A2A/latest/
+
+https://github.com/a2aproject/A2A
 
 ## Features
 
