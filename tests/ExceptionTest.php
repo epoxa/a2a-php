@@ -36,8 +36,8 @@ class ExceptionTest extends TestCase
         $this->assertEquals(-32601, A2AErrorCodes::METHOD_NOT_FOUND);
         $this->assertEquals(-32602, A2AErrorCodes::INVALID_PARAMS);
         $this->assertEquals(-32603, A2AErrorCodes::INTERNAL_ERROR);
-        $this->assertEquals(-32000, A2AErrorCodes::TASK_NOT_FOUND);
-        $this->assertEquals(-32001, A2AErrorCodes::TASK_NOT_CANCELABLE);
-        $this->assertEquals(-32005, A2AErrorCodes::INVALID_AGENT_RESPONSE);
+        $this->assertEquals(-32001, A2AErrorCodes::TASK_NOT_FOUND);
+        $this->assertEquals(-32002, A2AErrorCodes::TASK_NOT_CANCELABLE);
+        $this->assertEquals(-32006, A2AErrorCodes::INVALID_AGENT_RESPONSE);
     }
 }

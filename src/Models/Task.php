@@ -141,18 +141,29 @@ class Task
 
     public function toArray(): array
     {
-        return [
+        $result = [
             'kind' => 'task',
             'id' => $this->id,
             'contextId' => $this->contextId,
             'status' => [
                 'state' => $this->status->value,
                 'timestamp' => $this->completedAt?->format(DateTimeInterface::ISO8601) ?? $this->createdAt->format(DateTimeInterface::ISO8601)
-            ],
-            'artifacts' => $this->artifacts,
-            'history' => array_map(fn($msg) => $msg->toArray(), $this->history),
-            'metadata' => $this->context
+            ]
         ];
+
+        if (!empty($this->artifacts)) {
+            $result['artifacts'] = $this->artifacts;
+        }
+
+        if (!empty($this->history)) {
+            $result['history'] = array_map(fn($msg) => $msg->toArray(), $this->history);
+        }
+
+        if (!empty($this->context)) {
+            $result['metadata'] = $this->context;
+        }
+
+        return $result;
     }
 
     public static function fromArray(array $data): self

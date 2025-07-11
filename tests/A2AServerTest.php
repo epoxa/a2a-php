@@ -7,6 +7,8 @@ namespace A2A\Tests;
 use PHPUnit\Framework\TestCase;
 use A2A\A2AServer;
 use A2A\Models\AgentCard;
+use A2A\Models\AgentCapabilities;
+use A2A\Models\AgentSkill;
 use A2A\Models\Message;
 
 class A2AServerTest extends TestCase
@@ -17,10 +19,18 @@ class A2AServerTest extends TestCase
 
     protected function setUp(): void
     {
+        $capabilities = new AgentCapabilities();
+        $skill = new AgentSkill('test', 'Test', 'Test skill', ['test']);
+        
         $this->agentCard = new AgentCard(
-            'server-agent-001',
             'Server Agent',
-            'Test server agent'
+            'Test server agent',
+            'https://example.com/agent',
+            '1.0.0',
+            $capabilities,
+            ['text'],
+            ['text'],
+            [$skill]
         );
 
         $this->logger = new TestLogger();
@@ -39,7 +49,7 @@ class A2AServerTest extends TestCase
 
         $this->assertEquals('2.0', $response['jsonrpc']);
         $this->assertEquals(1, $response['id']);
-        $this->assertEquals('server-agent-001', $response['result']['id']);
+        $this->assertEquals('Server Agent', $response['result']['name']);
     }
 
     public function testHandlePingRequest(): void
@@ -64,17 +74,17 @@ class A2AServerTest extends TestCase
 
         $this->server->addMessageHandler(function ($message, $fromAgent) use (&$messageHandled) {
             $messageHandled = true;
-            $this->assertEquals('Hello Server', $message->getContent());
+            $this->assertEquals('Hello Server', $message->getTextContent());
             $this->assertEquals('client-agent', $fromAgent);
         });
 
-        $message = new Message('Hello Server', 'text');
+        $message = Message::createUserMessage('Hello Server');
         $request = [
             'jsonrpc' => '2.0',
-            'method' => 'send_message',
+            'method' => 'message/send',
             'params' => [
                 'from' => 'client-agent',
-                'message' => $message->toProtocolArray()
+                'message' => $message->toArray()
             ],
             'id' => 3
         ];
@@ -84,7 +94,7 @@ class A2AServerTest extends TestCase
         $this->assertEquals('2.0', $response['jsonrpc']);
         $this->assertEquals(3, $response['id']);
         $this->assertEquals('received', $response['result']['status']);
-        $this->assertEquals($message->getId(), $response['result']['message_id']);
+        $this->assertEquals($message->getMessageId(), $response['result']['message_id']);
         $this->assertTrue($messageHandled);
         $this->assertTrue($this->logger->hasRecordThatContains('info', 'Message received'));
     }
@@ -111,13 +121,13 @@ class A2AServerTest extends TestCase
             throw new \Exception('Handler error');
         });
 
-        $message = new Message('Test', 'text');
+        $message = Message::createUserMessage('Test');
         $request = [
             'jsonrpc' => '2.0',
-            'method' => 'send_message',
+            'method' => 'message/send',
             'params' => [
                 'from' => 'client-agent',
-                'message' => $message->toProtocolArray()
+                'message' => $message->toArray()
             ],
             'id' => 5
         ];
@@ -164,13 +174,13 @@ class A2AServerTest extends TestCase
             $handler2Called = true;
         });
 
-        $message = new Message('Test', 'text');
+        $message = Message::createUserMessage('Test');
         $request = [
             'jsonrpc' => '2.0',
-            'method' => 'send_message',
+            'method' => 'message/send',
             'params' => [
                 'from' => 'client-agent',
-                'message' => $message->toProtocolArray()
+                'message' => $message->toArray()
             ],
             'id' => 6
         ];

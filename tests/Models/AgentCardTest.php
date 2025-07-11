@@ -6,78 +6,61 @@ namespace A2A\Tests\Models;
 
 use PHPUnit\Framework\TestCase;
 use A2A\Models\AgentCard;
+use A2A\Models\AgentCapabilities;
+use A2A\Models\AgentSkill;
+use A2A\Models\AgentProvider;
 
 class AgentCardTest extends TestCase
 {
     public function testCreateAgentCard(): void
     {
+        $capabilities = new AgentCapabilities();
+        $skill = new AgentSkill('test', 'Test', 'Test skill', ['test']);
+        
         $card = new AgentCard(
-            'agent-123',
             'Test Agent',
             'A test agent',
+            'https://example.com/agent',
             '2.0.0',
-            ['messaging'],
-            ['key' => 'value']
+            $capabilities,
+            ['text'],
+            ['text'],
+            [$skill]
         );
 
-        $this->assertEquals('agent-123', $card->getId());
         $this->assertEquals('Test Agent', $card->getName());
         $this->assertEquals('A test agent', $card->getDescription());
         $this->assertEquals('2.0.0', $card->getVersion());
-        $this->assertEquals(['messaging'], $card->getCapabilities());
-        $this->assertEquals(['key' => 'value'], $card->getMetadata());
-    }
-
-    public function testAddCapability(): void
-    {
-        $card = new AgentCard('agent-123', 'Test Agent');
-        $card->addCapability('tasks');
-        $card->addCapability('messaging');
-        $card->addCapability('tasks'); // Should not duplicate
-
-        $this->assertEquals(['tasks', 'messaging'], $card->getCapabilities());
-    }
-
-    public function testHasCapability(): void
-    {
-        $card = new AgentCard('agent-123', 'Test Agent', '', '1.0.0', ['messaging']);
-        
-        $this->assertTrue($card->hasCapability('messaging'));
-        $this->assertFalse($card->hasCapability('tasks'));
-    }
-
-    public function testSetMetadata(): void
-    {
-        $card = new AgentCard('agent-123', 'Test Agent');
-        $card->setMetadata('environment', 'production');
-        $card->setMetadata('region', 'us-east-1');
-
-        $expected = [
-            'environment' => 'production',
-            'region' => 'us-east-1'
-        ];
-
-        $this->assertEquals($expected, $card->getMetadata());
+        $this->assertCount(1, $card->getSkills());
     }
 
     public function testToArray(): void
     {
+        $capabilities = new AgentCapabilities();
+        $skill = new AgentSkill('test', 'Test', 'Test skill', ['test']);
+        
         $card = new AgentCard(
-            'agent-123',
             'Test Agent',
             'Description',
+            'https://example.com/agent',
             '1.0.0',
-            ['messaging'],
-            ['env' => 'test']
+            $capabilities,
+            ['text'],
+            ['text'],
+            [$skill]
         );
 
         $expected = [
-            'id' => 'agent-123',
             'name' => 'Test Agent',
             'description' => 'Description',
+            'url' => 'https://example.com/agent',
             'version' => '1.0.0',
-            'capabilities' => ['messaging'],
-            'metadata' => ['env' => 'test']
+            'protocolVersion' => '0.2.5',
+            'capabilities' => $capabilities->toArray(),
+            'defaultInputModes' => ['text'],
+            'defaultOutputModes' => ['text'],
+            'skills' => [$skill->toArray()],
+            'supportsAuthenticatedExtendedCard' => false
         ];
 
         $this->assertEquals($expected, $card->toArray());
@@ -86,53 +69,45 @@ class AgentCardTest extends TestCase
     public function testFromArray(): void
     {
         $data = [
-            'id' => 'agent-456',
             'name' => 'Another Agent',
             'description' => 'Another description',
+            'url' => 'https://example.com/agent',
             'version' => '2.1.0',
-            'capabilities' => ['tasks', 'messaging'],
-            'metadata' => ['type' => 'worker']
+            'capabilities' => [],
+            'defaultInputModes' => ['text'],
+            'defaultOutputModes' => ['text'],
+            'skills' => [
+                ['id' => 'test', 'name' => 'Test', 'description' => 'Test skill', 'tags' => ['test']]
+            ]
         ];
 
         $card = AgentCard::fromArray($data);
 
-        $this->assertEquals('agent-456', $card->getId());
         $this->assertEquals('Another Agent', $card->getName());
         $this->assertEquals('Another description', $card->getDescription());
         $this->assertEquals('2.1.0', $card->getVersion());
-        $this->assertEquals(['tasks', 'messaging'], $card->getCapabilities());
-        $this->assertEquals(['type' => 'worker'], $card->getMetadata());
+        $this->assertCount(1, $card->getSkills());
     }
 
-    public function testExtensions(): void
+    public function testSetProvider(): void
     {
-        $card = new AgentCard('agent-123', 'Test Agent');
-        $extension = ['name' => 'test-ext', 'version' => '1.0'];
-        $card->addExtension($extension);
+        $capabilities = new AgentCapabilities();
+        $skill = new AgentSkill('test', 'Test', 'Test skill', ['test']);
+        
+        $card = new AgentCard(
+            'Test Agent',
+            'Description',
+            'https://example.com/agent',
+            '1.0.0',
+            $capabilities,
+            ['text'],
+            ['text'],
+            [$skill]
+        );
+        
+        $provider = new AgentProvider('Test Org', 'https://test.com');
+        $card->setProvider($provider);
 
-        $this->assertEquals([$extension], $card->getExtensions());
-    }
-
-    public function testAdditionalInterfaces(): void
-    {
-        $card = new AgentCard('agent-123', 'Test Agent');
-        $card->addInterface('ws://localhost:8080', 'websocket');
-        $card->addInterface('grpc://localhost:9090', 'grpc');
-
-        $expected = [
-            ['url' => 'ws://localhost:8080', 'transport' => 'websocket'],
-            ['url' => 'grpc://localhost:9090', 'transport' => 'grpc']
-        ];
-
-        $this->assertEquals($expected, $card->getAdditionalInterfaces());
-    }
-
-    public function testSupportsAuthenticatedExtendedCard(): void
-    {
-        $card = new AgentCard('agent-123', 'Test Agent', '', '1.0.0', [], [], [], true);
-        $this->assertTrue($card->supportsAuthenticatedExtendedCard());
-
-        $card2 = new AgentCard('agent-456', 'Test Agent 2');
-        $this->assertFalse($card2->supportsAuthenticatedExtendedCard());
+        $this->assertEquals($provider, $card->getProvider());
     }
 }

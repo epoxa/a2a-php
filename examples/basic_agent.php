@@ -4,6 +4,8 @@ require_once __DIR__ . '/../vendor/autoload.php';
 
 use A2A\A2AProtocol;
 use A2A\Models\AgentCard;
+use A2A\Models\AgentCapabilities;
+use A2A\Models\AgentSkill;
 use A2A\Models\Message;
 use Monolog\Logger;
 use Monolog\Handler\StreamHandler;
@@ -13,13 +15,18 @@ $logger = new Logger('basic_agent');
 $logger->pushHandler(new StreamHandler('php://stdout', Logger::INFO));
 
 // Create an agent card
+$capabilities = new AgentCapabilities();
+$skill = new AgentSkill('basic', 'Basic', 'Basic agent skill', ['basic']);
+
 $agentCard = new AgentCard(
-    'basic-agent-001',
     'Basic Agent',
     'A simple demonstration agent',
+    'https://example.com/agent',
     '1.0.0',
-    ['messaging', 'tasks', 'ping'],
-    ['environment' => 'example']
+    $capabilities,
+    ['text'],
+    ['text'],
+    [$skill]
 );
 
 // Initialize the protocol
@@ -43,14 +50,14 @@ echo "Creating a task...\n";
 $task = $protocol->createTask('Example task', ['priority' => 'normal']);
 echo "Task created: " . $task->getId() . "\n";
 echo "Task description: " . $task->getDescription() . "\n";
-echo "Task status: " . $task->getStatus() . "\n\n";
+echo "Task status: " . $task->getStatus()->value . "\n\n";
 
 // Example: Create a message
 echo "Creating a message...\n";
-$message = new Message('Hello from Basic Agent!', 'text');
-echo "Message ID: " . $message->getId() . "\n";
-echo "Message content: " . $message->getContent() . "\n";
-echo "Message type: " . $message->getType() . "\n\n";
+$message = Message::createUserMessage('Hello from Basic Agent!');
+echo "Message ID: " . $message->getMessageId() . "\n";
+echo "Message content: " . $message->getTextContent() . "\n";
+echo "Message role: " . $message->getRole() . "\n\n";
 
 // Example: Handle ping request
 echo "Handling ping request...\n";

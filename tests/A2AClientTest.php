@@ -20,10 +20,18 @@ class A2AClientTest extends TestCase
 
     protected function setUp(): void
     {
+        $capabilities = new \A2A\Models\AgentCapabilities();
+        $skill = new \A2A\Models\AgentSkill('test', 'Test', 'Test skill', ['test']);
+        
         $this->agentCard = new AgentCard(
-            'client-agent-001',
             'Client Agent',
-            'Test client agent'
+            'Test client agent',
+            'https://example.com/agent',
+            '1.0.0',
+            $capabilities,
+            ['text'],
+            ['text'],
+            [$skill]
         );
 
         $this->httpClient = $this->createMock(HttpClient::class);
@@ -38,7 +46,7 @@ class A2AClientTest extends TestCase
 
     public function testSendMessage(): void
     {
-        $message = new Message('Hello World', 'text');
+        $message = Message::createUserMessage('Hello World');
         $expectedResponse = [
             'jsonrpc' => '2.0',
             'id' => 1,
@@ -51,9 +59,9 @@ class A2AClientTest extends TestCase
             ->with(
                 'http://example.com/api',
                 $this->callback(function ($request) use ($message) {
-                    return $request['method'] === 'send_message' &&
-                        $request['params']['from'] === 'client-agent-001' &&
-                        $request['params']['message']['messageId'] === $message->getId();
+                    return $request['method'] === 'message/send' &&
+                        $request['params']['from'] === 'Client Agent' &&
+                        $request['params']['message']['messageId'] === $message->getMessageId();
                 })
             )
             ->willReturn($expectedResponse);
@@ -86,7 +94,7 @@ class A2AClientTest extends TestCase
 
         $remoteCard = $this->client->getAgentCard('http://example.com/api');
 
-        $this->assertEquals('remote-agent-001', $remoteCard->getId());
+        $this->assertEquals('Remote Agent', $remoteCard->getId());
         $this->assertEquals('Remote Agent', $remoteCard->getName());
     }
 
@@ -121,7 +129,7 @@ class A2AClientTest extends TestCase
 
     public function testSendMessageFailure(): void
     {
-        $message = new Message('Hello World', 'text');
+        $message = Message::createUserMessage('Hello World');
 
         $this->httpClient
             ->expects($this->once())

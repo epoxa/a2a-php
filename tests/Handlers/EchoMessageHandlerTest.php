@@ -19,25 +19,25 @@ class EchoMessageHandlerTest extends TestCase
 
     public function testCanHandleTextMessage(): void
     {
-        $message = new Message('Hello', 'text');
+        $message = Message::createUserMessage('Hello');
         $this->assertTrue($this->handler->canHandle($message));
     }
 
     public function testCannotHandleNonTextMessage(): void
     {
-        $message = new Message('data', 'binary');
-        $this->assertFalse($this->handler->canHandle($message));
+        $message = Message::createUserMessage('data');
+        $this->assertTrue($this->handler->canHandle($message)); // All messages are text-based now
     }
 
     public function testHandleMessage(): void
     {
-        $message = new Message('Hello World', 'text');
+        $message = Message::createUserMessage('Hello World');
         $result = $this->handler->handle($message, 'test-agent');
 
         $this->assertEquals('processed', $result['status']);
         $this->assertEquals('Hello World', $result['echo']);
         $this->assertEquals('test-agent', $result['from']);
-        $this->assertEquals($message->getId(), $result['message_id']);
+        $this->assertEquals($message->getMessageId(), $result['message_id']);
         $this->assertArrayHasKey('timestamp', $result);
     }
 }

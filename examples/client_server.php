@@ -5,34 +5,45 @@ require_once __DIR__ . '/../vendor/autoload.php';
 use A2A\A2AClient;
 use A2A\A2AServer;
 use A2A\Models\AgentCard;
+use A2A\Models\AgentCapabilities;
+use A2A\Models\AgentSkill;
 use A2A\Models\Message;
 use A2A\Utils\HttpClient;
 
 echo "=== Client-Server Communication Example ===\n\n";
 
 // Create server agent
+$capabilities = new AgentCapabilities();
+$skill = new AgentSkill('messaging', 'Messaging', 'Message handling', ['messaging']);
+
 $serverCard = new AgentCard(
-    'server-agent-001',
     'Server Agent',
     'Example server agent',
+    'https://example.com/server',
     '1.0.0',
-    ['messaging', 'tasks']
+    $capabilities,
+    ['text'],
+    ['text'],
+    [$skill]
 );
 
 $server = new A2AServer($serverCard);
 
 // Add message handler to server
 $server->addMessageHandler(function($message, $fromAgent) {
-    echo "Server received message from {$fromAgent}: {$message->getContent()}\n";
+    echo "Server received message from {$fromAgent}: {$message->getTextContent()}\n";
 });
 
 // Create client agent
 $clientCard = new AgentCard(
-    'client-agent-001',
     'Client Agent',
     'Example client agent',
+    'https://example.com/client',
     '1.0.0',
-    ['messaging']
+    $capabilities,
+    ['text'],
+    ['text'],
+    [$skill]
 );
 
 // Mock HTTP client for demonstration
@@ -64,7 +75,7 @@ echo "Remote agent: {$remoteCard->getName()} (ID: {$remoteCard->getId()})\n\n";
 
 // Test send message
 echo "Sending message to server...\n";
-$message = new Message('Hello from client!', 'text');
+$message = Message::createUserMessage('Hello from client!');
 $response = $client->sendMessage('http://example.com/api', $message);
 echo "Message sent successfully\n\n";
 

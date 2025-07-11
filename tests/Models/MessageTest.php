@@ -12,26 +12,24 @@ class MessageTest extends TestCase
 {
     public function testCreateMessage(): void
     {
-        $message = new Message('Hello World', 'text');
+        $message = Message::createUserMessage('Hello World');
 
-        $this->assertEquals('Hello World', $message->getContent());
-        $this->assertEquals('text', $message->getType());
-        $this->assertNotEmpty($message->getId());
-        $this->assertInstanceOf(\DateTime::class, $message->getTimestamp());
+        $this->assertEquals('Hello World', $message->getTextContent());
+        $this->assertEquals('user', $message->getRole());
+        $this->assertNotEmpty($message->getMessageId());
     }
 
     public function testCreateMessageWithId(): void
     {
-        $message = new Message('Test', 'text', 'custom-id');
+        $message = Message::createUserMessage('Test', 'custom-id');
 
-        $this->assertEquals('custom-id', $message->getId());
+        $this->assertEquals('custom-id', $message->getMessageId());
     }
 
     public function testSetMetadata(): void
     {
-        $message = new Message('Test');
-        $message->setMetadata('priority', 'high');
-        $message->setMetadata('sender', 'agent-123');
+        $message = Message::createUserMessage('Test');
+        $message->setMetadata(['priority' => 'high', 'sender' => 'agent-123']);
 
         $expected = [
             'priority' => 'high',
@@ -43,103 +41,66 @@ class MessageTest extends TestCase
 
     public function testAddPart(): void
     {
-        $message = new Message('Test');
+        $message = Message::createUserMessage('Test');
         $part = new Part('attachment', 'file.pdf');
         $message->addPart($part);
 
-        $this->assertCount(1, $message->getParts());
-        $this->assertEquals($part, $message->getParts()[0]);
+        $this->assertCount(2, $message->getParts()); // 1 text part + 1 added part
     }
 
     public function testToArray(): void
     {
-        $message = new Message('Test content', 'text', 'msg-123');
-        $message->setMetadata('key', 'value');
+        $message = Message::createUserMessage('Test content', 'msg-123');
+        $message->setMetadata(['key' => 'value']);
 
         $array = $message->toArray();
 
-        $this->assertEquals('msg-123', $array['id']);
-        $this->assertEquals('Test content', $array['content']);
-        $this->assertEquals('text', $array['type']);
-        $this->assertArrayHasKey('timestamp', $array);
+        $this->assertEquals('msg-123', $array['messageId']);
+        $this->assertEquals('message', $array['kind']);
+        $this->assertEquals('user', $array['role']);
         $this->assertEquals(['key' => 'value'], $array['metadata']);
-        $this->assertEquals([], $array['parts']);
+        $this->assertCount(1, $array['parts']);
     }
 
     public function testFromArray(): void
     {
         $data = [
-            'id' => 'msg-456',
-            'content' => 'Hello',
-            'type' => 'greeting',
-            'timestamp' => '2023-01-01T12:00:00+00:00',
-            'metadata' => ['lang' => 'en'],
-            'parts' => []
-        ];
-
-        $message = Message::fromArray($data);
-
-        $this->assertEquals('msg-456', $message->getId());
-        $this->assertEquals('Hello', $message->getContent());
-        $this->assertEquals('greeting', $message->getType());
-        $this->assertEquals(['lang' => 'en'], $message->getMetadata());
-    }
-
-    public function testFromProtocolArray(): void
-    {
-        $data = [
-            'messageId' => 'msg-789',
+            'messageId' => 'msg-456',
+            'role' => 'user',
             'parts' => [
-                ['type' => 'text', 'content' => 'Protocol message', 'metadata' => []]
+                ['kind' => 'text', 'text' => 'Hello']
             ],
-            'metadata' => ['source' => 'protocol']
+            'metadata' => ['lang' => 'en']
         ];
 
         $message = Message::fromArray($data);
 
-        $this->assertEquals('msg-789', $message->getId());
-        $this->assertEquals('Protocol message', $message->getContent());
-        $this->assertEquals(['source' => 'protocol'], $message->getMetadata());
-    }
-
-    public function testToProtocolArray(): void
-    {
-        $message = new Message('Test content', 'text', 'msg-123');
-        $message->setMetadata('key', 'value');
-        $message->addExtension('ext1');
-        $message->addReferenceTaskId('task-456');
-
-        $array = $message->toProtocolArray();
-
-        $this->assertEquals('message', $array['kind']);
-        $this->assertEquals('msg-123', $array['messageId']);
-        $this->assertEquals('user', $array['role']);
-        $this->assertEquals(['key' => 'value'], $array['metadata']);
-        $this->assertEquals(['ext1'], $array['extensions']);
-        $this->assertEquals(['task-456'], $array['referenceTaskIds']);
+        $this->assertEquals('msg-456', $message->getMessageId());
+        $this->assertEquals('Hello', $message->getTextContent());
+        $this->assertEquals(['lang' => 'en'], $message->getMetadata());
     }
 
     public function testMessageExtensions(): void
     {
-        $message = new Message('Test');
-        $message->addExtension('extension1');
-        $message->addExtension('extension2');
+        $message = Message::createUserMessage('Test');
+        $message->setExtensions(['extension1', 'extension2']);
 
         $this->assertEquals(['extension1', 'extension2'], $message->getExtensions());
     }
 
     public function testReferenceTaskIds(): void
     {
-        $message = new Message('Test');
-        $message->addReferenceTaskId('task-1');
-        $message->addReferenceTaskId('task-2');
+        $message = Message::createUserMessage('Test');
+        $message->setReferenceTaskIds(['task-1', 'task-2']);
 
         $this->assertEquals(['task-1', 'task-2'], $message->getReferenceTaskIds());
     }
 
     public function testContextAndTaskIds(): void
     {
-        $message = new Message('Test', 'text', null, [], 'context-123', 'task-456');
+        $message = Message::createUserMessage('Test');
+        $message->setContextId('context-123');
+        $message->setTaskId('task-456');
 
         $this->assertEquals('context-123', $message->getContextId());
         $this->assertEquals('task-456', $message->getTaskId());

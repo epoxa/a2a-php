@@ -33,16 +33,16 @@ class A2AClient
     public function sendMessage(string $agentUrl, Message $message): array
     {
         $jsonRpc = new JsonRpc();
-        $request = $jsonRpc->createRequest('send_message', [
-            'from' => $this->agentCard->getId(),
-            'message' => $message->toProtocolArray()
+        $request = $jsonRpc->createRequest('message/send', [
+            'from' => $this->agentCard->getName(),
+            'message' => $message->toArray()
         ], 1);
 
         try {
             $response = $this->httpClient->post($agentUrl, $request);
             $this->logger->info('Message sent', [
                 'to' => $agentUrl,
-                'message_id' => $message->getId()
+                'message_id' => $message->getMessageId()
             ]);
             return $response;
         } catch (\Exception $e) {
@@ -138,6 +138,76 @@ class A2AClient
             return isset($response['result']);
         } catch (\Exception $e) {
             $this->logger->error('Failed to set push notification config', [
+                'task_id' => $taskId,
+                'error' => $e->getMessage()
+            ]);
+            return false;
+        }
+    }
+
+    public function getPushNotificationConfig(string $taskId): ?PushNotificationConfig
+    {
+        $jsonRpc = new JsonRpc();
+        $request = $jsonRpc->createRequest('tasks/pushNotificationConfig/get', ['id' => $taskId], 1);
+
+        try {
+            $response = $this->httpClient->post('', $request);
+            if (isset($response['result']['pushNotificationConfig'])) {
+                return PushNotificationConfig::fromArray($response['result']['pushNotificationConfig']);
+            }
+            return null;
+        } catch (\Exception $e) {
+            $this->logger->error('Failed to get push notification config', [
+                'task_id' => $taskId,
+                'error' => $e->getMessage()
+            ]);
+            return null;
+        }
+    }
+
+    public function listPushNotificationConfigs(): array
+    {
+        $jsonRpc = new JsonRpc();
+        $request = $jsonRpc->createRequest('tasks/pushNotificationConfig/list', [], 1);
+
+        try {
+            $response = $this->httpClient->post('', $request);
+            return $response['result']['configs'] ?? [];
+        } catch (\Exception $e) {
+            $this->logger->error('Failed to list push notification configs', [
+                'error' => $e->getMessage()
+            ]);
+            return [];
+        }
+    }
+
+    public function deletePushNotificationConfig(string $taskId): bool
+    {
+        $jsonRpc = new JsonRpc();
+        $request = $jsonRpc->createRequest('tasks/pushNotificationConfig/delete', ['id' => $taskId], 1);
+
+        try {
+            $response = $this->httpClient->post('', $request);
+            return isset($response['result']);
+        } catch (\Exception $e) {
+            $this->logger->error('Failed to delete push notification config', [
+                'task_id' => $taskId,
+                'error' => $e->getMessage()
+            ]);
+            return false;
+        }
+    }
+
+    public function resubscribeTask(string $taskId): bool
+    {
+        $jsonRpc = new JsonRpc();
+        $request = $jsonRpc->createRequest('tasks/resubscribe', ['id' => $taskId], 1);
+
+        try {
+            $response = $this->httpClient->post('', $request);
+            return isset($response['result']);
+        } catch (\Exception $e) {
+            $this->logger->error('Failed to resubscribe task', [
                 'task_id' => $taskId,
                 'error' => $e->getMessage()
             ]);

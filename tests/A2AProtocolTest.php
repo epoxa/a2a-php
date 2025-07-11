@@ -19,13 +19,18 @@ class A2AProtocolTest extends TestCase
 
     protected function setUp(): void
     {
+        $capabilities = new \A2A\Models\AgentCapabilities();
+        $skill = new \A2A\Models\AgentSkill('test', 'Test', 'Test skill', ['test']);
+        
         $this->agentCard = new AgentCard(
-            'test-agent-1',
             'Test Agent',
             'A test agent for unit testing',
+            'https://example.com/agent',
             '1.0.0',
-            ['messaging', 'tasks'],
-            ['environment' => 'test']
+            $capabilities,
+            ['text'],
+            ['text'],
+            [$skill]
         );
 
         $this->logger = new TestLogger();
@@ -42,9 +47,8 @@ class A2AProtocolTest extends TestCase
     {
         $card = $this->protocol->getAgentCard();
 
-        $this->assertEquals('test-agent-1', $card->getId());
+        $this->assertEquals('Test Agent', $card->getId());
         $this->assertEquals('Test Agent', $card->getName());
-        $this->assertEquals(['messaging', 'tasks'], $card->getCapabilities());
     }
 
     public function testCreateTask(): void
@@ -73,7 +77,7 @@ class A2AProtocolTest extends TestCase
         $this->assertEquals('2.0', $response['jsonrpc']);
         $this->assertEquals(1, $response['id']);
         $this->assertArrayHasKey('result', $response);
-        $this->assertEquals('test-agent-1', $response['result']['id']);
+        $this->assertEquals('Test Agent', $response['result']['name']);
     }
 
     public function testHandlePingRequest(): void
@@ -93,13 +97,13 @@ class A2AProtocolTest extends TestCase
 
     public function testHandleMessageRequest(): void
     {
-        $message = new Message('Hello, World!');
+        $message = Message::createUserMessage('Hello, World!');
         $request = [
             'jsonrpc' => '2.0',
-            'method' => 'send_message',
+            'method' => 'message/send',
             'params' => [
                 'from' => 'sender-agent',
-                'message' => $message->toProtocolArray()
+                'message' => $message->toArray()
             ],
             'id' => 3
         ];
@@ -111,7 +115,7 @@ class A2AProtocolTest extends TestCase
 
         $this->assertArrayHasKey('result', $response);
         $this->assertEquals('received', $response['result']['status']);
-        $this->assertEquals($message->getId(), $response['result']['message_id']);
+        $this->assertEquals($message->getMessageId(), $response['result']['message_id']);
         $this->assertArrayHasKey('timestamp', $response['result']);
 
         // Verify that the message receipt was logged

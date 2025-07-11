@@ -44,8 +44,12 @@ class A2AServer
             $parsedRequest = $jsonRpc->parseRequest($request);
 
             switch ($parsedRequest['method']) {
+                case 'message/send':
                 case 'send_message':
                     return $this->handleMessage($parsedRequest);
+                case 'message/stream':
+                    $this->handleStreamMessage($parsedRequest);
+                    return [];
                 case 'get_agent_card':
                     return $jsonRpc->createResponse(
                         $parsedRequest['id'],
@@ -104,5 +108,19 @@ class A2AServer
                 'timestamp' => time()
             ]
         );
+    }
+
+    private function handleStreamMessage(array $parsedRequest): void
+    {
+        header('Content-Type: text/event-stream');
+        header('Cache-Control: no-cache');
+        header('Connection: keep-alive');
+        
+        echo "data: " . json_encode([
+            'jsonrpc' => '2.0',
+            'id' => $parsedRequest['id'],
+            'result' => ['status' => 'streaming_ready']
+        ]) . "\n\n";
+        flush();
     }
 }

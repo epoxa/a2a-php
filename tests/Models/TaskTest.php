@@ -51,8 +51,8 @@ class TaskTest extends TestCase
     public function testTaskHistory(): void
     {
         $task = new Task('task-123', 'Test task');
-        $message1 = new Message('First message');
-        $message2 = new Message('Second message');
+        $message1 = Message::createUserMessage('First message');
+        $message2 = Message::createUserMessage('Second message');
 
         $task->addToHistory($message1);
         $task->addToHistory($message2);

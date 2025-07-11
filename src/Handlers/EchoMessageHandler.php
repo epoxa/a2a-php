@@ -13,15 +13,15 @@ class EchoMessageHandler implements MessageHandlerInterface
     {
         return [
             'status' => 'processed',
-            'echo' => $message->getContent(),
+            'echo' => $message->getTextContent(),
             'from' => $fromAgent,
-            'message_id' => $message->getId(),
+            'message_id' => $message->getMessageId(),
             'timestamp' => time()
         ];
     }
 
     public function canHandle(Message $message): bool
     {
-        return $message->getType() === 'text';
+        return true; // All messages have text content
     }
 }

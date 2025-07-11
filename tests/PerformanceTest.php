@@ -7,6 +7,8 @@ namespace A2A\Tests;
 use PHPUnit\Framework\TestCase;
 use A2A\A2AServer;
 use A2A\Models\AgentCard;
+use A2A\Models\AgentCapabilities;
+use A2A\Models\AgentSkill;
 use A2A\Models\Message;
 use A2A\TaskManager;
 
@@ -14,7 +16,20 @@ class PerformanceTest extends TestCase
 {
     public function testHighVolumeMessageProcessing(): void
     {
-        $agentCard = new AgentCard('perf-agent', 'Performance Test Agent');
+        $capabilities = new AgentCapabilities();
+        $skill = new AgentSkill('test', 'Test', 'Test skill', ['test']);
+        
+        $agentCard = new AgentCard(
+            'Performance Test Agent',
+            'Performance test description',
+            'https://example.com/perf',
+            '1.0.0',
+            $capabilities,
+            ['text'],
+            ['text'],
+            [$skill]
+        );
+        
         $server = new A2AServer($agentCard);
         
         $processedCount = 0;
@@ -25,13 +40,13 @@ class PerformanceTest extends TestCase
         $startTime = microtime(true);
         
         for ($i = 0; $i < 1000; $i++) {
-            $message = new Message("Message $i", 'text');
+            $message = Message::createUserMessage("Message $i");
             $request = [
                 'jsonrpc' => '2.0',
-                'method' => 'send_message',
+                'method' => 'message/send',
                 'params' => [
                     'from' => 'client-perf',
-                    'message' => $message->toProtocolArray()
+                    'message' => $message->toArray()
                 ],
                 'id' => $i
             ];
@@ -65,8 +80,8 @@ class PerformanceTest extends TestCase
 
     public function testMessageSerializationPerformance(): void
     {
-        $message = new Message('Performance test message', 'text');
-        $message->setMetadata('test', 'value');
+        $message = Message::createUserMessage('Performance test message');
+        $message->setMetadata(['test' => 'value']);
         
         $startTime = microtime(true);
         

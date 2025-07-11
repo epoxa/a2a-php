@@ -64,16 +64,16 @@ class A2AProtocol
     public function sendMessage(string $recipientUrl, Message $message): array
     {
         $jsonRpc = new JsonRpc();
-        $request = $jsonRpc->createRequest('send_message', [
+        $request = $jsonRpc->createRequest('message/send', [
             'from' => $this->agentId,
-            'message' => $message->toProtocolArray()
+            'message' => $message->toArray()
         ]);
 
         try {
             $response = $this->httpClient->post($recipientUrl, $request);
             $this->logger->info('Message sent successfully', [
                 'recipient' => $recipientUrl,
-                'message_id' => $message->getId()
+                'message_id' => $message->getMessageId()
             ]);
             return $response;
         } catch (\Exception $e) {
@@ -100,6 +100,16 @@ class A2AProtocol
                     return $this->handleGetTask($parsedRequest['params'], $parsedRequest['id']);
                 case 'tasks/cancel':
                     return $this->handleCancelTask($parsedRequest['params'], $parsedRequest['id']);
+                case 'tasks/resubscribe':
+                    return $this->handleResubscribeTask($parsedRequest['params'], $parsedRequest['id']);
+                case 'tasks/pushNotificationConfig/set':
+                    return $this->handleSetPushConfig($parsedRequest['params'], $parsedRequest['id']);
+                case 'tasks/pushNotificationConfig/get':
+                    return $this->handleGetPushConfig($parsedRequest['params'], $parsedRequest['id']);
+                case 'tasks/pushNotificationConfig/list':
+                    return $this->handleListPushConfig($parsedRequest['params'], $parsedRequest['id']);
+                case 'tasks/pushNotificationConfig/delete':
+                    return $this->handleDeletePushConfig($parsedRequest['params'], $parsedRequest['id']);
                 case 'get_agent_card':
                     return $jsonRpc->createResponse($parsedRequest['id'], $this->agentCard->toArray());
                 case 'ping':
@@ -120,8 +130,8 @@ class A2AProtocol
 
         $this->logger->info('Message received', [
             'from' => $fromAgent,
-            'message_id' => $message->getId(),
-            'content_type' => $message->getType()
+            'message_id' => $message->getMessageId(),
+            'content_type' => 'text'
         ]);
 
         $result = $this->processMessage($message, $fromAgent);
@@ -145,7 +155,7 @@ class A2AProtocol
                     $this->logger->error('Message handler failed', [
                         'handler' => get_class($handler),
                         'error' => $e->getMessage(),
-                        'message_id' => $message->getId()
+                        'message_id' => $message->getMessageId()
                     ]);
                 }
             }
@@ -154,7 +164,7 @@ class A2AProtocol
         // Default response if no handler processes the message
         return [
             'status' => 'received',
-            'message_id' => $message->getId(),
+            'message_id' => $message->getMessageId(),
             'timestamp' => time()
         ];
     }
@@ -202,6 +212,62 @@ class A2AProtocol
         }
 
         return $jsonRpc->createResponse($requestId, $result['result']);
+    }
+
+    private function handleResubscribeTask(array $params, $requestId): array
+    {
+        $jsonRpc = new JsonRpc();
+        $taskId = $params['id'] ?? null;
+        
+        if (!$taskId) {
+            return $jsonRpc->createError($requestId, 'Missing task ID', A2AErrorCodes::INVALID_PARAMS);
+        }
+
+        // Resubscribe logic would go here
+        return $jsonRpc->createResponse($requestId, ['status' => 'resubscribed', 'taskId' => $taskId]);
+    }
+
+    private function handleSetPushConfig(array $params, $requestId): array
+    {
+        $jsonRpc = new JsonRpc();
+        $taskId = $params['taskId'] ?? null;
+        $config = $params['pushNotificationConfig'] ?? null;
+        
+        if (!$taskId || !$config) {
+            return $jsonRpc->createError($requestId, 'Missing required parameters', A2AErrorCodes::INVALID_PARAMS);
+        }
+
+        return $jsonRpc->createResponse($requestId, ['taskId' => $taskId, 'pushNotificationConfig' => $config]);
+    }
+
+    private function handleGetPushConfig(array $params, $requestId): array
+    {
+        $jsonRpc = new JsonRpc();
+        $taskId = $params['id'] ?? null;
+        
+        if (!$taskId) {
+            return $jsonRpc->createError($requestId, 'Missing task ID', A2AErrorCodes::INVALID_PARAMS);
+        }
+
+        return $jsonRpc->createResponse($requestId, ['taskId' => $taskId, 'pushNotificationConfig' => null]);
+    }
+
+    private function handleListPushConfig(array $params, $requestId): array
+    {
+        $jsonRpc = new JsonRpc();
+        return $jsonRpc->createResponse($requestId, ['configs' => []]);
+    }
+
+    private function handleDeletePushConfig(array $params, $requestId): array
+    {
+        $jsonRpc = new JsonRpc();
+        $taskId = $params['id'] ?? null;
+        
+        if (!$taskId) {
+            return $jsonRpc->createError($requestId, 'Missing task ID', A2AErrorCodes::INVALID_PARAMS);
+        }
+
+        return $jsonRpc->createResponse($requestId, ['status' => 'deleted', 'taskId' => $taskId]);
     }
 
     public function getTaskManager(): TaskManager

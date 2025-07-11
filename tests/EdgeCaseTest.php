@@ -7,6 +7,8 @@ namespace A2A\Tests;
 use PHPUnit\Framework\TestCase;
 use A2A\Models\Message;
 use A2A\Models\AgentCard;
+use A2A\Models\AgentCapabilities;
+use A2A\Models\AgentSkill;
 use A2A\Models\Task;
 use A2A\Models\TaskState;
 use A2A\Utils\JsonRpc;
@@ -15,30 +17,40 @@ class EdgeCaseTest extends TestCase
 {
     public function testMessageWithEmptyContent(): void
     {
-        $message = new Message('');
-        $this->assertEquals('', $message->getContent());
-        $this->assertNotEmpty($message->getId());
+        $message = Message::createUserMessage('');
+        $this->assertEquals('', $message->getTextContent());
+        $this->assertNotEmpty($message->getMessageId());
     }
 
     public function testMessageFromArrayWithMissingFields(): void
     {
-        $data = [];
+        $data = ['messageId' => 'test-123', 'role' => 'user', 'parts' => []];
         $message = Message::fromArray($data);
         
-        $this->assertEquals('', $message->getContent());
-        $this->assertEquals('text', $message->getType());
-        $this->assertNotEmpty($message->getId());
+        $this->assertEquals('test-123', $message->getMessageId());
+        $this->assertEquals('user', $message->getRole());
+        $this->assertNotEmpty($message->getMessageId());
     }
 
     public function testAgentCardWithMinimalData(): void
     {
-        $card = new AgentCard('minimal', 'Minimal Agent');
+        $capabilities = new AgentCapabilities();
+        $skill = new AgentSkill('test', 'Test', 'Test skill', ['test']);
         
-        $this->assertEquals('minimal', $card->getId());
+        $card = new AgentCard(
+            'Minimal Agent',
+            'Description',
+            'https://example.com/agent',
+            '1.0.0',
+            $capabilities,
+            ['text'],
+            ['text'],
+            [$skill]
+        );
+        
         $this->assertEquals('Minimal Agent', $card->getName());
-        $this->assertEquals('', $card->getDescription());
+        $this->assertEquals('Description', $card->getDescription());
         $this->assertEquals('1.0.0', $card->getVersion());
-        $this->assertEquals([], $card->getCapabilities());
     }
 
     public function testTaskStateTransitions(): void
@@ -83,22 +95,22 @@ class EdgeCaseTest extends TestCase
     public function testLargeMessageContent(): void
     {
         $largeContent = str_repeat('A', 10000);
-        $message = new Message($largeContent);
+        $message = Message::createUserMessage($largeContent);
         
-        $this->assertEquals($largeContent, $message->getContent());
-        $this->assertEquals(10000, strlen($message->getContent()));
+        $this->assertEquals($largeContent, $message->getTextContent());
+        $this->assertEquals(10000, strlen($message->getTextContent()));
     }
 
     public function testSpecialCharactersInMessage(): void
     {
         $specialContent = "Hello 世界! 🌍 Special chars: àáâãäå";
-        $message = new Message($specialContent);
+        $message = Message::createUserMessage($specialContent);
         
-        $this->assertEquals($specialContent, $message->getContent());
+        $this->assertEquals($specialContent, $message->getTextContent());
         
         $array = $message->toArray();
         $reconstructed = Message::fromArray($array);
-        $this->assertEquals($specialContent, $reconstructed->getContent());
+        $this->assertEquals($specialContent, $reconstructed->getTextContent());
     }
 
     public function testConcurrentTaskCreation(): void

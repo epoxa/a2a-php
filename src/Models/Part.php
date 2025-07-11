@@ -4,22 +4,25 @@ declare(strict_types=1);
 
 namespace A2A\Models;
 
-class Part
+// Legacy Part class for backward compatibility
+class Part implements PartInterface
 {
-    private string $type;
+    private string $kind;
     private string $content;
-    private array $metadata;
+    private ?array $metadata = null;
 
-    public function __construct(string $type, string $content, array $metadata = [])
+    public function __construct(string $kind, string $content, array $metadata = [])
     {
-        $this->type = $type;
+        $this->kind = $kind;
         $this->content = $content;
-        $this->metadata = $metadata;
+        if (!empty($metadata)) {
+            $this->metadata = $metadata;
+        }
     }
 
-    public function getType(): string
+    public function getKind(): string
     {
-        return $this->type;
+        return $this->kind;
     }
 
     public function getContent(): string
@@ -27,31 +30,42 @@ class Part
         return $this->content;
     }
 
-    public function getMetadata(): array
+    public function getMetadata(): ?array
     {
         return $this->metadata;
     }
 
-    public function setMetadata(string $key, $value): void
+    public function setMetadata(array $metadata): void
     {
-        $this->metadata[$key] = $value;
+        $this->metadata = $metadata;
     }
 
     public function toArray(): array
     {
-        return [
-            'type' => $this->type,
-            'content' => $this->content,
-            'metadata' => $this->metadata
+        $result = [
+            'kind' => $this->kind,
+            'content' => $this->content
         ];
+
+        if ($this->metadata !== null) {
+            $result['metadata'] = $this->metadata;
+        }
+
+        return $result;
     }
 
     public static function fromArray(array $data): self
     {
         return new self(
-            $data['type'],
-            $data['content'],
+            $data['kind'] ?? $data['type'] ?? 'text',
+            $data['content'] ?? $data['text'] ?? '',
             $data['metadata'] ?? []
         );
+    }
+
+    // Legacy compatibility methods
+    public function getType(): string
+    {
+        return $this->kind;
     }
 }

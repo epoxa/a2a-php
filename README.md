@@ -1,18 +1,37 @@
 # A2A PHP SDK
 
-A PHP implementation of the A2A (Agent-to-Agent) Protocol, providing a SDK for building PHP AI agent-based applications.
+A PHP implementation of the A2A (AI Agent-to-Agent) Protocol in PHP.
 
 https://github.com/a2aproject/A2A
 
 ## Features
 
--  A2A Protocol implementation
--  Modern PHP 8.0+
--  PSR-4 autoloading
--  Test coverage
--  JSON-RPC 2.0 support
--  HTTP client abstraction
--  Logging
+### Core Protocol Support
+-  A2A Protocol v0.2.5 implementation
+-  All protocol methods: `message/send`, `message/stream`, `tasks/*`
+-  Protocol-compliant AgentCard, Message, Task structures
+-  Full Part types: TextPart, FilePart, DataPart
+-  JSON-RPC 2.0 with A2A-specific error codes
+
+### Streaming & Real-time
+-  Server-Sent Events (SSE) streaming
+-  Event-driven architecture with ExecutionEventBus
+-  TaskStatusUpdateEvent and TaskArtifactUpdateEvent
+-  Concurrent task stream management
+-  StreamingClient for SSE consumption
+
+### Advanced Features
+-  AgentExecutor framework for complex agent logic
+-  RequestContext system for execution state
+-  ResultManager for event processing
+-  Push notification configuration (CRUD)
+-  Task resubscription and reconnection
+
+### Technical Features
+-  Modern PHP 8.0+ with strict typing
+-  PSR-4 autoloading and PSR-3 logging
+-  Comprehensive test coverage
+-  HTTP client abstraction with Guzzle
 
 ## Installation
 
@@ -205,10 +224,72 @@ $protocol = new A2AProtocol($agentCard, null, $logger);
 
 See the `examples/` directory for complete working examples:
 
-- Basic agent implementation
-- Client-server communication
-- Task management
-- Message handling
+- `basic_agent.php` - Basic agent implementation
+- `client_server.php` - Client-server communication
+- `streaming_example.php` - Streaming and events
+- `advanced_features.php` - All advanced features
+- `protocol_compliance.php` - A2A protocol compliance
+- `feature_comparison.php` - Feature parity verification
+- `task_management.php` - Task lifecycle management
+
+## Streaming Example
+
+```php
+use A2A\Events\ExecutionEventBusImpl;
+use A2A\Execution\DefaultAgentExecutor;
+use A2A\Models\RequestContext;
+
+$eventBus = new ExecutionEventBusImpl();
+$executor = new DefaultAgentExecutor();
+
+$message = Message::createUserMessage('Stream me updates!');
+$context = new RequestContext($message, 'task-123', 'ctx-123');
+
+// Subscribe to events
+$eventBus->subscribe('task-123', function($event) {
+    echo "Event: " . get_class($event) . "\n";
+});
+
+// Execute with streaming
+$executor->execute($context, $eventBus);
+```
+
+## Agent Execution Pattern
+
+```php
+use A2A\Interfaces\AgentExecutor;
+use A2A\Models\TaskStatusUpdateEvent;
+
+class MyAgentExecutor implements AgentExecutor
+{
+    public function execute(RequestContext $requestContext, ExecutionEventBus $eventBus): void
+    {
+        // Publish working status
+        $workingEvent = new TaskStatusUpdateEvent(
+            $requestContext->taskId,
+            $requestContext->contextId,
+            new TaskStatus(TaskState::WORKING)
+        );
+        $eventBus->publish($workingEvent);
+        
+        // Do work...
+        
+        // Publish completion
+        $completedEvent = new TaskStatusUpdateEvent(
+            $requestContext->taskId,
+            $requestContext->contextId,
+            new TaskStatus(TaskState::COMPLETED),
+            true // final
+        );
+        $eventBus->publish($completedEvent);
+    }
+    
+    public function cancelTask(string $taskId, ExecutionEventBus $eventBus): void
+    {
+        // Handle cancellation
+    }
+}
+```
 
 ## Contributing
 

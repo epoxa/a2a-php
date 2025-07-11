@@ -4,18 +4,27 @@ require_once __DIR__ . '/../vendor/autoload.php';
 
 use A2A\A2AProtocol;
 use A2A\Models\AgentCard;
+use A2A\Models\AgentCapabilities;
+use A2A\Models\AgentSkill;
 use A2A\Models\Task;
+use A2A\Models\TaskState;
 use A2A\Models\Part;
 
 echo "=== Task Management Example ===\n\n";
 
 // Create an agent
+$capabilities = new AgentCapabilities();
+$skill = new AgentSkill('tasks', 'Task Management', 'Task management capabilities', ['tasks', 'scheduling']);
+
 $agentCard = new AgentCard(
-    'task-manager-001',
     'Task Manager',
     'Demonstrates task management capabilities',
+    'https://example.com/task-manager',
     '1.0.0',
-    ['tasks', 'scheduling']
+    $capabilities,
+    ['text'],
+    ['text'],
+    [$skill]
 );
 
 $protocol = new A2AProtocol($agentCard);
@@ -53,13 +62,13 @@ echo "Task 3 assigned to: {$task3->getAssignedTo()}\n\n";
 
 // Update task statuses
 echo "Updating task statuses...\n";
-$task1->setStatus('in_progress');
-$task2->setStatus('completed');
-$task3->setStatus('in_progress');
+$task1->setStatus(TaskState::WORKING);
+$task2->setStatus(TaskState::COMPLETED);
+$task3->setStatus(TaskState::WORKING);
 
-echo "Task 1 status: {$task1->getStatus()}\n";
-echo "Task 2 status: {$task2->getStatus()} - Completed at: {$task2->getCompletedAt()?->format('Y-m-d H:i:s')}\n";
-echo "Task 3 status: {$task3->getStatus()}\n\n";
+echo "Task 1 status: {$task1->getStatus()->value}\n";
+echo "Task 2 status: {$task2->getStatus()->value} - Completed at: {$task2->getCompletedAt()?->format('Y-m-d H:i:s')}\n";
+echo "Task 3 status: {$task3->getStatus()->value}\n\n";
 
 // Add parts to tasks
 echo "Adding parts to task 1...\n";
@@ -76,8 +85,8 @@ echo json_encode($task1->toArray(), JSON_PRETTY_PRINT) . "\n\n";
 
 // Complete remaining tasks
 echo "Completing remaining tasks...\n";
-$task1->setStatus('completed');
-$task3->setStatus('completed');
+$task1->setStatus(TaskState::COMPLETED);
+$task3->setStatus(TaskState::COMPLETED);
 
 $completedTasks = array_filter(
     [$task1, $task2, $task3],

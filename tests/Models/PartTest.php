@@ -21,7 +21,7 @@ class PartTest extends TestCase
     public function testSetMetadata(): void
     {
         $part = new Part('text', 'Hello');
-        $part->setMetadata('priority', 'high');
+        $part->setMetadata(['priority' => 'high']);
 
         $this->assertEquals(['priority' => 'high'], $part->getMetadata());
     }
@@ -32,7 +32,7 @@ class PartTest extends TestCase
         $array = $part->toArray();
 
         $expected = [
-            'type' => 'image',
+            'kind' => 'image',
             'content' => 'base64data',
             'metadata' => ['format' => 'png']
         ];

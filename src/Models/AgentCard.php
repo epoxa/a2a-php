@@ -6,39 +6,43 @@ namespace A2A\Models;
 
 class AgentCard
 {
-    private string $id;
     private string $name;
     private string $description;
+    private string $url;
     private string $version;
-    private array $capabilities;
-    private array $metadata;
-    private array $extensions = [];
-    private array $additionalInterfaces = [];
+    private string $protocolVersion;
+    private AgentCapabilities $capabilities;
+    private array $defaultInputModes;
+    private array $defaultOutputModes;
+    private array $skills;
+    private ?AgentProvider $provider = null;
+    private ?array $securitySchemes = null;
+    private ?array $security = null;
+    private ?array $additionalInterfaces = null;
+    private ?string $documentationUrl = null;
+    private ?string $iconUrl = null;
     private bool $supportsAuthenticatedExtendedCard = false;
 
     public function __construct(
-        string $id,
         string $name,
-        string $description = '',
-        string $version = '1.0.0',
-        array $capabilities = [],
-        array $metadata = [],
-        array $extensions = [],
-        bool $supportsAuthenticatedExtendedCard = false
+        string $description,
+        string $url,
+        string $version,
+        AgentCapabilities $capabilities,
+        array $defaultInputModes,
+        array $defaultOutputModes,
+        array $skills,
+        string $protocolVersion = '0.2.5'
     ) {
-        $this->id = $id;
         $this->name = $name;
         $this->description = $description;
+        $this->url = $url;
         $this->version = $version;
+        $this->protocolVersion = $protocolVersion;
         $this->capabilities = $capabilities;
-        $this->metadata = $metadata;
-        $this->extensions = $extensions;
-        $this->supportsAuthenticatedExtendedCard = $supportsAuthenticatedExtendedCard;
-    }
-
-    public function getId(): string
-    {
-        return $this->id;
+        $this->defaultInputModes = $defaultInputModes;
+        $this->defaultOutputModes = $defaultOutputModes;
+        $this->skills = $skills;
     }
 
     public function getName(): string
@@ -46,9 +50,19 @@ class AgentCard
         return $this->name;
     }
 
+    public function getId(): string
+    {
+        return $this->name; // Use name as ID for backward compatibility
+    }
+
     public function getDescription(): string
     {
         return $this->description;
+    }
+
+    public function getUrl(): string
+    {
+        return $this->url;
     }
 
     public function getVersion(): string
@@ -56,79 +70,164 @@ class AgentCard
         return $this->version;
     }
 
-    public function getCapabilities(): array
+    public function getProtocolVersion(): string
+    {
+        return $this->protocolVersion;
+    }
+
+    public function getCapabilities(): AgentCapabilities
     {
         return $this->capabilities;
     }
 
-    public function getMetadata(): array
+    public function getDefaultInputModes(): array
     {
-        return $this->metadata;
+        return $this->defaultInputModes;
     }
 
-    public function addCapability(string $capability): void
+    public function getDefaultOutputModes(): array
     {
-        if (!in_array($capability, $this->capabilities)) {
-            $this->capabilities[] = $capability;
-        }
+        return $this->defaultOutputModes;
     }
 
-    public function setMetadata(string $key, $value): void
+    public function getSkills(): array
     {
-        $this->metadata[$key] = $value;
+        return $this->skills;
     }
 
-    public function hasCapability(string $capability): bool
+    public function setProvider(AgentProvider $provider): void
     {
-        return in_array($capability, $this->capabilities);
+        $this->provider = $provider;
     }
 
-    public function getExtensions(): array
+    public function getProvider(): ?AgentProvider
     {
-        return $this->extensions;
+        return $this->provider;
     }
 
-    public function addExtension(array $extension): void
+    public function setSecuritySchemes(array $securitySchemes): void
     {
-        $this->extensions[] = $extension;
+        $this->securitySchemes = $securitySchemes;
     }
 
-    public function getAdditionalInterfaces(): array
+    public function setSecurity(array $security): void
     {
-        return $this->additionalInterfaces;
+        $this->security = $security;
     }
 
-    public function addInterface(string $url, string $transport): void
+    public function setAdditionalInterfaces(array $additionalInterfaces): void
     {
-        $this->additionalInterfaces[] = ['url' => $url, 'transport' => $transport];
+        $this->additionalInterfaces = $additionalInterfaces;
     }
 
-    public function supportsAuthenticatedExtendedCard(): bool
+    public function setDocumentationUrl(string $documentationUrl): void
     {
-        return $this->supportsAuthenticatedExtendedCard;
+        $this->documentationUrl = $documentationUrl;
+    }
+
+    public function setIconUrl(string $iconUrl): void
+    {
+        $this->iconUrl = $iconUrl;
+    }
+
+    public function setSupportsAuthenticatedExtendedCard(bool $supports): void
+    {
+        $this->supportsAuthenticatedExtendedCard = $supports;
     }
 
     public function toArray(): array
     {
-        return [
-            'id' => $this->id,
+        $result = [
             'name' => $this->name,
             'description' => $this->description,
+            'url' => $this->url,
             'version' => $this->version,
-            'capabilities' => $this->capabilities,
-            'metadata' => $this->metadata
+            'protocolVersion' => $this->protocolVersion,
+            'capabilities' => $this->capabilities->toArray(),
+            'defaultInputModes' => $this->defaultInputModes,
+            'defaultOutputModes' => $this->defaultOutputModes,
+            'skills' => array_map(fn(AgentSkill $skill) => $skill->toArray(), $this->skills),
+            'supportsAuthenticatedExtendedCard' => $this->supportsAuthenticatedExtendedCard
         ];
+
+        if ($this->provider !== null) {
+            $result['provider'] = $this->provider->toArray();
+        }
+
+        if ($this->securitySchemes !== null) {
+            $result['securitySchemes'] = $this->securitySchemes;
+        }
+
+        if ($this->security !== null) {
+            $result['security'] = $this->security;
+        }
+
+        if ($this->additionalInterfaces !== null) {
+            $result['additionalInterfaces'] = $this->additionalInterfaces;
+        }
+
+        if ($this->documentationUrl !== null) {
+            $result['documentationUrl'] = $this->documentationUrl;
+        }
+
+        if ($this->iconUrl !== null) {
+            $result['iconUrl'] = $this->iconUrl;
+        }
+
+        return $result;
     }
 
     public static function fromArray(array $data): self
     {
-        return new self(
-            $data['id'],
+        $capabilities = AgentCapabilities::fromArray($data['capabilities'] ?? []);
+        
+        $skills = [];
+        if (isset($data['skills'])) {
+            foreach ($data['skills'] as $skillData) {
+                $skills[] = AgentSkill::fromArray($skillData);
+            }
+        }
+
+        $agentCard = new self(
             $data['name'],
-            $data['description'] ?? '',
-            $data['version'] ?? '1.0.0',
-            $data['capabilities'] ?? [],
-            $data['metadata'] ?? []
+            $data['description'],
+            $data['url'] ?? 'https://example.com/agent',
+            $data['version'],
+            $capabilities,
+            $data['defaultInputModes'] ?? [],
+            $data['defaultOutputModes'] ?? [],
+            $skills,
+            $data['protocolVersion'] ?? '0.2.5'
         );
+
+        if (isset($data['provider'])) {
+            $agentCard->setProvider(AgentProvider::fromArray($data['provider']));
+        }
+
+        if (isset($data['securitySchemes'])) {
+            $agentCard->setSecuritySchemes($data['securitySchemes']);
+        }
+
+        if (isset($data['security'])) {
+            $agentCard->setSecurity($data['security']);
+        }
+
+        if (isset($data['additionalInterfaces'])) {
+            $agentCard->setAdditionalInterfaces($data['additionalInterfaces']);
+        }
+
+        if (isset($data['documentationUrl'])) {
+            $agentCard->setDocumentationUrl($data['documentationUrl']);
+        }
+
+        if (isset($data['iconUrl'])) {
+            $agentCard->setIconUrl($data['iconUrl']);
+        }
+
+        if (isset($data['supportsAuthenticatedExtendedCard'])) {
+            $agentCard->setSupportsAuthenticatedExtendedCard($data['supportsAuthenticatedExtendedCard']);
+        }
+
+        return $agentCard;
     }
 }
