@@ -123,7 +123,10 @@ $complexMessage->setMetadata(['priority' => 'high', 'deadline' => '2024-12-31'])
 
 // Add different part types
 $complexMessage->addPart(new DataPart(['dataset' => 'user_analytics', 'records' => 1000]));
-$complexMessage->addPart(new FilePart(new FileWithBytes(base64_encode('sample file content'))));
+$fileWithBytes = new FileWithBytes(base64_encode('sample file content'));
+$fileWithBytes->setName('sample.txt');
+$fileWithBytes->setMimeType('text/plain');
+$complexMessage->addPart(new FilePart($fileWithBytes));
 
 echo "Agent A sending complex message to Agent B...\n";
 echo "Message parts: " . count($complexMessage->getParts()) . "\n";
@@ -132,7 +135,7 @@ echo "Message parts: " . count($complexMessage->getParts()) . "\n";
 $taskCreated = null;
 $serverB->addMessageHandler(function ($message, $fromAgent) use (&$taskCreated, $protocolB) {
     echo "Agent B received message from {$fromAgent}\n";
-    echo "Message content: {$message->getTextContent()}\n";
+    echo "Message content: {$message->getContent()}\n";
     echo "Message parts: " . count($message->getParts()) . "\n";
 
     // Create a task in response
@@ -154,7 +157,7 @@ if ($taskCreated) {
     $retrievedTask = $protocolB->getTaskManager()->getTask($taskCreated->getId());
     if ($retrievedTask) {
         echo "Retrieved task: {$retrievedTask->getId()}\n";
-        echo "Task status: {$retrievedTask->getStatus()->value}\n";
+        echo "Task status: {$retrievedTask->getStatus()}\n";
     }
 
     // 9. Test Protocol Method: tasks/cancel
@@ -170,12 +173,12 @@ echo "=== Testing Push Notification Configuration ===\n";
 $pushConfig = new PushNotificationConfig('https://agent-a.example.com/webhook', 'config-001');
 
 echo "Setting push notification config...\n";
-$setConfigResult = $clientA->setPushNotificationConfig($pushConfig);
+$setConfigResult = $clientA->setPushNotificationConfig('config-001', $pushConfig);
 echo "Set config result: " . ($setConfigResult ? 'SUCCESS' : 'FAILED') . "\n";
 
 echo "Getting push notification config...\n";
 $getConfigResult = $clientA->getPushNotificationConfig('config-001');
-echo "Get config result: " . ($getConfigResult ? 'SUCCESS' : 'FAILED') . "\n";
+echo "Get config result: " . ($getConfigResult !== null ? 'SUCCESS' : 'FAILED') . "\n";
 
 echo "Listing push notification configs...\n";
 $listConfigsResult = $clientA->listPushNotificationConfigs();
@@ -188,28 +191,8 @@ echo "Delete config result: " . ($deleteConfigResult ? 'SUCCESS' : 'FAILED') . "
 // 11. Test Protocol Method: tasks/resubscribe
 echo "=== Testing Task Resubscription ===\n";
 echo "Agent A resubscribing to task updates...\n";
-$resubscribeResult = $clientA->resubscribeToTask($taskCreated ? $taskCreated->getId() : 'default-task');
+$resubscribeResult = $clientA->resubscribeTask($taskCreated ? $taskCreated->getId() : 'default-task');
 echo "Resubscribe result: " . ($resubscribeResult ? 'SUCCESS' : 'FAILED') . "\n\n";
-
-// 11.5. Test Protocol Method: tasks/pushNotificationConfig/*
-echo "=== Testing Push Notification Configuration ===\n";
-$pushConfig = new PushNotificationConfig('https://agent-a.example.com/webhook', 'config-001');
-
-echo "Setting push notification config...\n";
-$setConfigResult = $clientA->setPushNotificationConfig($pushConfig);
-echo "Set config result: " . ($setConfigResult ? 'SUCCESS' : 'FAILED') . "\n";
-
-echo "Getting push notification config...\n";
-$getConfigResult = $clientA->getPushNotificationConfig('config-001');
-echo "Get config result: " . ($getConfigResult ? 'SUCCESS' : 'FAILED') . "\n";
-
-echo "Listing push notification configs...\n";
-$listConfigsResult = $clientA->listPushNotificationConfigs();
-echo "Listed configs: " . count($listConfigsResult) . "\n";
-
-echo "Deleting push notification config...\n";
-$deleteConfigResult = $clientA->deletePushNotificationConfig('config-001');
-echo "Delete config result: " . ($deleteConfigResult ? 'SUCCESS' : 'FAILED') . "\n\n";
 
 // 12. Test Streaming Communication
 echo "=== Testing Streaming Communication ===\n";
@@ -264,9 +247,9 @@ $methodResults = [
     'message/send' => $response !== null,
     'message/stream' => true, // Streaming was tested
     'tasks/get' => $retrievedTask !== null,
-    'tasks/cancel' => $cancelResult !== null,
-    'tasks/resubscribe' => true, // Resubscription was tested
-    'pushNotificationConfig' => true // All 4 methods were tested
+    'tasks/cancel' => isset($cancelResult),
+    'tasks/resubscribe' => $resubscribeResult,
+    'pushNotificationConfig' => $setConfigResult
 ];
 
 $successCount = count(array_filter($methodResults));

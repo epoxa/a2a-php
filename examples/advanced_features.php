@@ -64,7 +64,6 @@ echo "- Delete config: " . ($deleteResult ? 'SUCCESS' : 'FAILED') . "\n\n";
 // 3. Demonstrate streaming client
 $streamingClient = new StreamingClient($agentCard);
 $message = Message::createUserMessage('Hello streaming world!');
-$message->setTaskId('stream-task-001');
 
 echo "Streaming capabilities:\n";
 // Send message stream
@@ -74,7 +73,7 @@ try {
     });
     echo "- Send message stream: SUCCESS\n";
 } catch (\Exception $e) {
-    echo "- Send message stream: FAILED\n";
+    echo "- Send message stream: FAILED - " . $e->getMessage() . "\n";
 }
 
 // Task resubscription
@@ -84,7 +83,7 @@ try {
     });
     echo "- Task resubscription: SUCCESS\n";
 } catch (\Exception $e) {
-    echo "- Task resubscription: FAILED\n";
+    echo "- Task resubscription: FAILED - " . $e->getMessage() . "\n";
 }
 
 // Event handling
@@ -122,8 +121,12 @@ $sendResult = $client->sendMessage('https://example.com/agent', $testMessage);
 echo "- message/send: " . ($sendResult ? '✓ SUCCESS' : '✗ FAILED') . "\n";
 
 // Test message/stream
-$streamResult = $streamingClient->sendMessageStream('https://example.com/agent', $testMessage);
-echo "- message/stream: " . ($streamResult ? '✓ SUCCESS' : '✗ FAILED') . "\n";
+try {
+    $streamingClient->sendMessageStream('https://example.com/agent', $testMessage, function($event) {});
+    echo "- message/stream: ✓ SUCCESS\n";
+} catch (\Exception $e) {
+    echo "- message/stream: ✗ FAILED\n";
+}
 
 // Test tasks/get
 $taskId = 'test-task-001';
@@ -135,7 +138,7 @@ $cancelResult = $client->cancelTask($taskId);
 echo "- tasks/cancel: " . ($cancelResult ? '✓ SUCCESS' : '✗ FAILED') . "\n";
 
 // Test tasks/resubscribe
-$resubResult = $streamingClient->resubscribeToTask($taskId);
+$resubResult = $client->resubscribeTask($taskId);
 echo "- tasks/resubscribe: " . ($resubResult ? '✓ SUCCESS' : '✗ FAILED') . "\n";
 
 // Test push notification config methods
