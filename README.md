@@ -1,8 +1,9 @@
 # A2A PHP SDK
 
-A PHP implementation of the A2A (AI Agent-to-Agent) Protocol in PHP.
+PHP library implementation of the A2A (AI Agent-to-Agent) Protocol.
 
 https://github.com/a2aproject/A2A
+
 
 ## Features
 
@@ -226,6 +227,7 @@ See the `examples/` directory for complete working examples:
 
 - `basic_agent.php` - Basic agent implementation
 - `client_server.php` - Client-server communication
+- `complete_agent_communication.php` - Agent to agent communication
 - `streaming_example.php` - Streaming and events
 - `advanced_features.php` - All advanced features
 - `protocol_compliance.php` - A2A protocol compliance
