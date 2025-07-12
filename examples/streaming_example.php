@@ -45,9 +45,9 @@ $message->setContextId('ctx-123');
 $message->setTaskId('task-456');
 
 $context = new RequestContext(
+    $message,
     'task-456',
-    'ctx-123',
-    $message
+    'ctx-123'
 );
 
 echo "Created message: " . $message->getTextContent() . "\n";
