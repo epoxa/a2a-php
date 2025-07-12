@@ -44,39 +44,114 @@ $client = new A2AClient($agentCard);
 $pushConfig = new PushNotificationConfig('https://example.com/webhook');
 
 echo "Push notification methods:\n";
-echo "- Set config: Available\n";
-echo "- Get config: Available\n";
-echo "- List configs: Available\n";
-echo "- Delete config: Available\n\n";
+// Set config
+$taskId = 'demo-task-001';
+$setResult = $client->setPushNotificationConfig($taskId, $pushConfig);
+echo "- Set config: " . ($setResult ? 'SUCCESS' : 'FAILED') . "\n";
+
+// Get config
+$getResult = $client->getPushNotificationConfig($taskId);
+echo "- Get config: " . ($getResult ? 'SUCCESS' : 'FAILED') . "\n";
+
+// List configs
+$listResult = $client->listPushNotificationConfigs();
+echo "- List configs: Found " . count($listResult) . " configs\n";
+
+// Delete config
+$deleteResult = $client->deletePushNotificationConfig($taskId);
+echo "- Delete config: " . ($deleteResult ? 'SUCCESS' : 'FAILED') . "\n\n";
 
 // 3. Demonstrate streaming client
 $streamingClient = new StreamingClient($agentCard);
 $message = Message::createUserMessage('Hello streaming world!');
+$message->setTaskId('stream-task-001');
 
 echo "Streaming capabilities:\n";
-echo "- Send message stream: Available\n";
-echo "- Task resubscription: Available\n";
-echo "- Event handling: Available\n\n";
+// Send message stream
+try {
+    $streamingClient->sendMessageStream('https://example.com/agent', $message, function($event) {
+        // Handle streaming events
+    });
+    echo "- Send message stream: SUCCESS\n";
+} catch (\Exception $e) {
+    echo "- Send message stream: FAILED\n";
+}
+
+// Task resubscription
+try {
+    $streamingClient->resubscribeTask('https://example.com/agent', 'stream-task-001', function($event) {
+        // Handle resubscription events
+    });
+    echo "- Task resubscription: SUCCESS\n";
+} catch (\Exception $e) {
+    echo "- Task resubscription: FAILED\n";
+}
+
+// Event handling
+$eventCount = 0;
+echo "- Event handling: Registered (" . $eventCount . " events processed)\n\n";
 
 // 4. Demonstrate result manager
 $eventBus = new ExecutionEventBusImpl();
 $resultManager = new ResultManager();
 
 echo "Result management:\n";
-echo "- Event processing: Available\n";
-echo "- Result aggregation: Available\n";
-echo "- Task cleanup: Available\n\n";
+// Event processing
+$taskId = 'result-task-001';
+$eventBus->publish($taskId, ['type' => 'task_started', 'timestamp' => time()]);
+$processedEvents = $resultManager->processEvents($taskId);
+echo "- Event processing: Processed " . count($processedEvents) . " events\n";
+
+// Result aggregation
+$results = [
+    ['status' => 'completed', 'data' => 'result1'],
+    ['status' => 'completed', 'data' => 'result2']
+];
+$aggregatedResult = $resultManager->aggregateResults($results);
+echo "- Result aggregation: Aggregated " . count($results) . " results\n";
+
+// Task cleanup
+$cleanupResult = $resultManager->cleanupTask($taskId);
+echo "- Task cleanup: " . ($cleanupResult ? 'SUCCESS' : 'FAILED') . "\n\n";
 
 // 5. Show protocol methods
 echo "Protocol methods implemented:\n";
-echo "- message/send: ✓\n";
-echo "- message/stream: ✓\n";
-echo "- tasks/get: ✓\n";
-echo "- tasks/cancel: ✓\n";
-echo "- tasks/resubscribe: ✓\n";
-echo "- tasks/pushNotificationConfig/set: ✓\n";
-echo "- tasks/pushNotificationConfig/get: ✓\n";
-echo "- tasks/pushNotificationConfig/list: ✓\n";
-echo "- tasks/pushNotificationConfig/delete: ✓\n\n";
+// Test message/send
+$testMessage = Message::createUserMessage('Test message');
+$sendResult = $client->sendMessage('https://example.com/agent', $testMessage);
+echo "- message/send: " . ($sendResult ? '✓ SUCCESS' : '✗ FAILED') . "\n";
+
+// Test message/stream
+$streamResult = $streamingClient->sendMessageStream('https://example.com/agent', $testMessage);
+echo "- message/stream: " . ($streamResult ? '✓ SUCCESS' : '✗ FAILED') . "\n";
+
+// Test tasks/get
+$taskId = 'test-task-001';
+$getTaskResult = $client->getTask($taskId);
+echo "- tasks/get: " . ($getTaskResult !== null ? '✓ SUCCESS' : '✗ FAILED') . "\n";
+
+// Test tasks/cancel
+$cancelResult = $client->cancelTask($taskId);
+echo "- tasks/cancel: " . ($cancelResult ? '✓ SUCCESS' : '✗ FAILED') . "\n";
+
+// Test tasks/resubscribe
+$resubResult = $streamingClient->resubscribeToTask($taskId);
+echo "- tasks/resubscribe: " . ($resubResult ? '✓ SUCCESS' : '✗ FAILED') . "\n";
+
+// Test push notification config methods
+$configTaskId = 'test-config-task-001';
+$testPushConfig = new PushNotificationConfig('https://test.example.com/webhook', 'test-config-001');
+
+$setPushResult = $client->setPushNotificationConfig($configTaskId, $testPushConfig);
+echo "- tasks/pushNotificationConfig/set: " . ($setPushResult ? '✓ SUCCESS' : '✗ FAILED') . "\n";
+
+$getPushResult = $client->getPushNotificationConfig($configTaskId);
+echo "- tasks/pushNotificationConfig/get: " . ($getPushResult ? '✓ SUCCESS' : '✗ FAILED') . "\n";
+
+$listPushResult = $client->listPushNotificationConfigs();
+echo "- tasks/pushNotificationConfig/list: ✓ Found " . count($listPushResult) . " configs\n";
+
+$deletePushResult = $client->deletePushNotificationConfig($configTaskId);
+echo "- tasks/pushNotificationConfig/delete: " . ($deletePushResult ? '✓ SUCCESS' : '✗ FAILED') . "\n\n";
 
 echo "Advanced features example completed!\n";
