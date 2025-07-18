@@ -113,7 +113,7 @@ class A2AServer
                     return $this->handleTasksCancel($parsedRequest);
 
                 case 'tasks/resubscribe':
-                    $this->handleTasksResubscribe($parsedRequest);
+                    return $this->handleTasksResubscribe($parsedRequest);
                     return [];
 
                 case 'tasks/pushNotificationConfig/set':
@@ -455,80 +455,43 @@ class A2AServer
         }
     }
 
-    private function handleTasksResubscribe(array $request): void
+    private function handleTasksResubscribe(array $request): array
     {
+        $jsonRpc = new JsonRpc();
         $params = $request['params'] ?? [];
         $taskId = $params['taskId'] ?? $params['id'] ?? null;
 
-        // Set up SSE headers
-        header('Content-Type: text/event-stream;charset=UTF-8');
-        header('Cache-Control: no-cache');
-        header('Connection: keep-alive');
-        header('Access-Control-Allow-Origin: *');
-        header('Access-Control-Allow-Methods: POST, OPTIONS');
-        header('Access-Control-Allow-Headers: Content-Type, Authorization');
-
         if (!$taskId) {
-            // Send error as SSE event
-            $jsonRpc = new JsonRpc();
-            $error = $jsonRpc->createError(
+            return $jsonRpc->createError(
                 $request['id'],
                 'Task ID is required',
                 A2AErrorCodes::INVALID_PARAMS
             );
-            echo "data: " . json_encode($error) . "\n\n";
-            flush();
-            return;
         }
 
         try {
             // Check if task exists
             $task = $this->taskManager->getTask($taskId);
             if (!$task) {
-                $jsonRpc = new JsonRpc();
-                $error = $jsonRpc->createError(
+                return $jsonRpc->createError(
                     $request['id'],
                     'Task not found',
                     A2AErrorCodes::TASK_NOT_FOUND
                 );
-                echo "data: " . json_encode($error) . "\n\n";
-                flush();
-                return;
             }
 
-            // Send initial subscription confirmation
-            $jsonRpc = new JsonRpc();
-            $response = $jsonRpc->createResponse($request['id'], [
+            // Return subscription confirmation for non-streaming response
+            return $jsonRpc->createResponse($request['id'], [
                 'status' => 'subscribed',
                 'taskId' => $taskId
             ]);
-            echo "data: " . json_encode($response) . "\n\n";
-            flush();
-
-            // Send current task status
-            $statusUpdate = $jsonRpc->createResponse($request['id'], [
-                'kind' => 'task',
-                'id' => $task->getId(),
-                'contextId' => $task->getContextId(),
-                'status' => [
-                    'state' => $task->getStatus()->value,
-                    'timestamp' => date('c')
-                ]
-            ]);
-            echo "data: " . json_encode($statusUpdate) . "\n\n";
-            flush();
-
-            $this->logger->info('Task resubscription stream started', ['taskId' => $taskId]);
 
         } catch (\Exception $e) {
-            $jsonRpc = new JsonRpc();
-            $error = $jsonRpc->createError(
+            return $jsonRpc->createError(
                 $request['id'],
                 'Failed to resubscribe to task: ' . $e->getMessage(),
                 A2AErrorCodes::INTERNAL_ERROR
             );
-            echo "data: " . json_encode($error) . "\n\n";
-            flush();
         }
     }
 

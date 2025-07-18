@@ -20,7 +20,9 @@
     "ramsey/uuid": "^4.0",
     "psr/log": "^3.0",
     "monolog/monolog": "^3.0",
-    "grpc/grpc": "^1.57"
+    "grpc/grpc": "^1.57",
+    "illuminate/cache": "^12.20",
+    "illuminate/filesystem": "^12.20"
   },
   "require-dev": {
     "phpunit/phpunit": "^10.0",

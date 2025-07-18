@@ -199,19 +199,16 @@ class CompleteA2AServer
                 'role' => $message->getRole()
             ]);
 
-            // The A2AServer has already created a task - we just need to ensure
-            // it remains in submitted state for TCK compliance testing
+            // The A2AServer handles task state progression automatically
+            // via the progressTaskState method - no manual override needed
             $taskId = $message->getTaskId();
             if ($taskId) {
                 $task = $this->taskManager->getTask($taskId);
                 if ($task) {
-                    // Keep task in submitted state to allow TCK tests to interact
-                    $this->taskManager->updateTaskStatus($taskId, TaskState::SUBMITTED);
-
                     $this->logger->info('Message task ready for interaction', [
                         'task_id' => $taskId,
                         'message_id' => $message->getMessageId(),
-                        'state' => 'submitted'
+                        'state' => $task->getStatus()->value
                     ]);
                 }
             }
@@ -280,16 +277,21 @@ class CompleteA2AServer
         ]);
 
         // Handle streaming requests through A2AServer for proper validation
-        if (isset($request['method']) && $request['method'] === 'message/stream') {
+        if (isset($request['method']) && ($request['method'] === 'message/stream' || $request['method'] === 'tasks/resubscribe')) {
             try {
-                $response = $this->server->handleRequest($request);
-                // If validation passes and no response returned, it means streaming was started
-                if (empty($response)) {
+                if ($request['method'] === 'tasks/resubscribe') {
+                    $this->handleTasksResubscribeStream($request);
+                    return;
+                } else {
+                    $response = $this->server->handleRequest($request);
+                    // If validation passes and no response returned, it means streaming was started
+                    if (empty($response)) {
+                        return;
+                    }
+                    // If response returned, it's an error
+                    $this->sendJsonResponse($response);
                     return;
                 }
-                // If response returned, it's an error
-                $this->sendJsonResponse($response);
-                return;
             } catch (\Exception $e) {
                 $this->sendJsonRpcError(
                     $request['id'] ?? null,
@@ -341,6 +343,106 @@ class CompleteA2AServer
             $error = $jsonRpc->createError(
                 $request['id'] ?? null,
                 'Streaming error: ' . $e->getMessage(),
+                A2AErrorCodes::INTERNAL_ERROR
+            );
+
+            $streamer->sendEvent(json_encode($error), 'error');
+            $streamer->endStream();
+        }
+    }
+
+    private function handleTasksResubscribeStream(array $request): void
+    {
+        $this->logger->info('Handling tasks/resubscribe streaming request');
+
+        $params = $request['params'] ?? [];
+        $taskId = $params['taskId'] ?? $params['id'] ?? null;
+
+        if (!$taskId) {
+            $this->sendJsonRpcError(
+                $request['id'] ?? null,
+                'Task ID is required',
+                A2AErrorCodes::INVALID_PARAMS
+            );
+            return;
+        }
+
+        try {
+            // Check if task exists
+            $task = $this->taskManager->getTask($taskId);
+            if (!$task) {
+                // For streaming, we still need to start SSE and send error as event
+                $streamer = new SSEStreamer();
+                $streamer->startStream();
+
+                $jsonRpc = new JsonRpc();
+                $error = $jsonRpc->createError(
+                    $request['id'],
+                    'Task not found',
+                    A2AErrorCodes::TASK_NOT_FOUND
+                );
+
+                $streamer->sendEvent(json_encode($error), 'error');
+                $streamer->endStream();
+                return;
+            }
+
+            // Start SSE stream for task updates
+            $streamer = new SSEStreamer();
+            $streamer->startStream();
+
+            // Send initial subscription confirmation
+            $jsonRpc = new JsonRpc();
+            $response = $jsonRpc->createResponse($request['id'], [
+                'status' => 'subscribed',
+                'taskId' => $taskId
+            ]);
+
+            $streamer->sendEvent(json_encode($response), 'subscribed');
+
+            // Send current task state
+            $taskData = [
+                'id' => $task->getId(),
+                'state' => $task->getStatus()->value,
+                'messages' => $task->getHistory()
+            ];
+
+            $taskUpdate = $jsonRpc->createResponse($request['id'], [
+                'type' => 'task_update',
+                'task' => $taskData
+            ]);
+
+            $streamer->sendEvent(json_encode($taskUpdate), 'task_update');
+
+            // For demo purposes, send a few more updates
+            for ($i = 0; $i < 3; $i++) {
+                usleep(100000); // 100ms delay
+
+                $heartbeat = $jsonRpc->createResponse($request['id'], [
+                    'type' => 'heartbeat',
+                    'timestamp' => time(),
+                    'taskId' => $taskId
+                ]);
+
+                $streamer->sendEvent(json_encode($heartbeat), 'heartbeat');
+            }
+
+            $streamer->endStream();
+
+        } catch (\Exception $e) {
+            $this->logger->error('Tasks resubscribe streaming failed', [
+                'error' => $e->getMessage(),
+                'taskId' => $taskId
+            ]);
+
+            // Send error as SSE event
+            $streamer = new SSEStreamer();
+            $streamer->startStream();
+
+            $jsonRpc = new JsonRpc();
+            $error = $jsonRpc->createError(
+                $request['id'] ?? null,
+                'Failed to resubscribe to task: ' . $e->getMessage(),
                 A2AErrorCodes::INTERNAL_ERROR
             );
 

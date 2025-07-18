@@ -45,11 +45,14 @@ class PushNotificationConfigTest extends TestCase
 
     public function testSetPushNotificationConfig(): void
     {
+        // First create a task
+        $task = $this->taskManager->createTask('Test task for push config', ['test' => true]);
+        
         $request = [
             'jsonrpc' => '2.0',
             'method' => 'tasks/pushNotificationConfig/set',
             'params' => [
-                'taskId' => 'test-task-123',
+                'taskId' => $task->getId(),
                 'config' => [
                     'url' => 'https://example.com/webhook',
                     'id' => 'webhook-id',
@@ -66,17 +69,20 @@ class PushNotificationConfigTest extends TestCase
         $this->assertEquals(1, $response['id']);
         $this->assertArrayHasKey('result', $response);
         $this->assertEquals('configured', $response['result']['status']);
-        $this->assertEquals('test-task-123', $response['result']['taskId']);
+        $this->assertEquals($task->getId(), $response['result']['taskId']);
     }
 
     public function testGetPushNotificationConfig(): void
     {
+        // First create a task
+        $task = $this->taskManager->createTask('Test task for push config get', ['test' => true]);
+        
         // First set a config
         $setRequest = [
             'jsonrpc' => '2.0',
             'method' => 'tasks/pushNotificationConfig/set',
             'params' => [
-                'taskId' => 'test-task-456',
+                'taskId' => $task->getId(),
                 'config' => [
                     'url' => 'https://example.com/webhook2',
                     'id' => 'webhook-id-2',
@@ -92,7 +98,7 @@ class PushNotificationConfigTest extends TestCase
             'jsonrpc' => '2.0',
             'method' => 'tasks/pushNotificationConfig/get',
             'params' => [
-                'taskId' => 'test-task-456'
+                'taskId' => $task->getId()
             ],
             'id' => 2
         ];
@@ -129,12 +135,16 @@ class PushNotificationConfigTest extends TestCase
 
     public function testListPushNotificationConfigs(): void
     {
+        // Create tasks first
+        $task1 = $this->taskManager->createTask('Test task 1', ['test' => true]);
+        $task2 = $this->taskManager->createTask('Test task 2', ['test' => true]);
+        
         // Set a couple of configs
         $config1 = [
             'jsonrpc' => '2.0',
             'method' => 'tasks/pushNotificationConfig/set',
             'params' => [
-                'taskId' => 'task-1',
+                'taskId' => $task1->getId(),
                 'config' => ['url' => 'https://example.com/webhook1']
             ],
             'id' => 1
@@ -143,7 +153,7 @@ class PushNotificationConfigTest extends TestCase
             'jsonrpc' => '2.0',
             'method' => 'tasks/pushNotificationConfig/set',
             'params' => [
-                'taskId' => 'task-2',
+                'taskId' => $task2->getId(),
                 'config' => ['url' => 'https://example.com/webhook2']
             ],
             'id' => 2
@@ -151,11 +161,13 @@ class PushNotificationConfigTest extends TestCase
         $this->server->handleRequest($config1);
         $this->server->handleRequest($config2);
 
-        // List them
+        // List them for task1
         $listRequest = [
             'jsonrpc' => '2.0',
             'method' => 'tasks/pushNotificationConfig/list',
-            'params' => [],
+            'params' => [
+                'taskId' => $task1->getId()
+            ],
             'id' => 3
         ];
 
@@ -164,22 +176,23 @@ class PushNotificationConfigTest extends TestCase
         $this->assertEquals('2.0', $response['jsonrpc']);
         $this->assertEquals(3, $response['id']);
         $this->assertArrayHasKey('result', $response);
-        $this->assertCount(2, $response['result']);
+        $this->assertCount(1, $response['result']); // Only one config for task1
 
-        // Check that both configs are present
-        $taskIds = array_column($response['result'], 'taskId');
-        $this->assertContains('task-1', $taskIds);
-        $this->assertContains('task-2', $taskIds);
+        // Check that the config is present
+        $this->assertEquals($task1->getId(), $response['result'][0]['taskId']);
     }
 
     public function testDeletePushNotificationConfig(): void
     {
+        // First create a task
+        $task = $this->taskManager->createTask('Test task for delete', ['test' => true]);
+        
         // First set a config
         $setRequest = [
             'jsonrpc' => '2.0',
             'method' => 'tasks/pushNotificationConfig/set',
             'params' => [
-                'taskId' => 'test-task-delete',
+                'taskId' => $task->getId(),
                 'config' => ['url' => 'https://example.com/webhook-delete']
             ],
             'id' => 1
@@ -191,7 +204,7 @@ class PushNotificationConfigTest extends TestCase
             'jsonrpc' => '2.0',
             'method' => 'tasks/pushNotificationConfig/delete',
             'params' => [
-                'taskId' => 'test-task-delete'
+                'taskId' => $task->getId()
             ],
             'id' => 2
         ];
@@ -201,8 +214,8 @@ class PushNotificationConfigTest extends TestCase
         $this->assertEquals('2.0', $response['jsonrpc']);
         $this->assertEquals(2, $response['id']);
         $this->assertArrayHasKey('result', $response);
-        $this->assertEquals('deleted', $response['result']['status']);
-        $this->assertEquals('test-task-delete', $response['result']['taskId']);
+        // The delete method now returns null on success, so we just check it has result key
+        $this->assertNull($response['result']);
     }
 
     public function testDeletePushNotificationConfigNotFound(): void
@@ -288,12 +301,15 @@ class PushNotificationConfigTest extends TestCase
 
     public function testPushNotificationConfigInvalidConfig(): void
     {
+        // First create a task
+        $task = $this->taskManager->createTask('Test task for invalid config', ['test' => true]);
+        
         // Test missing config
         $request = [
             'jsonrpc' => '2.0',
             'method' => 'tasks/pushNotificationConfig/set',
             'params' => [
-                'taskId' => 'test-task'
+                'taskId' => $task->getId()
             ],
             'id' => 8
         ];

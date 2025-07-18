@@ -28,7 +28,7 @@ composer require andreibesleaga/a2a-php
 
 ```bash
 # Start the fully compliant A2A server
-php -S localhost:8081 complete_a2a_server.php
+php -S localhost:8081 examples/complete_a2a_server.php
 
 # Verify compliance with A2A-TCK
 cd ../a2a-tck
@@ -461,7 +461,7 @@ server {
     location @php {
         fastcgi_pass php-fpm:9000;
         fastcgi_index complete_a2a_server.php;
-        fastcgi_param SCRIPT_FILENAME $document_root/complete_a2a_server.php;
+        fastcgi_param SCRIPT_FILENAME $document_root/examples/complete_a2a_server.php;
         include fastcgi_params;
     }
     
