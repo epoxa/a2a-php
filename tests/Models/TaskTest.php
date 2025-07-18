@@ -97,6 +97,6 @@ class TaskTest extends TestCase
         $this->assertEquals('task-456', $task->getId());
         $this->assertEquals('Another task', $task->getDescription());
         $this->assertEquals(TaskState::WORKING, $task->getStatus());
-        $this->assertEquals(['type' => 'test'], $task->getContext());
+        $this->assertEquals(['type' => 'test'], $task->getMetadata());
     }
 }

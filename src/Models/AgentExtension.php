@@ -11,12 +11,19 @@ class AgentExtension
 {
     private string $uri;
     private ?string $description = null;
-    private bool $required = false;
+    private ?bool $required = null;
     private ?array $params = null;
 
-    public function __construct(string $uri)
-    {
+    public function __construct(
+        string $uri,
+        ?string $description = null,
+        ?array $params = null,
+        ?bool $required = null
+    ) {
         $this->uri = $uri;
+        $this->description = $description;
+        $this->params = $params;
+        $this->required = $required ?? false;
     }
 
     public function getUri(): string
@@ -34,17 +41,17 @@ class AgentExtension
         return $this->description;
     }
 
-    public function setRequired(bool $required): void
+    public function setRequired(?bool $required): void
     {
         $this->required = $required;
     }
 
-    public function isRequired(): bool
+    public function isRequired(): ?bool
     {
         return $this->required;
     }
 
-    public function setParams(array $params): void
+    public function setParams(?array $params): void
     {
         $this->params = $params;
     }
@@ -57,8 +64,7 @@ class AgentExtension
     public function toArray(): array
     {
         $result = [
-            'uri' => $this->uri,
-            'required' => $this->required
+            'uri' => $this->uri
         ];
 
         if ($this->description !== null) {
@@ -69,25 +75,20 @@ class AgentExtension
             $result['params'] = $this->params;
         }
 
+        if ($this->required !== null) {
+            $result['required'] = $this->required;
+        }
+
         return $result;
     }
 
     public static function fromArray(array $data): self
     {
-        $extension = new self($data['uri']);
-
-        if (isset($data['description'])) {
-            $extension->setDescription($data['description']);
-        }
-
-        if (isset($data['required'])) {
-            $extension->setRequired($data['required']);
-        }
-
-        if (isset($data['params'])) {
-            $extension->setParams($data['params']);
-        }
-
-        return $extension;
+        return new self(
+            $data['uri'],
+            $data['description'] ?? null,
+            $data['params'] ?? null,
+            $data['required'] ?? null
+        );
     }
 }

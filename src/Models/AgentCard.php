@@ -120,6 +120,19 @@ class AgentCard
         $this->additionalInterfaces = $additionalInterfaces;
     }
 
+    public function getAdditionalInterfaces(): ?array
+    {
+        return $this->additionalInterfaces;
+    }
+
+    public function addAdditionalInterface(AgentInterface $interface): void
+    {
+        if ($this->additionalInterfaces === null) {
+            $this->additionalInterfaces = [];
+        }
+        $this->additionalInterfaces[] = $interface;
+    }
+
     public function setDocumentationUrl(string $documentationUrl): void
     {
         $this->documentationUrl = $documentationUrl;
@@ -163,7 +176,10 @@ class AgentCard
         }
 
         if ($this->additionalInterfaces !== null) {
-            $result['additionalInterfaces'] = $this->additionalInterfaces;
+            $result['additionalInterfaces'] = array_map(
+                fn(AgentInterface $interface) => $interface->toArray(),
+                $this->additionalInterfaces
+            );
         }
 
         if ($this->documentationUrl !== null) {
@@ -213,7 +229,11 @@ class AgentCard
         }
 
         if (isset($data['additionalInterfaces'])) {
-            $agentCard->setAdditionalInterfaces($data['additionalInterfaces']);
+            $additionalInterfaces = [];
+            foreach ($data['additionalInterfaces'] as $interfaceData) {
+                $additionalInterfaces[] = AgentInterface::fromArray($interfaceData);
+            }
+            $agentCard->setAdditionalInterfaces($additionalInterfaces);
         }
 
         if (isset($data['documentationUrl'])) {

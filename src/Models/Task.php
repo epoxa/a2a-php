@@ -21,6 +21,7 @@ class Task
     private ?string $assignedTo;
     private array $history = [];
     private array $artifacts = [];
+    private array $metadata = [];
 
     public function __construct(
         string $id,
@@ -139,6 +140,21 @@ class Task
         return $this->artifacts;
     }
 
+    public function setMetadata(array $metadata): void
+    {
+        $this->metadata = $metadata;
+    }
+
+    public function getMetadata(): array
+    {
+        return $this->metadata;
+    }
+
+    public function addMetadata(string $key, $value): void
+    {
+        $this->metadata[$key] = $value;
+    }
+
     public function toArray(): array
     {
         $result = [
@@ -159,8 +175,16 @@ class Task
             $result['history'] = array_map(fn($msg) => $msg->toArray(), $this->history);
         }
 
+        // Merge context and metadata
+        $metadata = [];
         if (!empty($this->context)) {
-            $result['metadata'] = $this->context;
+            $metadata = array_merge($metadata, $this->context);
+        }
+        if (!empty($this->metadata)) {
+            $metadata = array_merge($metadata, $this->metadata);
+        }
+        if (!empty($metadata)) {
+            $result['metadata'] = $metadata;
         }
 
         return $result;
@@ -194,6 +218,11 @@ class Task
             $result['metadata'] = $this->context;
         }
 
+        // Add task metadata if present
+        if (!empty($this->metadata)) {
+            $result['metadata'] = array_merge($result['metadata'] ?? [], $this->metadata);
+        }
+
         return $result;
     }
 
@@ -207,10 +236,15 @@ class Task
         $task = new self(
             $data['id'],
             $data['description'] ?? '',
-            $data['metadata'] ?? [],
+            $data['context'] ?? [], // Keep context separate
             $data['contextId'] ?? null,
             $status
         );
+
+        // Set metadata separately from context
+        if (isset($data['metadata'])) {
+            $task->setMetadata($data['metadata']);
+        }
 
         if (isset($data['artifacts'])) {
             foreach ($data['artifacts'] as $artifact) {
