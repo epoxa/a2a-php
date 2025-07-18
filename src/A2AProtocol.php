@@ -94,8 +94,9 @@ class A2AProtocol
 
             switch ($parsedRequest['method']) {
                 case 'message/send':
-                case 'send_message':
                     return $this->handleMessage($parsedRequest['params'], $parsedRequest['id']);
+                case 'tasks/send':
+                    return $this->handleSendTask($parsedRequest['params'], $parsedRequest['id']);
                 case 'tasks/get':
                     return $this->handleGetTask($parsedRequest['params'], $parsedRequest['id']);
                 case 'tasks/cancel':
@@ -173,7 +174,7 @@ class A2AProtocol
     {
         $jsonRpc = new JsonRpc();
         $taskId = $params['id'] ?? null;
-        
+
         if (!$taskId) {
             return $jsonRpc->createError($requestId, 'Missing task ID', A2AErrorCodes::INVALID_AGENT_RESPONSE);
         }
@@ -185,7 +186,7 @@ class A2AProtocol
 
         $historyLength = $params['historyLength'] ?? null;
         $taskArray = $task->toArray();
-        
+
         if ($historyLength !== null) {
             $taskArray['history'] = array_map(
                 fn($msg) => $msg->toArray(),
@@ -200,13 +201,13 @@ class A2AProtocol
     {
         $jsonRpc = new JsonRpc();
         $taskId = $params['id'] ?? null;
-        
+
         if (!$taskId) {
             return $jsonRpc->createError($requestId, 'Missing task ID', A2AErrorCodes::INVALID_AGENT_RESPONSE);
         }
 
         $result = $this->taskManager->cancelTask($taskId);
-        
+
         if (isset($result['error'])) {
             return $jsonRpc->createError($requestId, $result['error']['message'], $result['error']['code']);
         }
@@ -218,7 +219,7 @@ class A2AProtocol
     {
         $jsonRpc = new JsonRpc();
         $taskId = $params['id'] ?? null;
-        
+
         if (!$taskId) {
             return $jsonRpc->createError($requestId, 'Missing task ID', A2AErrorCodes::INVALID_PARAMS);
         }
@@ -232,7 +233,7 @@ class A2AProtocol
         $jsonRpc = new JsonRpc();
         $taskId = $params['taskId'] ?? null;
         $config = $params['pushNotificationConfig'] ?? null;
-        
+
         if (!$taskId || !$config) {
             return $jsonRpc->createError($requestId, 'Missing required parameters', A2AErrorCodes::INVALID_PARAMS);
         }
@@ -244,7 +245,7 @@ class A2AProtocol
     {
         $jsonRpc = new JsonRpc();
         $taskId = $params['id'] ?? null;
-        
+
         if (!$taskId) {
             return $jsonRpc->createError($requestId, 'Missing task ID', A2AErrorCodes::INVALID_PARAMS);
         }
@@ -256,18 +257,82 @@ class A2AProtocol
     {
         $jsonRpc = new JsonRpc();
         return $jsonRpc->createResponse($requestId, ['configs' => []]);
-    }
-
-    private function handleDeletePushConfig(array $params, $requestId): array
+    }    private function handleDeletePushConfig(array $params, $requestId): array
     {
         $jsonRpc = new JsonRpc();
         $taskId = $params['id'] ?? null;
         
         if (!$taskId) {
-            return $jsonRpc->createError($requestId, 'Missing task ID', A2AErrorCodes::INVALID_PARAMS);
+            throw new InvalidRequestException('Task ID is required');
         }
 
-        return $jsonRpc->createResponse($requestId, ['status' => 'deleted', 'taskId' => $taskId]);
+        // For now, return empty result as delete isn't implemented
+        return $jsonRpc->createResponse($requestId, null);
+    }
+
+    private function handleSendTask(array $params, $requestId): array
+    {
+        $jsonRpc = new JsonRpc();
+
+        // Extract task parameters
+        $taskId = $params['id'] ?? null;
+        $sessionId = $params['sessionId'] ?? null;
+        $message = $params['message'] ?? null;
+        $pushNotification = $params['pushNotification'] ?? null;
+        $historyLength = $params['historyLength'] ?? null;
+        $metadata = $params['metadata'] ?? [];
+
+        if (!$taskId || !$message) {
+            throw new InvalidRequestException('Task ID and message are required');
+        }
+
+        try {
+            $messageObj = Message::fromArray($message);
+
+            // Check if task already exists, if not create it
+            $task = $this->taskManager->getTask($taskId);
+            if (!$task) {
+                // Create new task with the provided taskId
+                $task = $this->taskManager->createTask(
+                    'Task created via tasks/send',
+                    array_merge($metadata, ['taskId' => $taskId]),
+                    $taskId
+                );
+            }
+
+            // Add message to task history
+            $task->addToHistory($messageObj);
+
+            // Update task status to working
+            $task->setStatus(TaskState::WORKING);
+
+            // Process the message
+            $result = $this->processMessage($messageObj, 'tasks/send');
+
+            // Update task with artifacts if any
+            if (isset($result['artifacts'])) {
+                foreach ($result['artifacts'] as $artifactData) {
+                    $task->addArtifact($artifactData);
+                }
+            }
+
+            // Set final status
+            $task->setStatus(TaskState::COMPLETED);
+
+            return $jsonRpc->createResponse($requestId, $task->toArray());
+        } catch (\Exception $e) {
+            $this->logger->error('Failed to send task', [
+                'task_id' => $taskId,
+                'error' => $e->getMessage()
+            ]);
+
+            // Update task to failed status if it exists
+            if (isset($task)) {
+                $task->setStatus(TaskState::FAILED);
+            }
+
+            throw $e;
+        }
     }
 
     public function getTaskManager(): TaskManager

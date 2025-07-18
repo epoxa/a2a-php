@@ -166,6 +166,37 @@ class Task
         return $result;
     }
 
+    public function toArrayWithHistory(?int $historyLength = null): array
+    {
+        $result = [
+            'kind' => 'task',
+            'id' => $this->id,
+            'contextId' => $this->contextId,
+            'status' => [
+                'state' => $this->status->value,
+                'timestamp' => $this->completedAt?->format(DateTimeInterface::ISO8601) ?? $this->createdAt->format(DateTimeInterface::ISO8601)
+            ]
+        ];
+
+        if (!empty($this->artifacts)) {
+            $result['artifacts'] = $this->artifacts;
+        }
+
+        // Include history when historyLength is specified, even if empty
+        if ($historyLength !== null) {
+            $historyItems = $historyLength > 0 ? $this->getHistory($historyLength) : $this->getHistory();
+            $result['history'] = array_map(fn($msg) => $msg->toArray(), $historyItems);
+        } elseif (!empty($this->history)) {
+            $result['history'] = array_map(fn($msg) => $msg->toArray(), $this->history);
+        }
+
+        if (!empty($this->context)) {
+            $result['metadata'] = $this->context;
+        }
+
+        return $result;
+    }
+
     public static function fromArray(array $data): self
     {
         $status = TaskState::SUBMITTED;

@@ -125,6 +125,31 @@ class A2AClient
         }
     }
 
+    public function sendTask(string $taskId, Message $message, array $metadata = []): ?Task
+    {
+        $jsonRpc = new JsonRpc();
+        $params = [
+            'id' => $taskId,
+            'message' => $message->toArray(),
+            'metadata' => $metadata
+        ];
+        $request = $jsonRpc->createRequest('tasks/send', $params, 1);
+
+        try {
+            $response = $this->httpClient->post('', $request);
+            if (isset($response['result'])) {
+                return Task::fromArray($response['result']);
+            }
+            return null;
+        } catch (\Exception $e) {
+            $this->logger->error('Failed to send task', [
+                'task_id' => $taskId,
+                'error' => $e->getMessage()
+            ]);
+            throw new A2AException('Failed to send task: ' . $e->getMessage());
+        }
+    }
+
     public function setPushNotificationConfig(string $taskId, PushNotificationConfig $config): bool
     {
         $jsonRpc = new JsonRpc();

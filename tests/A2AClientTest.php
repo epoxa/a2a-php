@@ -188,4 +188,49 @@ class A2AClientTest extends TestCase
         $this->assertNull($task);
         $this->assertTrue($this->logger->hasRecordThatContains('error', 'Failed to get task'));
     }
+
+    public function testSendTaskSuccess(): void
+    {
+        $message = Message::createUserMessage('Process this task');
+        $taskData = [
+            'jsonrpc' => '2.0',
+            'id' => 1,
+            'result' => [
+                'id' => 'task-123',
+                'kind' => 'task',
+                'status' => ['state' => 'working'],
+                'contextId' => 'context-123'
+            ]
+        ];
+
+        $this->httpClient
+            ->expects($this->once())
+            ->method('post')
+            ->with('', $this->callback(function ($request) {
+                return $request['method'] === 'tasks/send' && 
+                       $request['params']['id'] === 'task-123' &&
+                       $request['params']['message']['role'] === 'user';
+            }))
+            ->willReturn($taskData);
+
+        $task = $this->client->sendTask('task-123', $message, ['priority' => 'high']);
+        $this->assertNotNull($task);
+        $this->assertEquals('task-123', $task->getId());
+        $this->assertEquals('working', $task->getStatus()->value);
+    }
+
+    public function testSendTaskFailure(): void
+    {
+        $message = Message::createUserMessage('Process this task');
+
+        $this->httpClient
+            ->expects($this->once())
+            ->method('post')
+            ->willThrowException(new \Exception('Task creation failed'));
+
+        $this->expectException(A2AException::class);
+        $this->expectExceptionMessage('Failed to send task: Task creation failed');
+
+        $this->client->sendTask('task-123', $message);
+    }
 }
