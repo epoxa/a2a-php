@@ -22,7 +22,7 @@ class A2AClientTest extends TestCase
     {
         $capabilities = new \A2A\Models\AgentCapabilities();
         $skill = new \A2A\Models\AgentSkill('test', 'Test', 'Test skill', ['test']);
-        
+
         $this->agentCard = new AgentCard(
             'Client Agent',
             'Test client agent',
@@ -207,9 +207,9 @@ class A2AClientTest extends TestCase
             ->expects($this->once())
             ->method('post')
             ->with('', $this->callback(function ($request) {
-                return $request['method'] === 'tasks/send' && 
-                       $request['params']['id'] === 'task-123' &&
-                       $request['params']['message']['role'] === 'user';
+                return $request['method'] === 'tasks/send' &&
+                    $request['params']['id'] === 'task-123' &&
+                    $request['params']['message']['role'] === 'user';
             }))
             ->willReturn($taskData);
 

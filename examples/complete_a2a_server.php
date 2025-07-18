@@ -130,7 +130,7 @@ class CompleteA2AServer
     {
         // Initialize shared storage first
         $this->sharedStorage = new \A2A\Storage\Storage();
-        
+
         // Initialize core components with shared storage
         $this->taskManager = new TaskManager($this->sharedStorage);
         $this->eventBusManager = new EventBusManager();
@@ -400,7 +400,7 @@ if (php_sapi_name() === 'cli') {
     echo "Agent: {$server->getAgentCard()['name']}\n";
     echo "Protocol: A2A v{$server->getAgentCard()['protocolVersion']}\n";
     echo "Press Ctrl+C to stop\n\n";
-    
+
     // Start built-in PHP web server
     $command = 'php -S localhost:8080 -t ' . __DIR__ . ' ' . __FILE__;
     passthru($command);

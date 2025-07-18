@@ -37,22 +37,10 @@ class PushNotificationConfigTest extends TestCase
             '0.2.5'
         );
 
-        $this->taskManager = new TaskManager();
-        $this->server = new A2AServer($agentCard, new NullLogger(), $this->taskManager);
-    }
-
-    protected function tearDown(): void
-    {
-        // Clear storage files to ensure test isolation
-        $storageDir = '/tmp/a2a_storage';
-        if (is_dir($storageDir)) {
-            $files = glob($storageDir . '/*');
-            foreach ($files as $file) {
-                if (is_file($file)) {
-                    unlink($file);
-                }
-            }
-        }
+        // Use array storage driver for tests to ensure isolation
+        $storage = new \A2A\Storage\Storage('array');
+        $this->taskManager = new TaskManager($storage);
+        $this->server = new A2AServer($agentCard, new NullLogger(), $this->taskManager, false, $storage);
     }
 
     public function testSetPushNotificationConfig(): void

@@ -257,11 +257,12 @@ class A2AProtocol
     {
         $jsonRpc = new JsonRpc();
         return $jsonRpc->createResponse($requestId, ['configs' => []]);
-    }    private function handleDeletePushConfig(array $params, $requestId): array
+    }
+    private function handleDeletePushConfig(array $params, $requestId): array
     {
         $jsonRpc = new JsonRpc();
         $taskId = $params['id'] ?? null;
-        
+
         if (!$taskId) {
             throw new InvalidRequestException('Task ID is required');
         }
