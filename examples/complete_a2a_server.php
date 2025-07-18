@@ -158,17 +158,23 @@ class CompleteA2AServer
                 'Text Processing',
                 'Process and respond to text-based requests',
                 ['text', 'general']
+            ),
+            new \A2A\Models\AgentSkill(
+                'file-processing',
+                'File Processing',
+                'Process and analyze file-based content',
+                ['file', 'data']
             )
         ];
 
         $this->agentCard = new AgentCard(
             'complete-a2a-server',                    // name
             'Complete A2A Server Implementation',     // description
-            'http://localhost:8080',                  // url
+            'http://localhost:8081',                  // url
             '1.0.0',                                  // version
             $capabilities,                            // capabilities
-            ['text'],                                 // defaultInputModes
-            ['text'],                                 // defaultOutputModes
+            ['text', 'file', 'data'],                // defaultInputModes
+            ['text', 'file', 'data'],                // defaultOutputModes
             $skills,                                  // skills (at least one required)
             '0.2.5'                                   // protocolVersion
         );
@@ -411,13 +417,13 @@ $server = new CompleteA2AServer();
 
 // Check if running from CLI or via web server
 if (php_sapi_name() === 'cli') {
-    echo "Complete A2A Server v1.0.0 starting on http://localhost:8080\n";
+    echo "Complete A2A Server v1.0.0 starting on http://localhost:8081\n";
     echo "Agent: {$server->getAgentCard()['name']}\n";
     echo "Protocol: A2A v{$server->getAgentCard()['protocolVersion']}\n";
     echo "Press Ctrl+C to stop\n\n";
 
     // Start built-in PHP web server
-    $command = 'php -S localhost:8080 -t ' . __DIR__ . ' ' . __FILE__;
+    $command = 'php -S localhost:8081 -t ' . __DIR__ . ' ' . __FILE__;
     passthru($command);
     exit;
 }

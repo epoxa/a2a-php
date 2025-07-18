@@ -84,4 +84,10 @@ class TaskManager
         }
         return false;
     }
+
+    public function updateTask(Task $task): void
+    {
+        $this->tasks[$task->getId()] = $task;
+        $this->storage->saveTask($task);
+    }
 }
