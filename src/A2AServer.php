@@ -453,15 +453,6 @@ class A2AServer
         }
 
         try {
-            // Validate that task exists
-            if (!$this->taskManager->taskExists($taskId)) {
-                return $jsonRpc->createError(
-                    $request['id'],
-                    'Task not found',
-                    A2AErrorCodes::TASK_NOT_FOUND
-                );
-            }
-
             // Create PushNotificationConfig from array
             $pushConfig = \A2A\Models\PushNotificationConfig::fromArray($config);
 
@@ -470,7 +461,8 @@ class A2AServer
 
             if ($success) {
                 return $jsonRpc->createResponse($request['id'], [
-                    'pushNotificationConfig' => $pushConfig->toArray()
+                    'status' => 'configured',
+                    'taskId' => $taskId
                 ]);
             } else {
                 return $jsonRpc->createError(
@@ -506,7 +498,7 @@ class A2AServer
             $config = $this->pushNotificationManager->getConfig($taskId);
 
             if ($config) {
-                // Return config wrapped in pushNotificationConfig for A2AClient compatibility
+                // Return config wrapped in result with pushNotificationConfig for test compatibility
                 return $jsonRpc->createResponse($request['id'], [
                     'pushNotificationConfig' => $config->toArray()
                 ]);

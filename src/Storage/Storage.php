@@ -103,7 +103,8 @@ class Storage
     {
         $configs = [];
         foreach ($this->pushConfigs as $taskId => $configData) {
-            $configs[] = PushNotificationConfig::fromArray($configData);
+            $config = PushNotificationConfig::fromArray($configData);
+            $configs[] = array_merge($config->toArray(), ['taskId' => $taskId]);
         }
         return $configs;
     }

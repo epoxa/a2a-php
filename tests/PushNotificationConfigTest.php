@@ -41,6 +41,20 @@ class PushNotificationConfigTest extends TestCase
         $this->server = new A2AServer($agentCard, new NullLogger(), $this->taskManager);
     }
 
+    protected function tearDown(): void
+    {
+        // Clear storage files to ensure test isolation
+        $storageDir = '/tmp/a2a_storage';
+        if (is_dir($storageDir)) {
+            $files = glob($storageDir . '/*');
+            foreach ($files as $file) {
+                if (is_file($file)) {
+                    unlink($file);
+                }
+            }
+        }
+    }
+
     public function testSetPushNotificationConfig(): void
     {
         $request = [
