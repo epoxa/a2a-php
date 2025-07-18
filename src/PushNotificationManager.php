@@ -61,6 +61,15 @@ class PushNotificationManager
     }
 
     /**
+     * List push notification configs for a specific task
+     */
+    public function listConfigsForTask(string $taskId): array
+    {
+        $config = $this->getConfig($taskId);
+        return $config ? [$config] : [];
+    }
+
+    /**
      * Delete push notification config for a task
      */
     public function deleteConfig(string $taskId): bool

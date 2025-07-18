@@ -273,10 +273,25 @@ class CompleteA2AServer
             'id' => $request['id'] ?? 'none'
         ]);
 
-        // Handle streaming requests separately
+        // Handle streaming requests through A2AServer for proper validation
         if (isset($request['method']) && $request['method'] === 'message/stream') {
-            $this->handleStreamingRequest($request);
-            return;
+            try {
+                $response = $this->server->handleRequest($request);
+                // If validation passes and no response returned, it means streaming was started
+                if (empty($response)) {
+                    return;
+                }
+                // If response returned, it's an error
+                $this->sendJsonResponse($response);
+                return;
+            } catch (\Exception $e) {
+                $this->sendJsonRpcError(
+                    $request['id'] ?? null,
+                    'Streaming error: ' . $e->getMessage(),
+                    A2AErrorCodes::INTERNAL_ERROR
+                );
+                return;
+            }
         }
 
         // Process regular requests through enhanced A2AServer
