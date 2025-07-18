@@ -23,7 +23,7 @@ class A2AServerTest extends TestCase
     {
         $capabilities = new AgentCapabilities();
         $skill = new AgentSkill('test', 'Test', 'Test skill', ['test']);
-        
+
         $this->agentCard = new AgentCard(
             'Server Agent',
             'Test server agent',
@@ -352,7 +352,7 @@ class A2AServerTest extends TestCase
     {
         // Create server in A2A compliance mode
         $complianceServer = new A2AServer($this->agentCard, $this->logger, $this->taskManager, true);
-        
+
         $request = [
             'jsonrpc' => '2.0',
             'method' => 'tasks/send',
@@ -371,7 +371,7 @@ class A2AServerTest extends TestCase
         $this->assertEquals('2.0', $response['jsonrpc']);
         $this->assertEquals('test-compliance-tasks-send', $response['id']);
         $this->assertArrayHasKey('result', $response);
-        
+
         // In compliance mode, should return full task object
         $this->assertArrayHasKey('kind', $response['result']);
         $this->assertEquals('task', $response['result']['kind']);

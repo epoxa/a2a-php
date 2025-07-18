@@ -165,7 +165,7 @@ class PushNotificationConfigTest extends TestCase
         $this->assertEquals(3, $response['id']);
         $this->assertArrayHasKey('result', $response);
         $this->assertCount(2, $response['result']);
-        
+
         // Check that both configs are present
         $taskIds = array_column($response['result'], 'taskId');
         $this->assertContains('task-1', $taskIds);

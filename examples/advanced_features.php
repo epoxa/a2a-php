@@ -48,16 +48,19 @@ $logger = new NullLogger();
 $server = new A2AServer($agentCard, $logger, $taskManager);
 
 // Mock client that uses direct method calls instead of HTTP
-class MockA2AClient {
+class MockA2AClient
+{
     private A2AServer $server;
     private AgentCard $agentCard;
-    
-    public function __construct(AgentCard $agentCard, A2AServer $server) {
+
+    public function __construct(AgentCard $agentCard, A2AServer $server)
+    {
         $this->agentCard = $agentCard;
         $this->server = $server;
     }
-    
-    public function setPushNotificationConfig(string $taskId, PushNotificationConfig $config): bool {
+
+    public function setPushNotificationConfig(string $taskId, PushNotificationConfig $config): bool
+    {
         try {
             $request = [
                 'jsonrpc' => '2.0',
@@ -71,8 +74,9 @@ class MockA2AClient {
             return false;
         }
     }
-    
-    public function getPushNotificationConfig(string $taskId): ?PushNotificationConfig {
+
+    public function getPushNotificationConfig(string $taskId): ?PushNotificationConfig
+    {
         try {
             $request = [
                 'jsonrpc' => '2.0',
@@ -92,8 +96,9 @@ class MockA2AClient {
             return null;
         }
     }
-    
-    public function deletePushNotificationConfig(string $taskId): bool {
+
+    public function deletePushNotificationConfig(string $taskId): bool
+    {
         try {
             $request = [
                 'jsonrpc' => '2.0',
@@ -107,8 +112,9 @@ class MockA2AClient {
             return false;
         }
     }
-    
-    public function listPushNotificationConfigs(): array {
+
+    public function listPushNotificationConfigs(): array
+    {
         try {
             $request = [
                 'jsonrpc' => '2.0',
@@ -122,8 +128,9 @@ class MockA2AClient {
             return [];
         }
     }
-    
-    public function sendMessage(Message $message): bool {
+
+    public function sendMessage(Message $message): bool
+    {
         try {
             $request = [
                 'jsonrpc' => '2.0',
@@ -137,8 +144,9 @@ class MockA2AClient {
             return false;
         }
     }
-    
-    public function getTask(string $taskId): ?array {
+
+    public function getTask(string $taskId): ?array
+    {
         try {
             $request = [
                 'jsonrpc' => '2.0',
@@ -152,8 +160,9 @@ class MockA2AClient {
             return null;
         }
     }
-    
-    public function cancelTask(string $taskId): bool {
+
+    public function cancelTask(string $taskId): bool
+    {
         try {
             $request = [
                 'jsonrpc' => '2.0',
@@ -167,8 +176,9 @@ class MockA2AClient {
             return false;
         }
     }
-    
-    public function resubscribeTask(string $taskId): bool {
+
+    public function resubscribeTask(string $taskId): bool
+    {
         try {
             $request = [
                 'jsonrpc' => '2.0',
