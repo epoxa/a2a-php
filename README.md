@@ -1,7 +1,3 @@
-# A2A PHP SDK
-
-PHP library implementation of the A2A Protocol (AI Agent-to-Agent)
-
 
 # A2A PHP SDK
 
@@ -511,6 +507,7 @@ composer test
 ## 📄 License
 
 This project is licensed under the **Apache License 2.0** - see the [LICENSE](LICENSE) file for details.
+
 
 
 
