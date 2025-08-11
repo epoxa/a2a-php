@@ -7,11 +7,6 @@ PHP library implementation of the A2A Protocol (AI Agent-to-Agent)
 
 PHP library implementation of the A2A (AI Agent-to-Agent) Protocol v0.2.5.
 
-**🎉 Full A2A Protocol Compliance**
-- ✅ **25/25 Mandatory Tests PASSED** - Complete protocol compliance
-- ✅ **14/14 Capability Tests PASSED** - All declared features working  
-- ✅ **12/12 Quality Tests PASSED** - Production-ready implementation
-- ✅ **15/15 Feature Tests PASSED** - Advanced features complete
 
 [![A2A Protocol](https://img.shields.io/badge/A2A_Protocol-v0.2.5-blue)](https://github.com/a2aproject/A2A)
 [![PHP Version](https://img.shields.io/badge/PHP-8.0%2B-purple)](https://php.net/)
@@ -516,6 +511,7 @@ composer test
 ## 📄 License
 
 This project is licensed under the **Apache License 2.0** - see the [LICENSE](LICENSE) file for details.
+
 
 
 
