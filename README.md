@@ -469,7 +469,7 @@ server {
 ### Documentation
 - **[A2A Protocol Specification](https://github.com/a2aproject/A2A)** - Official protocol docs
 - **[Test Compatibility Kit](https://github.com/a2aproject/a2a-tck)** - Compliance testing
-- **[PHP SDK API Docs](https://andreibesleaga.github.io/a2a-php)** - Complete API reference
+- **[PHP SDK API Docs](https://andreibesleaga.github.io/a2a-php/)** - Complete API reference
 
 ### Community
 - **[A2A Project](https://github.com/a2aproject)** - Main organization
@@ -507,6 +507,7 @@ composer test
 ## 📄 License
 
 This project is licensed under the **Apache License 2.0** - see the [LICENSE](LICENSE) file for details.
+
 
 
 
