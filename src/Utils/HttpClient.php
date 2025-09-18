@@ -16,21 +16,25 @@ class HttpClient
     public function __construct(int $timeout = 30)
     {
         $this->timeout = $timeout;
-        $this->client = new Client([
+        $this->client = new Client(
+            [
             'timeout' => $timeout,
             'headers' => [
                 'Content-Type' => 'application/json',
                 'User-Agent' => 'A2A-PHP-SDK/1.0.0'
             ]
-        ]);
+            ]
+        );
     }
 
     public function post(string $url, array $data): array
     {
         try {
-            $response = $this->client->post($url, [
+            $response = $this->client->post(
+                $url, [
                 'json' => $data
-            ]);
+                ]
+            );
 
             $body = $response->getBody()->getContents();
             $decoded = json_decode($body, true);

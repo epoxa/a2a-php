@@ -196,7 +196,7 @@ class AgentCard
     public static function fromArray(array $data): self
     {
         $capabilities = AgentCapabilities::fromArray($data['capabilities'] ?? []);
-        
+
         $skills = [];
         if (isset($data['skills'])) {
             foreach ($data['skills'] as $skillData) {

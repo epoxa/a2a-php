@@ -83,59 +83,61 @@ class A2AServer
             ];
 
             switch ($parsedRequest['method']) {
-                case 'message/send':
-                case 'send_message':
-                    return $this->handleMessage($parsedRequest);
+            case 'message/send':
+            case 'send_message':
+                return $this->handleMessage($parsedRequest);
 
-                case 'tasks/send':
-                    return $this->handleTasksSend($parsedRequest);
+            case 'tasks/send':
+                return $this->handleTasksSend($parsedRequest);
 
-                case 'message/stream':
-                    $this->handleStreamMessage($parsedRequest);
+            case 'message/stream':
+                $this->handleStreamMessage($parsedRequest);
+                return [];
+
+            case 'get_agent_card':
+                return $jsonRpc->createResponse(
+                    $parsedRequest['id'],
+                    $this->agentCard->toArray()
+                );
+
+            case 'ping':
+                return $jsonRpc->createResponse(
+                    $parsedRequest['id'],
+                    ['status' => 'pong', 'timestamp' => time()]
+                );
+
+            case 'tasks/get':
+                return $this->handleTasksGet($parsedRequest);
+
+            case 'tasks/cancel':
+                return $this->handleTasksCancel($parsedRequest);
+
+            case 'tasks/resubscribe':
+                return $this->handleTasksResubscribe($parsedRequest);
                     return [];
 
-                case 'get_agent_card':
-                    return $jsonRpc->createResponse(
-                        $parsedRequest['id'],
-                        $this->agentCard->toArray()
-                    );
+            case 'tasks/pushNotificationConfig/set':
+                return $this->handlePushNotificationConfigSet($parsedRequest);
 
-                case 'ping':
-                    return $jsonRpc->createResponse(
-                        $parsedRequest['id'],
-                        ['status' => 'pong', 'timestamp' => time()]
-                    );
+            case 'tasks/pushNotificationConfig/get':
+                return $this->handlePushNotificationConfigGet($parsedRequest);
 
-                case 'tasks/get':
-                    return $this->handleTasksGet($parsedRequest);
+            case 'tasks/pushNotificationConfig/list':
+                return $this->handlePushNotificationConfigList($parsedRequest);
 
-                case 'tasks/cancel':
-                    return $this->handleTasksCancel($parsedRequest);
+            case 'tasks/pushNotificationConfig/delete':
+                return $this->handlePushNotificationConfigDelete($parsedRequest);
 
-                case 'tasks/resubscribe':
-                    return $this->handleTasksResubscribe($parsedRequest);
-                    return [];
-
-                case 'tasks/pushNotificationConfig/set':
-                    return $this->handlePushNotificationConfigSet($parsedRequest);
-
-                case 'tasks/pushNotificationConfig/get':
-                    return $this->handlePushNotificationConfigGet($parsedRequest);
-
-                case 'tasks/pushNotificationConfig/list':
-                    return $this->handlePushNotificationConfigList($parsedRequest);
-
-                case 'tasks/pushNotificationConfig/delete':
-                    return $this->handlePushNotificationConfigDelete($parsedRequest);
-
-                default:
-                    return $jsonRpc->createError($parsedRequest['id'], 'Unknown method', A2AErrorCodes::METHOD_NOT_FOUND);
+            default:
+                return $jsonRpc->createError($parsedRequest['id'], 'Unknown method', A2AErrorCodes::METHOD_NOT_FOUND);
             }
         } catch (\Exception $e) {
-            $this->logger->error('Request handling failed', [
+            $this->logger->error(
+                'Request handling failed', [
                 'error' => $e->getMessage(),
                 'request' => $request
-            ]);
+                ]
+            );
             return $jsonRpc->createError(
                 $request['id'] ?? null,
                 'Internal error: ' . $e->getMessage(),
@@ -183,13 +185,15 @@ class A2AServer
 
         $fromAgent = $params['from'] ?? 'unknown';
 
-        $this->logger->info('Message received', [
+        $this->logger->info(
+            'Message received', [
             'from' => $fromAgent,
             'message_id' => $message->getMessageId(),
             'role' => $message->getRole()
-        ]);
+            ]
+        );
 
-        // Handle task creation/continuation  
+        // Handle task creation/continuation
         $taskId = $params['taskId'] ?? $messageData['taskId'] ?? null;
         $contextId = $messageData['contextId'] ?? null;
         $task = null;
@@ -208,7 +212,7 @@ class A2AServer
                     // Any pattern that ends with a UUID
                     preg_match('/-[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i', $taskId)
                 );
-                               
+
                 if ($isGeneratedId) {
                     // This looks like a new task creation with generated ID
                     $task = $this->taskManager->createTask('Message task', [], $taskId);
@@ -218,7 +222,7 @@ class A2AServer
                     return $jsonRpc->createError($parsedRequest['id'], "Task not found: {$taskId}", A2AErrorCodes::TASK_NOT_FOUND);
                 }
             }
-            
+
             // If contextId is provided, validate it matches
             if ($contextId !== null && $task->getContextId() !== $contextId) {
                 $jsonRpc = new JsonRpc();
@@ -234,7 +238,7 @@ class A2AServer
 
         // Add message to task history
         $task->addToHistory($message);
-        
+
         // Progress task state based on message activity
         $this->progressTaskState($task, $message);
 
@@ -243,10 +247,12 @@ class A2AServer
             try {
                 $handler($message, $fromAgent);
             } catch (\Exception $e) {
-                $this->logger->error('Message handler failed', [
+                $this->logger->error(
+                    'Message handler failed', [
                     'error' => $e->getMessage(),
                     'message_id' => $message->getMessageId()
-                ]);
+                    ]
+                );
             }
         }
 
@@ -305,11 +311,13 @@ class A2AServer
         header('Cache-Control: no-cache');
         header('Connection: keep-alive');
 
-        echo "data: " . json_encode([
+        echo "data: " . json_encode(
+            [
             'jsonrpc' => '2.0',
             'id' => $parsedRequest['id'],
             'result' => ['status' => 'streaming_ready']
-        ]) . "\n\n";
+            ]
+        ) . "\n\n";
         flush();
     }
 
@@ -441,10 +449,12 @@ class A2AServer
                 return $jsonRpc->createResponse($request['id'], $task->toArray());
             } else {
                 // Standard mode, return simple status response
-                return $jsonRpc->createResponse($request['id'], [
+                return $jsonRpc->createResponse(
+                    $request['id'], [
                     'status' => 'received',
                     'task_id' => $taskId
-                ]);
+                    ]
+                );
             }
         } catch (\Exception $e) {
             return $jsonRpc->createError(
@@ -481,10 +491,12 @@ class A2AServer
             }
 
             // Return subscription confirmation for non-streaming response
-            return $jsonRpc->createResponse($request['id'], [
+            return $jsonRpc->createResponse(
+                $request['id'], [
                 'status' => 'subscribed',
                 'taskId' => $taskId
-            ]);
+                ]
+            );
 
         } catch (\Exception $e) {
             return $jsonRpc->createError(
@@ -531,7 +543,7 @@ class A2AServer
         try {
             // Create PushNotificationConfig from array
             $pushConfig = \A2A\Models\PushNotificationConfig::fromArray($config);
-            
+
             // Generate a unique config ID if not provided
             if (!isset($config['id'])) {
                 $configId = 'pnc-' . uniqid();
@@ -544,11 +556,13 @@ class A2AServer
             $success = $this->pushNotificationManager->setConfig($taskId, $pushConfig);
 
             if ($success) {
-                return $jsonRpc->createResponse($request['id'], [
+                return $jsonRpc->createResponse(
+                    $request['id'], [
                     'pushNotificationConfig' => $pushConfig->toArray(),
                     'status' => 'configured',
                     'taskId' => $taskId
-                ]);
+                    ]
+                );
             } else {
                 return $jsonRpc->createError(
                     $request['id'],
@@ -594,9 +608,11 @@ class A2AServer
 
             if ($config) {
                 // Return config wrapped in result with pushNotificationConfig for test compatibility
-                return $jsonRpc->createResponse($request['id'], [
+                return $jsonRpc->createResponse(
+                    $request['id'], [
                     'pushNotificationConfig' => $config->toArray()
-                ]);
+                    ]
+                );
             } else {
                 return $jsonRpc->createError(
                     $request['id'],
@@ -639,7 +655,7 @@ class A2AServer
 
         try {
             $configs = $this->pushNotificationManager->listConfigsForTask($taskId);
-            
+
             // Format configs in the expected structure
             $formattedConfigs = [];
             foreach ($configs as $config) {
@@ -648,7 +664,7 @@ class A2AServer
                     'pushNotificationConfig' => $config->toArray()
                 ];
             }
-            
+
             return $jsonRpc->createResponse($request['id'], $formattedConfigs);
         } catch (\Exception $e) {
             return $jsonRpc->createError(
@@ -704,39 +720,41 @@ class A2AServer
     private function progressTaskState(Task $task, Message $message): void
     {
         $currentState = $task->getStatus();
-        
+
         // Don't change terminal states
         if ($currentState->isTerminal()) {
             return;
         }
-        
+
         $history = $task->getHistory();
         $messageCount = count($history);
-        
+
         // State progression logic
         switch ($currentState) {
-            case TaskState::SUBMITTED:
-                // Any message activity moves task to working state
+        case TaskState::SUBMITTED:
+            // Any message activity moves task to working state
+            $task->setStatus(TaskState::WORKING);
+            $this->logger->info(
+                'Task state progressed', [
+                'taskId' => $task->getId(),
+                'from' => 'submitted',
+                'to' => 'working',
+                'messageCount' => $messageCount
+                    ]
+            );
+            break;
+
+        case TaskState::WORKING:
+            // For quality tests, keep showing activity
+            // In production, this would be based on actual processing logic
+            if ($messageCount >= 3) {
+                // After multiple interactions, task could be completed
+                // For now, keep it working to show continued activity
                 $task->setStatus(TaskState::WORKING);
-                $this->logger->info('Task state progressed', [
-                    'taskId' => $task->getId(),
-                    'from' => 'submitted',
-                    'to' => 'working',
-                    'messageCount' => $messageCount
-                ]);
-                break;
-                
-            case TaskState::WORKING:
-                // For quality tests, keep showing activity
-                // In production, this would be based on actual processing logic
-                if ($messageCount >= 3) {
-                    // After multiple interactions, task could be completed
-                    // For now, keep it working to show continued activity
-                    $task->setStatus(TaskState::WORKING);
-                }
-                break;
+            }
+            break;
         }
-        
+
         // Save the updated task
         $this->taskManager->updateTask($task);
     }

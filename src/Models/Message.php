@@ -34,7 +34,7 @@ class Message
     {
         $messageId = $messageId ?? Uuid::uuid4()->toString();
         $textPart = new TextPart($text);
-        
+
         return new self($messageId, 'user', [$textPart]);
     }
 
@@ -42,7 +42,7 @@ class Message
     {
         $messageId = $messageId ?? Uuid::uuid4()->toString();
         $textPart = new TextPart($text);
-        
+
         return new self($messageId, 'agent', [$textPart]);
     }
 

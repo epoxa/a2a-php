@@ -18,12 +18,14 @@ enum TaskState: string
 
     public function isTerminal(): bool
     {
-        return in_array($this, [
+        return in_array(
+            $this, [
             self::COMPLETED,
             self::CANCELED,
             self::FAILED,
             self::REJECTED,
             self::UNKNOWN
-        ]);
+            ]
+        );
     }
 }

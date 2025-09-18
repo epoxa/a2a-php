@@ -1,0 +1,770 @@
+<!DOCTYPE html>
+<html lang="en">
+ <head>
+  <meta charset="UTF-8">
+  <title>Dashboard for /app/src</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="_css/bootstrap.min.css?v=10.1.16" rel="stylesheet" type="text/css">
+  <link href="_css/nv.d3.min.css?v=10.1.16" rel="stylesheet" type="text/css">
+  <link href="_css/style.css?v=10.1.16" rel="stylesheet" type="text/css">
+  <link href="_css/custom.css" rel="stylesheet" type="text/css">
+ </head>
+ <body>
+  <header>
+   <div class="container-fluid">
+    <div class="row">
+     <div class="col-md-12">
+      <nav aria-label="breadcrumb">
+       <ol class="breadcrumb">
+         <li class="breadcrumb-item"><a href="index.html">/app/src</a></li>
+         <li class="breadcrumb-item active">(Dashboard)</li>
+
+       </ol>
+      </nav>
+     </div>
+    </div>
+   </div>
+  </header>
+  <div class="container-fluid">
+   <div class="row">
+    <div class="col-md-12">
+     <h2>Classes</h2>
+    </div>
+   </div>
+   <div class="row">
+    <div class="col-md-6">
+     <h3>Coverage Distribution</h3>
+     <div id="classCoverageDistribution" style="height: 300px;">
+       <svg></svg>
+     </div>
+    </div>
+    <div class="col-md-6">
+     <h3>Complexity</h3>
+     <div id="classComplexity" style="height: 300px;">
+       <svg></svg>
+     </div>
+    </div>
+   </div>
+   <div class="row">
+    <div class="col-md-6">
+     <h3>Insufficient Coverage</h3>
+     <div class="scrollbox">
+      <table class="table">
+       <thead>
+        <tr>
+         <th>Class</th>
+         <th class="text-right">Coverage</th>
+        </tr>
+       </thead>
+       <tbody>
+       <tr><td><a href="Client/GrpcClient.php.html#21">A2A\Client\GrpcClient</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Events/EventBusManager.php.html#9">A2A\Events\EventBusManager</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Exceptions/A2AErrorCodes.php.html#7">A2A\Exceptions\A2AErrorCodes</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Exceptions/A2ASpecificErrors.php.html#7">A2A\Exceptions\TaskNotCancelableException</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Exceptions/A2ASpecificErrors.php.html#15">A2A\Exceptions\PushNotificationNotSupportedException</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Exceptions/A2ASpecificErrors.php.html#23">A2A\Exceptions\UnsupportedOperationException</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Exceptions/A2ASpecificErrors.php.html#31">A2A\Exceptions\ContentTypeNotSupportedException</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Exceptions/A2ASpecificErrors.php.html#39">A2A\Exceptions\InvalidAgentResponseException</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Execution/ResultManager.php.html#11">A2A\Execution\ResultManager</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Models/AgentCardV2.php.html#16">A2A\Models\AgentCardV2</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Models/AgentExtension.php.html#10">A2A\Models\AgentExtension</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Models/AgentInterface.php.html#11">A2A\Models\AgentInterface</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Models/Artifact.php.html#10">A2A\Models\Artifact</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Models/FileFactory.php.html#12">A2A\Models\FileFactory</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Models/FileWithUri.php.html#10">A2A\Models\FileWithUri</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Models/MessageV2.php.html#16">A2A\Models\MessageV2</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Models/TaskArtifactUpdateEvent.php.html#10">A2A\Models\TaskArtifactUpdateEvent</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Models/TaskV2.php.html#13">A2A\Models\TaskV2</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Streaming/SSEStreamer.php.html#7">A2A\Streaming\SSEStreamer</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Streaming/StreamingServer.php.html#14">A2A\Streaming\StreamingServer</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Models/FileWithBytes.php.html#10">A2A\Models\FileWithBytes</a></td><td class="text-right">5%</td></tr>
+       <tr><td><a href="Client/StreamingClient.php.html#14">A2A\Client\StreamingClient</a></td><td class="text-right">5%</td></tr>
+       <tr><td><a href="Models/TaskStatus.php.html#10">A2A\Models\TaskStatus</a></td><td class="text-right">8%</td></tr>
+       <tr><td><a href="Models/DataPart.php.html#10">A2A\Models\DataPart</a></td><td class="text-right">11%</td></tr>
+       <tr><td><a href="Models/FilePart.php.html#10">A2A\Models\FilePart</a></td><td class="text-right">11%</td></tr>
+       <tr><td><a href="Models/TaskStatusUpdateEvent.php.html#10">A2A\Models\TaskStatusUpdateEvent</a></td><td class="text-right">15%</td></tr>
+       <tr><td><a href="A2AProtocol.php.html#24">A2A\A2AProtocol</a></td><td class="text-right">28%</td></tr>
+       <tr><td><a href="Models/PartFactory.php.html#12">A2A\Models\PartFactory</a></td><td class="text-right">40%</td></tr>
+       <tr><td><a href="Storage/Storage.php.html#32">A2A\Storage\Storage</a></td><td class="text-right">40%</td></tr>
+       <tr><td><a href="A2AClient.php.html#17">A2A\A2AClient</a></td><td class="text-right">48%</td></tr>
+       <tr><td><a href="Models/AgentProvider.php.html#10">A2A\Models\AgentProvider</a></td><td class="text-right">50%</td></tr>
+       <tr><td><a href="PushNotificationManager.php.html#13">A2A\PushNotificationManager</a></td><td class="text-right">55%</td></tr>
+       <tr><td><a href="Models/AgentCapabilities.php.html#10">A2A\Models\AgentCapabilities</a></td><td class="text-right">57%</td></tr>
+       <tr><td><a href="A2AServer.php.html#21">A2A\A2AServer</a></td><td class="text-right">59%</td></tr>
+       <tr><td><a href="Models/AgentSkill.php.html#10">A2A\Models\AgentSkill</a></td><td class="text-right">60%</td></tr>
+       <tr><td><a href="Models/AgentCard.php.html#7">A2A\Models\AgentCard</a></td><td class="text-right">64%</td></tr>
+       <tr><td><a href="Utils/HttpClient.php.html#11">A2A\Utils\HttpClient</a></td><td class="text-right">66%</td></tr>
+       <tr><td><a href="Models/TextPart.php.html#10">A2A\Models\TextPart</a></td><td class="text-right">70%</td></tr>
+       <tr><td><a href="Execution/DefaultAgentExecutor.php.html#15">A2A\Execution\DefaultAgentExecutor</a></td><td class="text-right">76%</td></tr>
+       <tr><td><a href="Events/ExecutionEventBusImpl.php.html#9">A2A\Events\ExecutionEventBusImpl</a></td><td class="text-right">80%</td></tr>
+       <tr><td><a href="Models/Task.php.html#11">A2A\Models\Task</a></td><td class="text-right">81%</td></tr>
+       <tr><td><a href="Models/Message.php.html#11">A2A\Models\Message</a></td><td class="text-right">83%</td></tr>
+
+       </tbody>
+      </table>
+     </div>
+    </div>
+    <div class="col-md-6">
+     <h3>Project Risks</h3>
+     <div class="scrollbox">
+      <table class="table">
+       <thead>
+        <tr>
+         <th>Class</th>
+         <th class="text-right"><abbr title="Change Risk Anti-Patterns (CRAP) Index">CRAP</abbr></th>
+        </tr>
+       </thead>
+       <tbody>
+       <tr><td><a href="Models/MessageV2.php.html#16">A2A\Models\MessageV2</a></td><td class="text-right">1722</td></tr>
+       <tr><td><a href="Models/AgentCardV2.php.html#16">A2A\Models\AgentCardV2</a></td><td class="text-right">1560</td></tr>
+       <tr><td><a href="A2AProtocol.php.html#24">A2A\A2AProtocol</a></td><td class="text-right">995</td></tr>
+       <tr><td><a href="A2AServer.php.html#21">A2A\A2AServer</a></td><td class="text-right">818</td></tr>
+       <tr><td><a href="Models/Artifact.php.html#10">A2A\Models\Artifact</a></td><td class="text-right">756</td></tr>
+       <tr><td><a href="Models/TaskV2.php.html#13">A2A\Models\TaskV2</a></td><td class="text-right">756</td></tr>
+       <tr><td><a href="Client/GrpcClient.php.html#21">A2A\Client\GrpcClient</a></td><td class="text-right">506</td></tr>
+       <tr><td><a href="Models/TaskArtifactUpdateEvent.php.html#10">A2A\Models\TaskArtifactUpdateEvent</a></td><td class="text-right">420</td></tr>
+       <tr><td><a href="Storage/Storage.php.html#32">A2A\Storage\Storage</a></td><td class="text-right">238</td></tr>
+       <tr><td><a href="Models/AgentExtension.php.html#10">A2A\Models\AgentExtension</a></td><td class="text-right">182</td></tr>
+       <tr><td><a href="Models/FileWithUri.php.html#10">A2A\Models\FileWithUri</a></td><td class="text-right">156</td></tr>
+       <tr><td><a href="Models/TaskStatus.php.html#10">A2A\Models\TaskStatus</a></td><td class="text-right">143</td></tr>
+       <tr><td><a href="Models/FileWithBytes.php.html#10">A2A\Models\FileWithBytes</a></td><td class="text-right">135</td></tr>
+       <tr><td><a href="Models/TaskStatusUpdateEvent.php.html#10">A2A\Models\TaskStatusUpdateEvent</a></td><td class="text-right">133</td></tr>
+       <tr><td><a href="A2AClient.php.html#17">A2A\A2AClient</a></td><td class="text-right">133</td></tr>
+       <tr><td><a href="Models/AgentCard.php.html#7">A2A\Models\AgentCard</a></td><td class="text-right">111</td></tr>
+       <tr><td><a href="Execution/ResultManager.php.html#11">A2A\Execution\ResultManager</a></td><td class="text-right">90</td></tr>
+       <tr><td><a href="Models/DataPart.php.html#10">A2A\Models\DataPart</a></td><td class="text-right">78</td></tr>
+       <tr><td><a href="Client/StreamingClient.php.html#14">A2A\Client\StreamingClient</a></td><td class="text-right">77</td></tr>
+       <tr><td><a href="Streaming/SSEStreamer.php.html#7">A2A\Streaming\SSEStreamer</a></td><td class="text-right">72</td></tr>
+       <tr><td><a href="Models/FilePart.php.html#10">A2A\Models\FilePart</a></td><td class="text-right">64</td></tr>
+       <tr><td><a href="Models/Task.php.html#11">A2A\Models\Task</a></td><td class="text-right">57</td></tr>
+       <tr><td><a href="Models/Message.php.html#11">A2A\Models\Message</a></td><td class="text-right">44</td></tr>
+       <tr><td><a href="Models/AgentSkill.php.html#10">A2A\Models\AgentSkill</a></td><td class="text-right">42</td></tr>
+       <tr><td><a href="Models/AgentCapabilities.php.html#10">A2A\Models\AgentCapabilities</a></td><td class="text-right">28</td></tr>
+       <tr><td><a href="PushNotificationManager.php.html#13">A2A\PushNotificationManager</a></td><td class="text-right">21</td></tr>
+       <tr><td><a href="Events/EventBusManager.php.html#9">A2A\Events\EventBusManager</a></td><td class="text-right">20</td></tr>
+       <tr><td><a href="Models/FileFactory.php.html#12">A2A\Models\FileFactory</a></td><td class="text-right">20</td></tr>
+       <tr><td><a href="Models/PartFactory.php.html#12">A2A\Models\PartFactory</a></td><td class="text-right">13</td></tr>
+       <tr><td><a href="Models/TextPart.php.html#10">A2A\Models\TextPart</a></td><td class="text-right">12</td></tr>
+       <tr><td><a href="Streaming/StreamingServer.php.html#14">A2A\Streaming\StreamingServer</a></td><td class="text-right">12</td></tr>
+       <tr><td><a href="Utils/HttpClient.php.html#11">A2A\Utils\HttpClient</a></td><td class="text-right">8</td></tr>
+       <tr><td><a href="Events/ExecutionEventBusImpl.php.html#9">A2A\Events\ExecutionEventBusImpl</a></td><td class="text-right">7</td></tr>
+       <tr><td><a href="Execution/DefaultAgentExecutor.php.html#15">A2A\Execution\DefaultAgentExecutor</a></td><td class="text-right">4</td></tr>
+
+       </tbody>
+      </table>
+     </div>
+    </div>
+   </div>
+   <div class="row">
+    <div class="col-md-12">
+     <h2>Methods</h2>
+    </div>
+   </div>
+   <div class="row">
+    <div class="col-md-6">
+     <h3>Coverage Distribution</h3>
+     <div id="methodCoverageDistribution" style="height: 300px;">
+       <svg></svg>
+     </div>
+    </div>
+    <div class="col-md-6">
+     <h3>Complexity</h3>
+     <div id="methodComplexity" style="height: 300px;">
+       <svg></svg>
+     </div>
+    </div>
+   </div>
+   <div class="row">
+    <div class="col-md-6">
+     <h3>Insufficient Coverage</h3>
+     <div class="scrollbox">
+      <table class="table">
+       <thead>
+        <tr>
+         <th>Method</th>
+         <th class="text-right">Coverage</th>
+        </tr>
+       </thead>
+       <tbody>
+       <tr><td><a href="A2AClient.php.html#120"><abbr title="A2A\A2AClient::cancelTask">cancelTask</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="A2AClient.php.html#166"><abbr title="A2A\A2AClient::setPushNotificationConfig">setPushNotificationConfig</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="A2AClient.php.html#190"><abbr title="A2A\A2AClient::getPushNotificationConfig">getPushNotificationConfig</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="A2AClient.php.html#212"><abbr title="A2A\A2AClient::listPushNotificationConfigs">listPushNotificationConfigs</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="A2AClient.php.html#230"><abbr title="A2A\A2AClient::deletePushNotificationConfig">deletePushNotificationConfig</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="A2AClient.php.html#249"><abbr title="A2A\A2AClient::resubscribeTask">resubscribeTask</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="A2AProtocol.php.html#66"><abbr title="A2A\A2AProtocol::sendMessage">sendMessage</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="A2AProtocol.php.html#154"><abbr title="A2A\A2AProtocol::addMessageHandler">addMessageHandler</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="A2AProtocol.php.html#185"><abbr title="A2A\A2AProtocol::handleGetTask">handleGetTask</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="A2AProtocol.php.html#212"><abbr title="A2A\A2AProtocol::handleCancelTask">handleCancelTask</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="A2AProtocol.php.html#230"><abbr title="A2A\A2AProtocol::handleResubscribeTask">handleResubscribeTask</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="A2AProtocol.php.html#243"><abbr title="A2A\A2AProtocol::handleSetPushConfig">handleSetPushConfig</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="A2AProtocol.php.html#256"><abbr title="A2A\A2AProtocol::handleGetPushConfig">handleGetPushConfig</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="A2AProtocol.php.html#268"><abbr title="A2A\A2AProtocol::handleListPushConfig">handleListPushConfig</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="A2AProtocol.php.html#273"><abbr title="A2A\A2AProtocol::handleDeletePushConfig">handleDeletePushConfig</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="A2AProtocol.php.html#286"><abbr title="A2A\A2AProtocol::handleSendTask">handleSendTask</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="A2AServer.php.html#276"><abbr title="A2A\A2AServer::handleStreamMessage">handleStreamMessage</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="A2AServer.php.html#353"><abbr title="A2A\A2AServer::handleTasksCancel">handleTasksCancel</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Client/GrpcClient.php.html#28"><abbr title="A2A\Client\GrpcClient::__construct">__construct</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Client/GrpcClient.php.html#41"><abbr title="A2A\Client\GrpcClient::connect">connect</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Client/GrpcClient.php.html#60"><abbr title="A2A\Client\GrpcClient::sendMessage">sendMessage</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Client/GrpcClient.php.html#79"><abbr title="A2A\Client\GrpcClient::getAgentCard">getAgentCard</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Client/GrpcClient.php.html#91"><abbr title="A2A\Client\GrpcClient::ping">ping</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Client/GrpcClient.php.html#113"><abbr title="A2A\Client\GrpcClient::getTask">getTask</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Client/GrpcClient.php.html#130"><abbr title="A2A\Client\GrpcClient::cancelTask">cancelTask</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Client/GrpcClient.php.html#146"><abbr title="A2A\Client\GrpcClient::setPushNotificationConfig">setPushNotificationConfig</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Client/GrpcClient.php.html#162"><abbr title="A2A\Client\GrpcClient::getPushNotificationConfig">getPushNotificationConfig</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Client/GrpcClient.php.html#178"><abbr title="A2A\Client\GrpcClient::listPushNotificationConfigs">listPushNotificationConfigs</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Client/GrpcClient.php.html#190"><abbr title="A2A\Client\GrpcClient::deletePushNotificationConfig">deletePushNotificationConfig</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Client/GrpcClient.php.html#206"><abbr title="A2A\Client\GrpcClient::resubscribeTask">resubscribeTask</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Client/GrpcClient.php.html#222"><abbr title="A2A\Client\GrpcClient::disconnect">disconnect</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Client/GrpcClient.php.html#233"><abbr title="A2A\Client\GrpcClient::ensureConnected">ensureConnected</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Client/GrpcClient.php.html#243"><abbr title="A2A\Client\GrpcClient::isAvailable">isAvailable</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Client/GrpcClient.php.html#251"><abbr title="A2A\Client\GrpcClient::getGrpcInfo">getGrpcInfo</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Client/StreamingClient.php.html#25"><abbr title="A2A\Client\StreamingClient::sendMessageStream">sendMessageStream</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Client/StreamingClient.php.html#37"><abbr title="A2A\Client\StreamingClient::resubscribeTask">resubscribeTask</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Client/StreamingClient.php.html#49"><abbr title="A2A\Client\StreamingClient::streamRequest">streamRequest</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Events/EventBusManager.php.html#13"><abbr title="A2A\Events\EventBusManager::getEventBus">getEventBus</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Events/EventBusManager.php.html#21"><abbr title="A2A\Events\EventBusManager::removeEventBus">removeEventBus</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Events/EventBusManager.php.html#26"><abbr title="A2A\Events\EventBusManager::cleanup">cleanup</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Events/ExecutionEventBusImpl.php.html#28"><abbr title="A2A\Events\ExecutionEventBusImpl::unsubscribe">unsubscribe</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Exceptions/A2AErrorCodes.php.html#24"><abbr title="A2A\Exceptions\A2AErrorCodes::getErrorMessage">getErrorMessage</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Exceptions/A2ASpecificErrors.php.html#9"><abbr title="A2A\Exceptions\TaskNotCancelableException::__construct">__construct</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Exceptions/A2ASpecificErrors.php.html#17"><abbr title="A2A\Exceptions\PushNotificationNotSupportedException::__construct">__construct</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Exceptions/A2ASpecificErrors.php.html#25"><abbr title="A2A\Exceptions\UnsupportedOperationException::__construct">__construct</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Exceptions/A2ASpecificErrors.php.html#33"><abbr title="A2A\Exceptions\ContentTypeNotSupportedException::__construct">__construct</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Exceptions/A2ASpecificErrors.php.html#41"><abbr title="A2A\Exceptions\InvalidAgentResponseException::__construct">__construct</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Execution/ResultManager.php.html#15"><abbr title="A2A\Execution\ResultManager::processEvents">processEvents</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Execution/ResultManager.php.html#24"><abbr title="A2A\Execution\ResultManager::handleEvent">handleEvent</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Execution/ResultManager.php.html#43"><abbr title="A2A\Execution\ResultManager::getResult">getResult</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Execution/ResultManager.php.html#48"><abbr title="A2A\Execution\ResultManager::cleanup">cleanup</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Models/AgentCapabilities.php.html#29"><abbr title="A2A\Models\AgentCapabilities::isStreaming">isStreaming</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Models/AgentCapabilities.php.html#34"><abbr title="A2A\Models\AgentCapabilities::setStreaming">setStreaming</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Models/AgentCapabilities.php.html#39"><abbr title="A2A\Models\AgentCapabilities::isPushNotifications">isPushNotifications</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Models/AgentCapabilities.php.html#44"><abbr title="A2A\Models\AgentCapabilities::setPushNotifications">setPushNotifications</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Models/AgentCapabilities.php.html#49"><abbr title="A2A\Models\AgentCapabilities::isStateTransitionHistory">isStateTransitionHistory</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Models/AgentCapabilities.php.html#54"><abbr title="A2A\Models\AgentCapabilities::setStateTransitionHistory">setStateTransitionHistory</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Models/AgentCapabilities.php.html#59"><abbr title="A2A\Models\AgentCapabilities::getExtensions">getExtensions</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Models/AgentCapabilities.php.html#64"><abbr title="A2A\Models\AgentCapabilities::addExtension">addExtension</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Models/AgentCard.php.html#63"><abbr title="A2A\Models\AgentCard::getUrl">getUrl</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Models/AgentCard.php.html#73"><abbr title="A2A\Models\AgentCard::getProtocolVersion">getProtocolVersion</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Models/AgentCard.php.html#78"><abbr title="A2A\Models\AgentCard::getCapabilities">getCapabilities</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Models/AgentCard.php.html#83"><abbr title="A2A\Models\AgentCard::getDefaultInputModes">getDefaultInputModes</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Models/AgentCard.php.html#88"><abbr title="A2A\Models\AgentCard::getDefaultOutputModes">getDefaultOutputModes</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Models/AgentCard.php.html#108"><abbr title="A2A\Models\AgentCard::setSecuritySchemes">setSecuritySchemes</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Models/AgentCard.php.html#113"><abbr title="A2A\Models\AgentCard::setSecurity">setSecurity</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Models/AgentCard.php.html#118"><abbr title="A2A\Models\AgentCard::setAdditionalInterfaces">setAdditionalInterfaces</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Models/AgentCard.php.html#123"><abbr title="A2A\Models\AgentCard::getAdditionalInterfaces">getAdditionalInterfaces</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Models/AgentCard.php.html#128"><abbr title="A2A\Models\AgentCard::addAdditionalInterface">addAdditionalInterface</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Models/AgentCard.php.html#136"><abbr title="A2A\Models\AgentCard::setDocumentationUrl">setDocumentationUrl</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Models/AgentCard.php.html#141"><abbr title="A2A\Models\AgentCard::setIconUrl">setIconUrl</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Models/AgentCard.php.html#146"><abbr title="A2A\Models\AgentCard::setSupportsAuthenticatedExtendedCard">setSupportsAuthenticatedExtendedCard</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Models/AgentCardV2.php.html#36"><abbr title="A2A\Models\AgentCardV2::__construct">__construct</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Models/AgentCardV2.php.html#58"><abbr title="A2A\Models\AgentCardV2::getName">getName</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Models/AgentCardV2.php.html#63"><abbr title="A2A\Models\AgentCardV2::getDescription">getDescription</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Models/AgentCardV2.php.html#68"><abbr title="A2A\Models\AgentCardV2::getUrl">getUrl</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Models/AgentCardV2.php.html#73"><abbr title="A2A\Models\AgentCardV2::getVersion">getVersion</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Models/AgentCardV2.php.html#78"><abbr title="A2A\Models\AgentCardV2::getProtocolVersion">getProtocolVersion</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Models/AgentCardV2.php.html#83"><abbr title="A2A\Models\AgentCardV2::getCapabilities">getCapabilities</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Models/AgentCardV2.php.html#88"><abbr title="A2A\Models\AgentCardV2::getDefaultInputModes">getDefaultInputModes</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Models/AgentCardV2.php.html#93"><abbr title="A2A\Models\AgentCardV2::getDefaultOutputModes">getDefaultOutputModes</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Models/AgentCardV2.php.html#98"><abbr title="A2A\Models\AgentCardV2::getSkills">getSkills</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Models/AgentCardV2.php.html#103"><abbr title="A2A\Models\AgentCardV2::setProvider">setProvider</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Models/AgentCardV2.php.html#108"><abbr title="A2A\Models\AgentCardV2::getProvider">getProvider</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Models/AgentCardV2.php.html#113"><abbr title="A2A\Models\AgentCardV2::setSecuritySchemes">setSecuritySchemes</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Models/AgentCardV2.php.html#118"><abbr title="A2A\Models\AgentCardV2::setSecurity">setSecurity</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Models/AgentCardV2.php.html#123"><abbr title="A2A\Models\AgentCardV2::setAdditionalInterfaces">setAdditionalInterfaces</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Models/AgentCardV2.php.html#128"><abbr title="A2A\Models\AgentCardV2::setPreferredTransport">setPreferredTransport</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Models/AgentCardV2.php.html#133"><abbr title="A2A\Models\AgentCardV2::setDocumentationUrl">setDocumentationUrl</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Models/AgentCardV2.php.html#138"><abbr title="A2A\Models\AgentCardV2::setIconUrl">setIconUrl</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Models/AgentCardV2.php.html#143"><abbr title="A2A\Models\AgentCardV2::setSupportsAuthenticatedExtendedCard">setSupportsAuthenticatedExtendedCard</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Models/AgentCardV2.php.html#148"><abbr title="A2A\Models\AgentCardV2::addSkill">addSkill</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Models/AgentCardV2.php.html#153"><abbr title="A2A\Models\AgentCardV2::toArray">toArray</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Models/AgentCardV2.php.html#199"><abbr title="A2A\Models\AgentCardV2::fromArray">fromArray</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Models/AgentExtension.php.html#17"><abbr title="A2A\Models\AgentExtension::__construct">__construct</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Models/AgentExtension.php.html#29"><abbr title="A2A\Models\AgentExtension::getUri">getUri</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Models/AgentExtension.php.html#34"><abbr title="A2A\Models\AgentExtension::setDescription">setDescription</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Models/AgentExtension.php.html#39"><abbr title="A2A\Models\AgentExtension::getDescription">getDescription</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Models/AgentExtension.php.html#44"><abbr title="A2A\Models\AgentExtension::setRequired">setRequired</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Models/AgentExtension.php.html#49"><abbr title="A2A\Models\AgentExtension::isRequired">isRequired</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Models/AgentExtension.php.html#54"><abbr title="A2A\Models\AgentExtension::setParams">setParams</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Models/AgentExtension.php.html#59"><abbr title="A2A\Models\AgentExtension::getParams">getParams</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Models/AgentExtension.php.html#64"><abbr title="A2A\Models\AgentExtension::toArray">toArray</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Models/AgentExtension.php.html#85"><abbr title="A2A\Models\AgentExtension::fromArray">fromArray</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Models/AgentInterface.php.html#16"><abbr title="A2A\Models\AgentInterface::__construct">__construct</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Models/AgentInterface.php.html#22"><abbr title="A2A\Models\AgentInterface::getTransport">getTransport</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Models/AgentInterface.php.html#27"><abbr title="A2A\Models\AgentInterface::setTransport">setTransport</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Models/AgentInterface.php.html#32"><abbr title="A2A\Models\AgentInterface::getUrl">getUrl</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Models/AgentInterface.php.html#37"><abbr title="A2A\Models\AgentInterface::setUrl">setUrl</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Models/AgentInterface.php.html#45"><abbr title="A2A\Models\AgentInterface::isJsonRpc">isJsonRpc</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Models/AgentInterface.php.html#53"><abbr title="A2A\Models\AgentInterface::isGrpc">isGrpc</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Models/AgentInterface.php.html#61"><abbr title="A2A\Models\AgentInterface::isHttpJson">isHttpJson</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Models/AgentInterface.php.html#66"><abbr title="A2A\Models\AgentInterface::toArray">toArray</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Models/AgentInterface.php.html#74"><abbr title="A2A\Models\AgentInterface::fromArray">fromArray</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Models/AgentInterface.php.html#85"><abbr title="A2A\Models\AgentInterface::jsonRpc">jsonRpc</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Models/AgentInterface.php.html#93"><abbr title="A2A\Models\AgentInterface::grpc">grpc</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Models/AgentInterface.php.html#101"><abbr title="A2A\Models\AgentInterface::httpJson">httpJson</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Models/AgentProvider.php.html#21"><abbr title="A2A\Models\AgentProvider::getOrganization">getOrganization</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Models/AgentProvider.php.html#26"><abbr title="A2A\Models\AgentProvider::getUrl">getUrl</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Models/AgentProvider.php.html#39"><abbr title="A2A\Models\AgentProvider::fromArray">fromArray</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Models/AgentSkill.php.html#32"><abbr title="A2A\Models\AgentSkill::getId">getId</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Models/AgentSkill.php.html#37"><abbr title="A2A\Models\AgentSkill::getName">getName</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Models/AgentSkill.php.html#42"><abbr title="A2A\Models\AgentSkill::getDescription">getDescription</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Models/AgentSkill.php.html#47"><abbr title="A2A\Models\AgentSkill::getTags">getTags</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Models/AgentSkill.php.html#52"><abbr title="A2A\Models\AgentSkill::setExamples">setExamples</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Models/AgentSkill.php.html#57"><abbr title="A2A\Models\AgentSkill::getExamples">getExamples</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Models/AgentSkill.php.html#62"><abbr title="A2A\Models\AgentSkill::setInputModes">setInputModes</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Models/AgentSkill.php.html#67"><abbr title="A2A\Models\AgentSkill::getInputModes">getInputModes</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Models/AgentSkill.php.html#72"><abbr title="A2A\Models\AgentSkill::setOutputModes">setOutputModes</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Models/AgentSkill.php.html#77"><abbr title="A2A\Models\AgentSkill::getOutputModes">getOutputModes</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Models/Artifact.php.html#19"><abbr title="A2A\Models\Artifact::__construct">__construct</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Models/Artifact.php.html#25"><abbr title="A2A\Models\Artifact::getArtifactId">getArtifactId</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Models/Artifact.php.html#30"><abbr title="A2A\Models\Artifact::getParts">getParts</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Models/Artifact.php.html#35"><abbr title="A2A\Models\Artifact::setParts">setParts</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Models/Artifact.php.html#40"><abbr title="A2A\Models\Artifact::addPart">addPart</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Models/Artifact.php.html#45"><abbr title="A2A\Models\Artifact::getName">getName</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Models/Artifact.php.html#50"><abbr title="A2A\Models\Artifact::setName">setName</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Models/Artifact.php.html#55"><abbr title="A2A\Models\Artifact::getDescription">getDescription</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Models/Artifact.php.html#60"><abbr title="A2A\Models\Artifact::setDescription">setDescription</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Models/Artifact.php.html#65"><abbr title="A2A\Models\Artifact::getExtensions">getExtensions</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Models/Artifact.php.html#70"><abbr title="A2A\Models\Artifact::setExtensions">setExtensions</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Models/Artifact.php.html#75"><abbr title="A2A\Models\Artifact::addExtension">addExtension</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Models/Artifact.php.html#83"><abbr title="A2A\Models\Artifact::getMetadata">getMetadata</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Models/Artifact.php.html#88"><abbr title="A2A\Models\Artifact::setMetadata">setMetadata</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Models/Artifact.php.html#93"><abbr title="A2A\Models\Artifact::toArray">toArray</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Models/Artifact.php.html#119"><abbr title="A2A\Models\Artifact::fromArray">fromArray</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Models/DataPart.php.html#26"><abbr title="A2A\Models\DataPart::getData">getData</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Models/DataPart.php.html#31"><abbr title="A2A\Models\DataPart::setData">setData</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Models/DataPart.php.html#36"><abbr title="A2A\Models\DataPart::getMetadata">getMetadata</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Models/DataPart.php.html#41"><abbr title="A2A\Models\DataPart::setMetadata">setMetadata</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Models/DataPart.php.html#46"><abbr title="A2A\Models\DataPart::toArray">toArray</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Models/DataPart.php.html#60"><abbr title="A2A\Models\DataPart::fromArray">fromArray</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Models/FileFactory.php.html#14"><abbr title="A2A\Models\FileFactory::fromArray">fromArray</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Models/FilePart.php.html#26"><abbr title="A2A\Models\FilePart::getFile">getFile</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Models/FilePart.php.html#31"><abbr title="A2A\Models\FilePart::getMetadata">getMetadata</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Models/FilePart.php.html#36"><abbr title="A2A\Models\FilePart::setMetadata">setMetadata</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Models/FilePart.php.html#41"><abbr title="A2A\Models\FilePart::toArray">toArray</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Models/FilePart.php.html#55"><abbr title="A2A\Models\FilePart::fromArray">fromArray</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Models/FileWithBytes.php.html#21"><abbr title="A2A\Models\FileWithBytes::getBytes">getBytes</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Models/FileWithBytes.php.html#26"><abbr title="A2A\Models\FileWithBytes::getName">getName</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Models/FileWithBytes.php.html#31"><abbr title="A2A\Models\FileWithBytes::setName">setName</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Models/FileWithBytes.php.html#36"><abbr title="A2A\Models\FileWithBytes::getMimeType">getMimeType</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Models/FileWithBytes.php.html#41"><abbr title="A2A\Models\FileWithBytes::setMimeType">setMimeType</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Models/FileWithBytes.php.html#46"><abbr title="A2A\Models\FileWithBytes::toArray">toArray</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Models/FileWithBytes.php.html#63"><abbr title="A2A\Models\FileWithBytes::fromArray">fromArray</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Models/FileWithUri.php.html#16"><abbr title="A2A\Models\FileWithUri::__construct">__construct</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Models/FileWithUri.php.html#21"><abbr title="A2A\Models\FileWithUri::getUri">getUri</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Models/FileWithUri.php.html#26"><abbr title="A2A\Models\FileWithUri::getName">getName</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Models/FileWithUri.php.html#31"><abbr title="A2A\Models\FileWithUri::setName">setName</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Models/FileWithUri.php.html#36"><abbr title="A2A\Models\FileWithUri::getMimeType">getMimeType</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Models/FileWithUri.php.html#41"><abbr title="A2A\Models\FileWithUri::setMimeType">setMimeType</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Models/FileWithUri.php.html#46"><abbr title="A2A\Models\FileWithUri::toArray">toArray</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Models/FileWithUri.php.html#63"><abbr title="A2A\Models\FileWithUri::fromArray">fromArray</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Models/Message.php.html#205"><abbr title="A2A\Models\Message::getId">getId</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Models/Message.php.html#210"><abbr title="A2A\Models\Message::getContent">getContent</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Models/Message.php.html#215"><abbr title="A2A\Models\Message::getType">getType</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Models/MessageV2.php.html#28"><abbr title="A2A\Models\MessageV2::__construct">__construct</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Models/MessageV2.php.html#38"><abbr title="A2A\Models\MessageV2::createUserMessage">createUserMessage</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Models/MessageV2.php.html#46"><abbr title="A2A\Models\MessageV2::createAgentMessage">createAgentMessage</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Models/MessageV2.php.html#54"><abbr title="A2A\Models\MessageV2::getMessageId">getMessageId</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Models/MessageV2.php.html#59"><abbr title="A2A\Models\MessageV2::getRole">getRole</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Models/MessageV2.php.html#64"><abbr title="A2A\Models\MessageV2::getKind">getKind</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Models/MessageV2.php.html#69"><abbr title="A2A\Models\MessageV2::getParts">getParts</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Models/MessageV2.php.html#74"><abbr title="A2A\Models\MessageV2::addPart">addPart</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Models/MessageV2.php.html#79"><abbr title="A2A\Models\MessageV2::getContextId">getContextId</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Models/MessageV2.php.html#84"><abbr title="A2A\Models\MessageV2::setContextId">setContextId</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Models/MessageV2.php.html#89"><abbr title="A2A\Models\MessageV2::getTaskId">getTaskId</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Models/MessageV2.php.html#94"><abbr title="A2A\Models\MessageV2::setTaskId">setTaskId</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Models/MessageV2.php.html#99"><abbr title="A2A\Models\MessageV2::getReferenceTaskIds">getReferenceTaskIds</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Models/MessageV2.php.html#104"><abbr title="A2A\Models\MessageV2::setReferenceTaskIds">setReferenceTaskIds</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Models/MessageV2.php.html#109"><abbr title="A2A\Models\MessageV2::addReferenceTaskId">addReferenceTaskId</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Models/MessageV2.php.html#117"><abbr title="A2A\Models\MessageV2::getExtensions">getExtensions</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Models/MessageV2.php.html#122"><abbr title="A2A\Models\MessageV2::setExtensions">setExtensions</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Models/MessageV2.php.html#127"><abbr title="A2A\Models\MessageV2::addExtension">addExtension</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Models/MessageV2.php.html#135"><abbr title="A2A\Models\MessageV2::getMetadata">getMetadata</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Models/MessageV2.php.html#140"><abbr title="A2A\Models\MessageV2::setMetadata">setMetadata</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Models/MessageV2.php.html#145"><abbr title="A2A\Models\MessageV2::setMetadataValue">setMetadataValue</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Models/MessageV2.php.html#153"><abbr title="A2A\Models\MessageV2::toArray">toArray</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Models/MessageV2.php.html#185"><abbr title="A2A\Models\MessageV2::fromArray">fromArray</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Models/MessageV2.php.html#226"><abbr title="A2A\Models\MessageV2::getTextContent">getTextContent</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Models/Part.php.html#23"><abbr title="A2A\Models\Part::getKind">getKind</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Models/Task.php.html#82"><abbr title="A2A\Models\Task::getCreatedAt">getCreatedAt</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Models/Task.php.html#102"><abbr title="A2A\Models\Task::getAssignedTo">getAssignedTo</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Models/Task.php.html#107"><abbr title="A2A\Models\Task::assignTo">assignTo</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Models/Task.php.html#153"><abbr title="A2A\Models\Task::addMetadata">addMetadata</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Models/TaskArtifactUpdateEvent.php.html#20"><abbr title="A2A\Models\TaskArtifactUpdateEvent::__construct">__construct</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Models/TaskArtifactUpdateEvent.php.html#30"><abbr title="A2A\Models\TaskArtifactUpdateEvent::getKind">getKind</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Models/TaskArtifactUpdateEvent.php.html#35"><abbr title="A2A\Models\TaskArtifactUpdateEvent::getTaskId">getTaskId</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Models/TaskArtifactUpdateEvent.php.html#40"><abbr title="A2A\Models\TaskArtifactUpdateEvent::getContextId">getContextId</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Models/TaskArtifactUpdateEvent.php.html#45"><abbr title="A2A\Models\TaskArtifactUpdateEvent::getArtifact">getArtifact</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Models/TaskArtifactUpdateEvent.php.html#50"><abbr title="A2A\Models\TaskArtifactUpdateEvent::setArtifact">setArtifact</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Models/TaskArtifactUpdateEvent.php.html#55"><abbr title="A2A\Models\TaskArtifactUpdateEvent::getAppend">getAppend</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Models/TaskArtifactUpdateEvent.php.html#60"><abbr title="A2A\Models\TaskArtifactUpdateEvent::setAppend">setAppend</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Models/TaskArtifactUpdateEvent.php.html#65"><abbr title="A2A\Models\TaskArtifactUpdateEvent::getLastChunk">getLastChunk</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Models/TaskArtifactUpdateEvent.php.html#70"><abbr title="A2A\Models\TaskArtifactUpdateEvent::setLastChunk">setLastChunk</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Models/TaskArtifactUpdateEvent.php.html#75"><abbr title="A2A\Models\TaskArtifactUpdateEvent::getMetadata">getMetadata</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Models/TaskArtifactUpdateEvent.php.html#80"><abbr title="A2A\Models\TaskArtifactUpdateEvent::setMetadata">setMetadata</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Models/TaskArtifactUpdateEvent.php.html#85"><abbr title="A2A\Models\TaskArtifactUpdateEvent::toArray">toArray</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Models/TaskArtifactUpdateEvent.php.html#109"><abbr title="A2A\Models\TaskArtifactUpdateEvent::fromArray">fromArray</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Models/TaskStatus.php.html#22"><abbr title="A2A\Models\TaskStatus::getState">getState</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Models/TaskStatus.php.html#27"><abbr title="A2A\Models\TaskStatus::setState">setState</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Models/TaskStatus.php.html#33"><abbr title="A2A\Models\TaskStatus::getMessage">getMessage</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Models/TaskStatus.php.html#38"><abbr title="A2A\Models\TaskStatus::setMessage">setMessage</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Models/TaskStatus.php.html#43"><abbr title="A2A\Models\TaskStatus::getTimestamp">getTimestamp</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Models/TaskStatus.php.html#48"><abbr title="A2A\Models\TaskStatus::setTimestamp">setTimestamp</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Models/TaskStatus.php.html#53"><abbr title="A2A\Models\TaskStatus::toArray">toArray</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Models/TaskStatus.php.html#70"><abbr title="A2A\Models\TaskStatus::fromArray">fromArray</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Models/TaskStatusUpdateEvent.php.html#31"><abbr title="A2A\Models\TaskStatusUpdateEvent::getKind">getKind</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Models/TaskStatusUpdateEvent.php.html#41"><abbr title="A2A\Models\TaskStatusUpdateEvent::getContextId">getContextId</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Models/TaskStatusUpdateEvent.php.html#46"><abbr title="A2A\Models\TaskStatusUpdateEvent::getStatus">getStatus</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Models/TaskStatusUpdateEvent.php.html#51"><abbr title="A2A\Models\TaskStatusUpdateEvent::setStatus">setStatus</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Models/TaskStatusUpdateEvent.php.html#56"><abbr title="A2A\Models\TaskStatusUpdateEvent::isFinal">isFinal</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Models/TaskStatusUpdateEvent.php.html#61"><abbr title="A2A\Models\TaskStatusUpdateEvent::setFinal">setFinal</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Models/TaskStatusUpdateEvent.php.html#66"><abbr title="A2A\Models\TaskStatusUpdateEvent::getMetadata">getMetadata</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Models/TaskStatusUpdateEvent.php.html#71"><abbr title="A2A\Models\TaskStatusUpdateEvent::setMetadata">setMetadata</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Models/TaskStatusUpdateEvent.php.html#76"><abbr title="A2A\Models\TaskStatusUpdateEvent::toArray">toArray</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Models/TaskStatusUpdateEvent.php.html#93"><abbr title="A2A\Models\TaskStatusUpdateEvent::fromArray">fromArray</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Models/TaskV2.php.html#23"><abbr title="A2A\Models\TaskV2::__construct">__construct</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Models/TaskV2.php.html#33"><abbr title="A2A\Models\TaskV2::getId">getId</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Models/TaskV2.php.html#38"><abbr title="A2A\Models\TaskV2::getContextId">getContextId</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Models/TaskV2.php.html#43"><abbr title="A2A\Models\TaskV2::getKind">getKind</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Models/TaskV2.php.html#48"><abbr title="A2A\Models\TaskV2::getStatus">getStatus</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Models/TaskV2.php.html#53"><abbr title="A2A\Models\TaskV2::setStatus">setStatus</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Models/TaskV2.php.html#58"><abbr title="A2A\Models\TaskV2::getHistory">getHistory</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Models/TaskV2.php.html#63"><abbr title="A2A\Models\TaskV2::setHistory">setHistory</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Models/TaskV2.php.html#68"><abbr title="A2A\Models\TaskV2::addToHistory">addToHistory</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Models/TaskV2.php.html#76"><abbr title="A2A\Models\TaskV2::getArtifacts">getArtifacts</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Models/TaskV2.php.html#81"><abbr title="A2A\Models\TaskV2::setArtifacts">setArtifacts</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Models/TaskV2.php.html#86"><abbr title="A2A\Models\TaskV2::addArtifact">addArtifact</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Models/TaskV2.php.html#94"><abbr title="A2A\Models\TaskV2::getMetadata">getMetadata</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Models/TaskV2.php.html#99"><abbr title="A2A\Models\TaskV2::setMetadata">setMetadata</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Models/TaskV2.php.html#104"><abbr title="A2A\Models\TaskV2::isTerminal">isTerminal</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Models/TaskV2.php.html#109"><abbr title="A2A\Models\TaskV2::toArray">toArray</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Models/TaskV2.php.html#139"><abbr title="A2A\Models\TaskV2::fromArray">fromArray</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Models/TextPart.php.html#31"><abbr title="A2A\Models\TextPart::setText">setText</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Models/TextPart.php.html#36"><abbr title="A2A\Models\TextPart::getMetadata">getMetadata</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Models/TextPart.php.html#41"><abbr title="A2A\Models\TextPart::setMetadata">setMetadata</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="PushNotificationManager.php.html#58"><abbr title="A2A\PushNotificationManager::listConfigs">listConfigs</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="PushNotificationManager.php.html#84"><abbr title="A2A\PushNotificationManager::hasConfig">hasConfig</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Storage/Storage.php.html#84"><abbr title="A2A\Storage\Storage::taskExists">taskExists</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Storage/Storage.php.html#92"><abbr title="A2A\Storage\Storage::updateTaskStatus">updateTaskStatus</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Storage/Storage.php.html#128"><abbr title="A2A\Storage\Storage::getPushConfig">getPushConfig</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Storage/Storage.php.html#142"><abbr title="A2A\Storage\Storage::listPushConfigs">listPushConfigs</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Storage/Storage.php.html#229"><abbr title="A2A\Storage\Storage::createRedisStore">createRedisStore</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Storage/Storage.php.html#256"><abbr title="A2A\Storage\Storage::createMemcachedStore">createMemcachedStore</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Streaming/SSEStreamer.php.html#9"><abbr title="A2A\Streaming\SSEStreamer::sendEvent">sendEvent</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Streaming/SSEStreamer.php.html#27"><abbr title="A2A\Streaming\SSEStreamer::startStream">startStream</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Streaming/SSEStreamer.php.html#38"><abbr title="A2A\Streaming\SSEStreamer::endStream">endStream</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Streaming/StreamingServer.php.html#19"><abbr title="A2A\Streaming\StreamingServer::__construct">__construct</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Streaming/StreamingServer.php.html#25"><abbr title="A2A\Streaming\StreamingServer::handleStreamRequest">handleStreamRequest</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="TaskManager.php.html#54"><abbr title="A2A\TaskManager::taskExists">taskExists</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="PushNotificationManager.php.html#40"><abbr title="A2A\PushNotificationManager::getConfig">getConfig</abbr></a></td><td class="text-right">33%</td></tr>
+       <tr><td><a href="A2AProtocol.php.html#159"><abbr title="A2A\A2AProtocol::processMessage">processMessage</abbr></a></td><td class="text-right">37%</td></tr>
+       <tr><td><a href="Utils/HttpClient.php.html#52"><abbr title="A2A\Utils\HttpClient::get">get</abbr></a></td><td class="text-right">37%</td></tr>
+       <tr><td><a href="Models/PartFactory.php.html#14"><abbr title="A2A\Models\PartFactory::fromArray">fromArray</abbr></a></td><td class="text-right">40%</td></tr>
+       <tr><td><a href="Storage/Storage.php.html#181"><abbr title="A2A\Storage\Storage::createCacheRepository">createCacheRepository</abbr></a></td><td class="text-right">44%</td></tr>
+       <tr><td><a href="A2AServer.php.html#632"><abbr title="A2A\A2AServer::handlePushNotificationConfigList">handlePushNotificationConfigList</abbr></a></td><td class="text-right">46%</td></tr>
+       <tr><td><a href="A2AServer.php.html#582"><abbr title="A2A\A2AServer::handlePushNotificationConfigGet">handlePushNotificationConfigGet</abbr></a></td><td class="text-right">52%</td></tr>
+       <tr><td><a href="A2AServer.php.html#678"><abbr title="A2A\A2AServer::handlePushNotificationConfigDelete">handlePushNotificationConfigDelete</abbr></a></td><td class="text-right">54%</td></tr>
+       <tr><td><a href="Utils/HttpClient.php.html#30"><abbr title="A2A\Utils\HttpClient::post">post</abbr></a></td><td class="text-right">58%</td></tr>
+       <tr><td><a href="A2AProtocol.php.html#96"><abbr title="A2A\A2AProtocol::handleRequest">handleRequest</abbr></a></td><td class="text-right">58%</td></tr>
+       <tr><td><a href="PushNotificationManager.php.html#26"><abbr title="A2A\PushNotificationManager::setConfig">setConfig</abbr></a></td><td class="text-right">60%</td></tr>
+       <tr><td><a href="A2AServer.php.html#468"><abbr title="A2A\A2AServer::handleTasksResubscribe">handleTasksResubscribe</abbr></a></td><td class="text-right">60%</td></tr>
+       <tr><td><a href="A2AServer.php.html#149"><abbr title="A2A\A2AServer::handleMessage">handleMessage</abbr></a></td><td class="text-right">61%</td></tr>
+       <tr><td><a href="Models/AgentCapabilities.php.html#69"><abbr title="A2A\Models\AgentCapabilities::toArray">toArray</abbr></a></td><td class="text-right">63%</td></tr>
+       <tr><td><a href="A2AServer.php.html#510"><abbr title="A2A\A2AServer::handlePushNotificationConfigSet">handlePushNotificationConfigSet</abbr></a></td><td class="text-right">67%</td></tr>
+       <tr><td><a href="Models/AgentCard.php.html#196"><abbr title="A2A\Models\AgentCard::fromArray">fromArray</abbr></a></td><td class="text-right">70%</td></tr>
+       <tr><td><a href="A2AServer.php.html#53"><abbr title="A2A\A2AServer::handleRequest">handleRequest</abbr></a></td><td class="text-right">70%</td></tr>
+       <tr><td><a href="Models/AgentCard.php.html#151"><abbr title="A2A\Models\AgentCard::toArray">toArray</abbr></a></td><td class="text-right">71%</td></tr>
+       <tr><td><a href="Models/Task.php.html#193"><abbr title="A2A\Models\Task::toArrayWithHistory">toArrayWithHistory</abbr></a></td><td class="text-right">71%</td></tr>
+       <tr><td><a href="Events/ExecutionEventBusImpl.php.html#33"><abbr title="A2A\Events\ExecutionEventBusImpl::getTaskIdFromEvent">getTaskIdFromEvent</abbr></a></td><td class="text-right">75%</td></tr>
+       <tr><td><a href="Execution/DefaultAgentExecutor.php.html#19"><abbr title="A2A\Execution\DefaultAgentExecutor::execute">execute</abbr></a></td><td class="text-right">75%</td></tr>
+       <tr><td><a href="Models/Message.php.html#194"><abbr title="A2A\Models\Message::getTextContent">getTextContent</abbr></a></td><td class="text-right">75%</td></tr>
+       <tr><td><a href="Models/TextPart.php.html#60"><abbr title="A2A\Models\TextPart::fromArray">fromArray</abbr></a></td><td class="text-right">75%</td></tr>
+       <tr><td><a href="TaskManager.php.html#23"><abbr title="A2A\TaskManager::createTask">createTask</abbr></a></td><td class="text-right">75%</td></tr>
+       <tr><td><a href="A2AServer.php.html#720"><abbr title="A2A\A2AServer::progressTaskState">progressTaskState</abbr></a></td><td class="text-right">76%</td></tr>
+       <tr><td><a href="A2AServer.php.html#324"><abbr title="A2A\A2AServer::handleTasksGet">handleTasksGet</abbr></a></td><td class="text-right">76%</td></tr>
+       <tr><td><a href="Models/AgentSkill.php.html#82"><abbr title="A2A\Models\AgentSkill::toArray">toArray</abbr></a></td><td class="text-right">76%</td></tr>
+       <tr><td><a href="Models/AgentSkill.php.html#106"><abbr title="A2A\Models\AgentSkill::fromArray">fromArray</abbr></a></td><td class="text-right">76%</td></tr>
+       <tr><td><a href="Models/Task.php.html#229"><abbr title="A2A\Models\Task::fromArray">fromArray</abbr></a></td><td class="text-right">78%</td></tr>
+       <tr><td><a href="A2AServer.php.html#380"><abbr title="A2A\A2AServer::handleTasksSend">handleTasksSend</abbr></a></td><td class="text-right">80%</td></tr>
+       <tr><td><a href="Models/AgentCapabilities.php.html#87"><abbr title="A2A\Models\AgentCapabilities::fromArray">fromArray</abbr></a></td><td class="text-right">80%</td></tr>
+       <tr><td><a href="Models/Message.php.html#156"><abbr title="A2A\Models\Message::fromArray">fromArray</abbr></a></td><td class="text-right">80%</td></tr>
+       <tr><td><a href="Storage/Storage.php.html#204"><abbr title="A2A\Storage\Storage::createFileStore">createFileStore</abbr></a></td><td class="text-right">80%</td></tr>
+       <tr><td><a href="Models/Message.php.html#124"><abbr title="A2A\Models\Message::toArray">toArray</abbr></a></td><td class="text-right">82%</td></tr>
+       <tr><td><a href="Models/TextPart.php.html#46"><abbr title="A2A\Models\TextPart::toArray">toArray</abbr></a></td><td class="text-right">85%</td></tr>
+       <tr><td><a href="Storage/Storage.php.html#161"><abbr title="A2A\Storage\Storage::deletePushConfig">deletePushConfig</abbr></a></td><td class="text-right">85%</td></tr>
+       <tr><td><a href="A2AClient.php.html#94"><abbr title="A2A\A2AClient::getTask">getTask</abbr></a></td><td class="text-right">88%</td></tr>
+
+       </tbody>
+      </table>
+     </div>
+    </div>
+    <div class="col-md-6">
+     <h3>Project Risks</h3>
+     <div class="scrollbox">
+      <table class="table">
+       <thead>
+        <tr>
+         <th>Method</th>
+         <th class="text-right"><abbr title="Change Risk Anti-Patterns (CRAP) Index">CRAP</abbr></th>
+        </tr>
+       </thead>
+       <tbody>
+       <tr><td><a href="Models/AgentCardV2.php.html#199"><abbr title="A2A\Models\AgentCardV2::fromArray">fromArray</abbr></a></td><td class="text-right">132</td></tr>
+       <tr><td><a href="A2AProtocol.php.html#286"><abbr title="A2A\A2AProtocol::handleSendTask">handleSendTask</abbr></a></td><td class="text-right">72</td></tr>
+       <tr><td><a href="A2AServer.php.html#276"><abbr title="A2A\A2AServer::handleStreamMessage">handleStreamMessage</abbr></a></td><td class="text-right">72</td></tr>
+       <tr><td><a href="Models/AgentCardV2.php.html#153"><abbr title="A2A\Models\AgentCardV2::toArray">toArray</abbr></a></td><td class="text-right">72</td></tr>
+       <tr><td><a href="Models/MessageV2.php.html#185"><abbr title="A2A\Models\MessageV2::fromArray">fromArray</abbr></a></td><td class="text-right">72</td></tr>
+       <tr><td><a href="Models/Artifact.php.html#119"><abbr title="A2A\Models\Artifact::fromArray">fromArray</abbr></a></td><td class="text-right">56</td></tr>
+       <tr><td><a href="A2AServer.php.html#149"><abbr title="A2A\A2AServer::handleMessage">handleMessage</abbr></a></td><td class="text-right">46</td></tr>
+       <tr><td><a href="Client/StreamingClient.php.html#49"><abbr title="A2A\Client\StreamingClient::streamRequest">streamRequest</abbr></a></td><td class="text-right">42</td></tr>
+       <tr><td><a href="Execution/ResultManager.php.html#24"><abbr title="A2A\Execution\ResultManager::handleEvent">handleEvent</abbr></a></td><td class="text-right">42</td></tr>
+       <tr><td><a href="Models/MessageV2.php.html#153"><abbr title="A2A\Models\MessageV2::toArray">toArray</abbr></a></td><td class="text-right">42</td></tr>
+       <tr><td><a href="Models/TaskV2.php.html#139"><abbr title="A2A\Models\TaskV2::fromArray">fromArray</abbr></a></td><td class="text-right">42</td></tr>
+       <tr><td><a href="A2AServer.php.html#53"><abbr title="A2A\A2AServer::handleRequest">handleRequest</abbr></a></td><td class="text-right">35</td></tr>
+       <tr><td><a href="Models/Artifact.php.html#93"><abbr title="A2A\Models\Artifact::toArray">toArray</abbr></a></td><td class="text-right">30</td></tr>
+       <tr><td><a href="A2AProtocol.php.html#96"><abbr title="A2A\A2AProtocol::handleRequest">handleRequest</abbr></a></td><td class="text-right">27</td></tr>
+       <tr><td><a href="A2AProtocol.php.html#185"><abbr title="A2A\A2AProtocol::handleGetTask">handleGetTask</abbr></a></td><td class="text-right">20</td></tr>
+       <tr><td><a href="Models/AgentExtension.php.html#64"><abbr title="A2A\Models\AgentExtension::toArray">toArray</abbr></a></td><td class="text-right">20</td></tr>
+       <tr><td><a href="Models/FileFactory.php.html#14"><abbr title="A2A\Models\FileFactory::fromArray">fromArray</abbr></a></td><td class="text-right">20</td></tr>
+       <tr><td><a href="Models/TaskArtifactUpdateEvent.php.html#85"><abbr title="A2A\Models\TaskArtifactUpdateEvent::toArray">toArray</abbr></a></td><td class="text-right">20</td></tr>
+       <tr><td><a href="Models/TaskArtifactUpdateEvent.php.html#109"><abbr title="A2A\Models\TaskArtifactUpdateEvent::fromArray">fromArray</abbr></a></td><td class="text-right">20</td></tr>
+       <tr><td><a href="Models/TaskV2.php.html#109"><abbr title="A2A\Models\TaskV2::toArray">toArray</abbr></a></td><td class="text-right">20</td></tr>
+       <tr><td><a href="Streaming/SSEStreamer.php.html#9"><abbr title="A2A\Streaming\SSEStreamer::sendEvent">sendEvent</abbr></a></td><td class="text-right">20</td></tr>
+       <tr><td><a href="Models/AgentCard.php.html#196"><abbr title="A2A\Models\AgentCard::fromArray">fromArray</abbr></a></td><td class="text-right">14</td></tr>
+       <tr><td><a href="Models/PartFactory.php.html#14"><abbr title="A2A\Models\PartFactory::fromArray">fromArray</abbr></a></td><td class="text-right">13</td></tr>
+       <tr><td><a href="Storage/Storage.php.html#181"><abbr title="A2A\Storage\Storage::createCacheRepository">createCacheRepository</abbr></a></td><td class="text-right">12</td></tr>
+       <tr><td><a href="A2AClient.php.html#190"><abbr title="A2A\A2AClient::getPushNotificationConfig">getPushNotificationConfig</abbr></a></td><td class="text-right">12</td></tr>
+       <tr><td><a href="A2AProtocol.php.html#212"><abbr title="A2A\A2AProtocol::handleCancelTask">handleCancelTask</abbr></a></td><td class="text-right">12</td></tr>
+       <tr><td><a href="A2AProtocol.php.html#243"><abbr title="A2A\A2AProtocol::handleSetPushConfig">handleSetPushConfig</abbr></a></td><td class="text-right">12</td></tr>
+       <tr><td><a href="A2AServer.php.html#353"><abbr title="A2A\A2AServer::handleTasksCancel">handleTasksCancel</abbr></a></td><td class="text-right">12</td></tr>
+       <tr><td><a href="Client/GrpcClient.php.html#251"><abbr title="A2A\Client\GrpcClient::getGrpcInfo">getGrpcInfo</abbr></a></td><td class="text-right">12</td></tr>
+       <tr><td><a href="Models/FileWithBytes.php.html#46"><abbr title="A2A\Models\FileWithBytes::toArray">toArray</abbr></a></td><td class="text-right">12</td></tr>
+       <tr><td><a href="Models/FileWithBytes.php.html#63"><abbr title="A2A\Models\FileWithBytes::fromArray">fromArray</abbr></a></td><td class="text-right">12</td></tr>
+       <tr><td><a href="Models/FileWithUri.php.html#46"><abbr title="A2A\Models\FileWithUri::toArray">toArray</abbr></a></td><td class="text-right">12</td></tr>
+       <tr><td><a href="Models/FileWithUri.php.html#63"><abbr title="A2A\Models\FileWithUri::fromArray">fromArray</abbr></a></td><td class="text-right">12</td></tr>
+       <tr><td><a href="Models/MessageV2.php.html#226"><abbr title="A2A\Models\MessageV2::getTextContent">getTextContent</abbr></a></td><td class="text-right">12</td></tr>
+       <tr><td><a href="Models/TaskStatus.php.html#53"><abbr title="A2A\Models\TaskStatus::toArray">toArray</abbr></a></td><td class="text-right">12</td></tr>
+       <tr><td><a href="Models/TaskStatus.php.html#70"><abbr title="A2A\Models\TaskStatus::fromArray">fromArray</abbr></a></td><td class="text-right">12</td></tr>
+       <tr><td><a href="Storage/Storage.php.html#142"><abbr title="A2A\Storage\Storage::listPushConfigs">listPushConfigs</abbr></a></td><td class="text-right">12</td></tr>
+       <tr><td><a href="Storage/Storage.php.html#256"><abbr title="A2A\Storage\Storage::createMemcachedStore">createMemcachedStore</abbr></a></td><td class="text-right">12</td></tr>
+       <tr><td><a href="A2AServer.php.html#510"><abbr title="A2A\A2AServer::handlePushNotificationConfigSet">handlePushNotificationConfigSet</abbr></a></td><td class="text-right">10</td></tr>
+       <tr><td><a href="A2AServer.php.html#380"><abbr title="A2A\A2AServer::handleTasksSend">handleTasksSend</abbr></a></td><td class="text-right">9</td></tr>
+       <tr><td><a href="A2AServer.php.html#632"><abbr title="A2A\A2AServer::handlePushNotificationConfigList">handlePushNotificationConfigList</abbr></a></td><td class="text-right">8</td></tr>
+       <tr><td><a href="Models/Message.php.html#156"><abbr title="A2A\Models\Message::fromArray">fromArray</abbr></a></td><td class="text-right">8</td></tr>
+       <tr><td><a href="Models/AgentCard.php.html#151"><abbr title="A2A\Models\AgentCard::toArray">toArray</abbr></a></td><td class="text-right">8</td></tr>
+       <tr><td><a href="Models/Task.php.html#193"><abbr title="A2A\Models\Task::toArrayWithHistory">toArrayWithHistory</abbr></a></td><td class="text-right">8</td></tr>
+       <tr><td><a href="A2AProtocol.php.html#159"><abbr title="A2A\A2AProtocol::processMessage">processMessage</abbr></a></td><td class="text-right">7</td></tr>
+       <tr><td><a href="A2AServer.php.html#582"><abbr title="A2A\A2AServer::handlePushNotificationConfigGet">handlePushNotificationConfigGet</abbr></a></td><td class="text-right">7</td></tr>
+       <tr><td><a href="Models/Task.php.html#229"><abbr title="A2A\Models\Task::fromArray">fromArray</abbr></a></td><td class="text-right">7</td></tr>
+       <tr><td><a href="Models/Message.php.html#124"><abbr title="A2A\Models\Message::toArray">toArray</abbr></a></td><td class="text-right">6</td></tr>
+       <tr><td><a href="A2AClient.php.html#120"><abbr title="A2A\A2AClient::cancelTask">cancelTask</abbr></a></td><td class="text-right">6</td></tr>
+       <tr><td><a href="A2AClient.php.html#166"><abbr title="A2A\A2AClient::setPushNotificationConfig">setPushNotificationConfig</abbr></a></td><td class="text-right">6</td></tr>
+       <tr><td><a href="A2AClient.php.html#212"><abbr title="A2A\A2AClient::listPushNotificationConfigs">listPushNotificationConfigs</abbr></a></td><td class="text-right">6</td></tr>
+       <tr><td><a href="A2AClient.php.html#230"><abbr title="A2A\A2AClient::deletePushNotificationConfig">deletePushNotificationConfig</abbr></a></td><td class="text-right">6</td></tr>
+       <tr><td><a href="A2AClient.php.html#249"><abbr title="A2A\A2AClient::resubscribeTask">resubscribeTask</abbr></a></td><td class="text-right">6</td></tr>
+       <tr><td><a href="A2AProtocol.php.html#66"><abbr title="A2A\A2AProtocol::sendMessage">sendMessage</abbr></a></td><td class="text-right">6</td></tr>
+       <tr><td><a href="A2AProtocol.php.html#230"><abbr title="A2A\A2AProtocol::handleResubscribeTask">handleResubscribeTask</abbr></a></td><td class="text-right">6</td></tr>
+       <tr><td><a href="A2AProtocol.php.html#256"><abbr title="A2A\A2AProtocol::handleGetPushConfig">handleGetPushConfig</abbr></a></td><td class="text-right">6</td></tr>
+       <tr><td><a href="A2AProtocol.php.html#273"><abbr title="A2A\A2AProtocol::handleDeletePushConfig">handleDeletePushConfig</abbr></a></td><td class="text-right">6</td></tr>
+       <tr><td><a href="Client/GrpcClient.php.html#41"><abbr title="A2A\Client\GrpcClient::connect">connect</abbr></a></td><td class="text-right">6</td></tr>
+       <tr><td><a href="Client/GrpcClient.php.html#91"><abbr title="A2A\Client\GrpcClient::ping">ping</abbr></a></td><td class="text-right">6</td></tr>
+       <tr><td><a href="Client/GrpcClient.php.html#222"><abbr title="A2A\Client\GrpcClient::disconnect">disconnect</abbr></a></td><td class="text-right">6</td></tr>
+       <tr><td><a href="Client/GrpcClient.php.html#233"><abbr title="A2A\Client\GrpcClient::ensureConnected">ensureConnected</abbr></a></td><td class="text-right">6</td></tr>
+       <tr><td><a href="Events/EventBusManager.php.html#13"><abbr title="A2A\Events\EventBusManager::getEventBus">getEventBus</abbr></a></td><td class="text-right">6</td></tr>
+       <tr><td><a href="Models/AgentCard.php.html#128"><abbr title="A2A\Models\AgentCard::addAdditionalInterface">addAdditionalInterface</abbr></a></td><td class="text-right">6</td></tr>
+       <tr><td><a href="Models/Artifact.php.html#75"><abbr title="A2A\Models\Artifact::addExtension">addExtension</abbr></a></td><td class="text-right">6</td></tr>
+       <tr><td><a href="Models/DataPart.php.html#46"><abbr title="A2A\Models\DataPart::toArray">toArray</abbr></a></td><td class="text-right">6</td></tr>
+       <tr><td><a href="Models/DataPart.php.html#60"><abbr title="A2A\Models\DataPart::fromArray">fromArray</abbr></a></td><td class="text-right">6</td></tr>
+       <tr><td><a href="Models/FilePart.php.html#41"><abbr title="A2A\Models\FilePart::toArray">toArray</abbr></a></td><td class="text-right">6</td></tr>
+       <tr><td><a href="Models/FilePart.php.html#55"><abbr title="A2A\Models\FilePart::fromArray">fromArray</abbr></a></td><td class="text-right">6</td></tr>
+       <tr><td><a href="Models/MessageV2.php.html#109"><abbr title="A2A\Models\MessageV2::addReferenceTaskId">addReferenceTaskId</abbr></a></td><td class="text-right">6</td></tr>
+       <tr><td><a href="Models/MessageV2.php.html#127"><abbr title="A2A\Models\MessageV2::addExtension">addExtension</abbr></a></td><td class="text-right">6</td></tr>
+       <tr><td><a href="Models/MessageV2.php.html#145"><abbr title="A2A\Models\MessageV2::setMetadataValue">setMetadataValue</abbr></a></td><td class="text-right">6</td></tr>
+       <tr><td><a href="Models/Task.php.html#107"><abbr title="A2A\Models\Task::assignTo">assignTo</abbr></a></td><td class="text-right">6</td></tr>
+       <tr><td><a href="Models/TaskStatusUpdateEvent.php.html#76"><abbr title="A2A\Models\TaskStatusUpdateEvent::toArray">toArray</abbr></a></td><td class="text-right">6</td></tr>
+       <tr><td><a href="Models/TaskStatusUpdateEvent.php.html#93"><abbr title="A2A\Models\TaskStatusUpdateEvent::fromArray">fromArray</abbr></a></td><td class="text-right">6</td></tr>
+       <tr><td><a href="Models/TaskV2.php.html#68"><abbr title="A2A\Models\TaskV2::addToHistory">addToHistory</abbr></a></td><td class="text-right">6</td></tr>
+       <tr><td><a href="Models/TaskV2.php.html#86"><abbr title="A2A\Models\TaskV2::addArtifact">addArtifact</abbr></a></td><td class="text-right">6</td></tr>
+       <tr><td><a href="Storage/Storage.php.html#92"><abbr title="A2A\Storage\Storage::updateTaskStatus">updateTaskStatus</abbr></a></td><td class="text-right">6</td></tr>
+       <tr><td><a href="Storage/Storage.php.html#128"><abbr title="A2A\Storage\Storage::getPushConfig">getPushConfig</abbr></a></td><td class="text-right">6</td></tr>
+       <tr><td><a href="Storage/Storage.php.html#229"><abbr title="A2A\Storage\Storage::createRedisStore">createRedisStore</abbr></a></td><td class="text-right">6</td></tr>
+       <tr><td><a href="Streaming/SSEStreamer.php.html#27"><abbr title="A2A\Streaming\SSEStreamer::startStream">startStream</abbr></a></td><td class="text-right">6</td></tr>
+       <tr><td><a href="Streaming/SSEStreamer.php.html#38"><abbr title="A2A\Streaming\SSEStreamer::endStream">endStream</abbr></a></td><td class="text-right">6</td></tr>
+       <tr><td><a href="Streaming/StreamingServer.php.html#25"><abbr title="A2A\Streaming\StreamingServer::handleStreamRequest">handleStreamRequest</abbr></a></td><td class="text-right">6</td></tr>
+       <tr><td><a href="TaskManager.php.html#54"><abbr title="A2A\TaskManager::taskExists">taskExists</abbr></a></td><td class="text-right">6</td></tr>
+       <tr><td><a href="PushNotificationManager.php.html#40"><abbr title="A2A\PushNotificationManager::getConfig">getConfig</abbr></a></td><td class="text-right">5</td></tr>
+       <tr><td><a href="A2AServer.php.html#678"><abbr title="A2A\A2AServer::handlePushNotificationConfigDelete">handlePushNotificationConfigDelete</abbr></a></td><td class="text-right">5</td></tr>
+       <tr><td><a href="A2AServer.php.html#720"><abbr title="A2A\A2AServer::progressTaskState">progressTaskState</abbr></a></td><td class="text-right">5</td></tr>
+       <tr><td><a href="A2AServer.php.html#324"><abbr title="A2A\A2AServer::handleTasksGet">handleTasksGet</abbr></a></td><td class="text-right">5</td></tr>
+       <tr><td><a href="Utils/HttpClient.php.html#52"><abbr title="A2A\Utils\HttpClient::get">get</abbr></a></td><td class="text-right">5</td></tr>
+       <tr><td><a href="A2AServer.php.html#468"><abbr title="A2A\A2AServer::handleTasksResubscribe">handleTasksResubscribe</abbr></a></td><td class="text-right">4</td></tr>
+       <tr><td><a href="Models/AgentSkill.php.html#82"><abbr title="A2A\Models\AgentSkill::toArray">toArray</abbr></a></td><td class="text-right">4</td></tr>
+       <tr><td><a href="Models/AgentSkill.php.html#106"><abbr title="A2A\Models\AgentSkill::fromArray">fromArray</abbr></a></td><td class="text-right">4</td></tr>
+       <tr><td><a href="A2AClient.php.html#94"><abbr title="A2A\A2AClient::getTask">getTask</abbr></a></td><td class="text-right">4</td></tr>
+       <tr><td><a href="Utils/HttpClient.php.html#30"><abbr title="A2A\Utils\HttpClient::post">post</abbr></a></td><td class="text-right">3</td></tr>
+       <tr><td><a href="Execution/DefaultAgentExecutor.php.html#19"><abbr title="A2A\Execution\DefaultAgentExecutor::execute">execute</abbr></a></td><td class="text-right">3</td></tr>
+       <tr><td><a href="Models/Message.php.html#194"><abbr title="A2A\Models\Message::getTextContent">getTextContent</abbr></a></td><td class="text-right">3</td></tr>
+       <tr><td><a href="Models/AgentCapabilities.php.html#87"><abbr title="A2A\Models\AgentCapabilities::fromArray">fromArray</abbr></a></td><td class="text-right">3</td></tr>
+       <tr><td><a href="PushNotificationManager.php.html#26"><abbr title="A2A\PushNotificationManager::setConfig">setConfig</abbr></a></td><td class="text-right">2</td></tr>
+       <tr><td><a href="Models/AgentCapabilities.php.html#69"><abbr title="A2A\Models\AgentCapabilities::toArray">toArray</abbr></a></td><td class="text-right">2</td></tr>
+       <tr><td><a href="Models/TextPart.php.html#60"><abbr title="A2A\Models\TextPart::fromArray">fromArray</abbr></a></td><td class="text-right">2</td></tr>
+       <tr><td><a href="TaskManager.php.html#23"><abbr title="A2A\TaskManager::createTask">createTask</abbr></a></td><td class="text-right">2</td></tr>
+       <tr><td><a href="Storage/Storage.php.html#204"><abbr title="A2A\Storage\Storage::createFileStore">createFileStore</abbr></a></td><td class="text-right">2</td></tr>
+       <tr><td><a href="Models/TextPart.php.html#46"><abbr title="A2A\Models\TextPart::toArray">toArray</abbr></a></td><td class="text-right">2</td></tr>
+       <tr><td><a href="Storage/Storage.php.html#161"><abbr title="A2A\Storage\Storage::deletePushConfig">deletePushConfig</abbr></a></td><td class="text-right">2</td></tr>
+
+       </tbody>
+      </table>
+     </div>
+    </div>
+   </div>
+   <footer>
+    <hr/>
+    <p>
+     <small>Generated by <a href="https://github.com/sebastianbergmann/php-code-coverage" target="_top">php-code-coverage 10.1.16</a> using <a href="https://www.php.net/" target="_top">PHP 8.3.6</a> and <a href="https://phpunit.de/">PHPUnit 10.5.55</a> at Thu Sep 18 13:25:33 UTC 2025.</small>
+    </p>
+   </footer>
+  </div>
+  <script src="_js/jquery.min.js?v=10.1.16" type="text/javascript"></script>
+  <script src="_js/d3.min.js?v=10.1.16" type="text/javascript"></script>
+  <script src="_js/nv.d3.min.js?v=10.1.16" type="text/javascript"></script>
+  <script type="text/javascript">
+$(document).ready(function() {
+  nv.addGraph(function() {
+    var chart = nv.models.multiBarChart();
+    chart.tooltips(false)
+      .showControls(false)
+      .showLegend(false)
+      .reduceXTicks(false)
+      .staggerLabels(true)
+      .yAxis.tickFormat(d3.format('d'));
+
+    d3.select('#classCoverageDistribution svg')
+      .datum(getCoverageDistributionData([20,3,3,1,0,3,4,3,2,3,2,8], "Class Coverage"))
+      .transition().duration(500).call(chart);
+
+    nv.utils.windowResize(chart.update);
+
+    return chart;
+  });
+
+  nv.addGraph(function() {
+    var chart = nv.models.multiBarChart();
+    chart.tooltips(false)
+      .showControls(false)
+      .showLegend(false)
+      .reduceXTicks(false)
+      .staggerLabels(true)
+      .yAxis.tickFormat(d3.format('d'));
+
+    d3.select('#methodCoverageDistribution svg')
+      .datum(getCoverageDistributionData([271,0,0,0,3,3,4,5,14,8,2,111], "Method Coverage"))
+      .transition().duration(500).call(chart);
+
+    nv.utils.windowResize(chart.update);
+
+    return chart;
+  });
+
+  function getCoverageDistributionData(data, label) {
+    var labels = [
+      '0%',
+      '0-10%',
+      '10-20%',
+      '20-30%',
+      '30-40%',
+      '40-50%',
+      '50-60%',
+      '60-70%',
+      '70-80%',
+      '80-90%',
+      '90-100%',
+      '100%'
+    ];
+    var values = [];
+    $.each(labels, function(key) {
+      values.push({x: labels[key], y: data[key]});
+    });
+
+    return [
+      {
+        key: label,
+        values: values,
+        color: "#4572A7"
+      }
+    ];
+  }
+  nv.addGraph(function() {
+    var chart = nv.models.scatterChart()
+      .showDistX(true)
+      .showDistY(true)
+      .showLegend(false)
+      .forceX([0, 100]);
+    chart.tooltipContent(function(graph) {
+      return '<p>' + graph.point.class + '</p>';
+    });
+
+    chart.xAxis.axisLabel('Code Coverage (in percent)');
+    chart.yAxis.axisLabel('Cyclomatic Complexity');
+
+    d3.select('#classComplexity svg')
+      .datum(getComplexityData([[48.734177215189874,28,"<a href=\"A2AClient.php.html#17\">A2A\\A2AClient<\/a>"],[28.651685393258425,51,"<a href=\"A2AProtocol.php.html#24\">A2A\\A2AProtocol<\/a>"],[59.009009009009006,102,"<a href=\"A2AServer.php.html#21\">A2A\\A2AServer<\/a>"],[0,22,"<a href=\"Client\/GrpcClient.php.html#21\">A2A\\Client\\GrpcClient<\/a>"],[5.555555555555555,9,"<a href=\"Client\/StreamingClient.php.html#14\">A2A\\Client\\StreamingClient<\/a>"],[0,4,"<a href=\"Events\/EventBusManager.php.html#9\">A2A\\Events\\EventBusManager<\/a>"],[80,7,"<a href=\"Events\/ExecutionEventBusImpl.php.html#9\">A2A\\Events\\ExecutionEventBusImpl<\/a>"],[0,1,"<a href=\"Exceptions\/A2AErrorCodes.php.html#7\">A2A\\Exceptions\\A2AErrorCodes<\/a>"],[100,0,"<a href=\"Exceptions\/A2AException.php.html#7\">A2A\\Exceptions\\A2AException<\/a>"],[0,1,"<a href=\"Exceptions\/A2ASpecificErrors.php.html#7\">A2A\\Exceptions\\TaskNotCancelableException<\/a>"],[0,1,"<a href=\"Exceptions\/A2ASpecificErrors.php.html#15\">A2A\\Exceptions\\PushNotificationNotSupportedException<\/a>"],[0,1,"<a href=\"Exceptions\/A2ASpecificErrors.php.html#23\">A2A\\Exceptions\\UnsupportedOperationException<\/a>"],[0,1,"<a href=\"Exceptions\/A2ASpecificErrors.php.html#31\">A2A\\Exceptions\\ContentTypeNotSupportedException<\/a>"],[0,1,"<a href=\"Exceptions\/A2ASpecificErrors.php.html#39\">A2A\\Exceptions\\InvalidAgentResponseException<\/a>"],[100,0,"<a href=\"Exceptions\/InvalidRequestException.php.html#7\">A2A\\Exceptions\\InvalidRequestException<\/a>"],[100,0,"<a href=\"Exceptions\/TaskNotFoundException.php.html#7\">A2A\\Exceptions\\TaskNotFoundException<\/a>"],[76.47058823529412,4,"<a href=\"Execution\/DefaultAgentExecutor.php.html#15\">A2A\\Execution\\DefaultAgentExecutor<\/a>"],[0,9,"<a href=\"Execution\/ResultManager.php.html#11\">A2A\\Execution\\ResultManager<\/a>"],[100,2,"<a href=\"Handlers\/EchoMessageHandler.php.html#10\">A2A\\Handlers\\EchoMessageHandler<\/a>"],[57.57575757575758,14,"<a href=\"Models\/AgentCapabilities.php.html#10\">A2A\\Models\\AgentCapabilities<\/a>"],[64.51612903225806,40,"<a href=\"Models\/AgentCard.php.html#7\">A2A\\Models\\AgentCard<\/a>"],[0,39,"<a href=\"Models\/AgentCardV2.php.html#16\">A2A\\Models\\AgentCardV2<\/a>"],[0,13,"<a href=\"Models\/AgentExtension.php.html#10\">A2A\\Models\\AgentExtension<\/a>"],[0,13,"<a href=\"Models\/AgentInterface.php.html#11\">A2A\\Models\\AgentInterface<\/a>"],[50,5,"<a href=\"Models\/AgentProvider.php.html#10\">A2A\\Models\\AgentProvider<\/a>"],[60,19,"<a href=\"Models\/AgentSkill.php.html#10\">A2A\\Models\\AgentSkill<\/a>"],[0,27,"<a href=\"Models\/Artifact.php.html#10\">A2A\\Models\\Artifact<\/a>"],[11.76470588235294,10,"<a href=\"Models\/DataPart.php.html#10\">A2A\\Models\\DataPart<\/a>"],[0,4,"<a href=\"Models\/FileFactory.php.html#12\">A2A\\Models\\FileFactory<\/a>"],[11.76470588235294,9,"<a href=\"Models\/FilePart.php.html#10\">A2A\\Models\\FilePart<\/a>"],[5,12,"<a href=\"Models\/FileWithBytes.php.html#10\">A2A\\Models\\FileWithBytes<\/a>"],[0,12,"<a href=\"Models\/FileWithUri.php.html#10\">A2A\\Models\\FileWithUri<\/a>"],[83.82352941176471,38,"<a href=\"Models\/Message.php.html#11\">A2A\\Models\\Message<\/a>"],[0,41,"<a href=\"Models\/MessageV2.php.html#16\">A2A\\Models\\MessageV2<\/a>"],[95.23809523809523,10,"<a href=\"Models\/Part.php.html#8\">A2A\\Models\\Part<\/a>"],[40,6,"<a href=\"Models\/PartFactory.php.html#12\">A2A\\Models\\PartFactory<\/a>"],[100,7,"<a href=\"Models\/PushNotificationConfig.php.html#7\">A2A\\Models\\PushNotificationConfig<\/a>"],[100,1,"<a href=\"Models\/RequestContext.php.html#7\">A2A\\Models\\RequestContext<\/a>"],[81.44329896907216,45,"<a href=\"Models\/Task.php.html#11\">A2A\\Models\\Task<\/a>"],[0,20,"<a href=\"Models\/TaskArtifactUpdateEvent.php.html#10\">A2A\\Models\\TaskArtifactUpdateEvent<\/a>"],[8.333333333333332,13,"<a href=\"Models\/TaskStatus.php.html#10\">A2A\\Models\\TaskStatus<\/a>"],[15.151515151515152,14,"<a href=\"Models\/TaskStatusUpdateEvent.php.html#10\">A2A\\Models\\TaskStatusUpdateEvent<\/a>"],[0,27,"<a href=\"Models\/TaskV2.php.html#13\">A2A\\Models\\TaskV2<\/a>"],[70.58823529411765,10,"<a href=\"Models\/TextPart.php.html#10\">A2A\\Models\\TextPart<\/a>"],[55.55555555555556,11,"<a href=\"PushNotificationManager.php.html#13\">A2A\\PushNotificationManager<\/a>"],[40,31,"<a href=\"Storage\/Storage.php.html#32\">A2A\\Storage\\Storage<\/a>"],[0,8,"<a href=\"Streaming\/SSEStreamer.php.html#7\">A2A\\Streaming\\SSEStreamer<\/a>"],[0,3,"<a href=\"Streaming\/StreamingServer.php.html#14\">A2A\\Streaming\\StreamingServer<\/a>"],[90.9090909090909,15,"<a href=\"TaskManager.php.html#13\">A2A\\TaskManager<\/a>"],[66.66666666666666,7,"<a href=\"Utils\/HttpClient.php.html#11\">A2A\\Utils\\HttpClient<\/a>"],[100,10,"<a href=\"Utils\/JsonRpc.php.html#9\">A2A\\Utils\\JsonRpc<\/a>"],[100,1,"<a href=\"Models\/TaskState.php.html#7\">A2A\\Models\\TaskState<\/a>"]], 'Class Complexity'))
+      .transition()
+      .duration(500)
+      .call(chart);
+
+    nv.utils.windowResize(chart.update);
+
+    return chart;
+  });
+
+  nv.addGraph(function() {
+    var chart = nv.models.scatterChart()
+      .showDistX(true)
+      .showDistY(true)
+      .showLegend(false)
+      .forceX([0, 100]);
+    chart.tooltipContent(function(graph) {
+      return '<p>' + graph.point.class + '</p>';
+    });
+
+    chart.xAxis.axisLabel('Code Coverage (in percent)');
+    chart.yAxis.axisLabel('Method Complexity');
+
+    d3.select('#methodComplexity svg')
+      .datum(getComplexityData([[100,1,"<a href=\"A2AClient.php.html#22\">A2A\\A2AClient::__construct<\/a>"],[100,2,"<a href=\"A2AClient.php.html#32\">A2A\\A2AClient::sendMessage<\/a>"],[100,2,"<a href=\"A2AClient.php.html#62\">A2A\\A2AClient::getAgentCard<\/a>"],[100,3,"<a href=\"A2AClient.php.html#75\">A2A\\A2AClient::ping<\/a>"],[88.23529411764706,4,"<a href=\"A2AClient.php.html#94\">A2A\\A2AClient::getTask<\/a>"],[0,2,"<a href=\"A2AClient.php.html#120\">A2A\\A2AClient::cancelTask<\/a>"],[94.73684210526315,3,"<a href=\"A2AClient.php.html#139\">A2A\\A2AClient::sendTask<\/a>"],[0,2,"<a href=\"A2AClient.php.html#166\">A2A\\A2AClient::setPushNotificationConfig<\/a>"],[0,3,"<a href=\"A2AClient.php.html#190\">A2A\\A2AClient::getPushNotificationConfig<\/a>"],[0,2,"<a href=\"A2AClient.php.html#212\">A2A\\A2AClient::listPushNotificationConfigs<\/a>"],[0,2,"<a href=\"A2AClient.php.html#230\">A2A\\A2AClient::deletePushNotificationConfig<\/a>"],[0,2,"<a href=\"A2AClient.php.html#249\">A2A\\A2AClient::resubscribeTask<\/a>"],[100,1,"<a href=\"A2AProtocol.php.html#33\">A2A\\A2AProtocol::__construct<\/a>"],[100,1,"<a href=\"A2AProtocol.php.html#46\">A2A\\A2AProtocol::getAgentCard<\/a>"],[100,1,"<a href=\"A2AProtocol.php.html#51\">A2A\\A2AProtocol::createTask<\/a>"],[0,2,"<a href=\"A2AProtocol.php.html#66\">A2A\\A2AProtocol::sendMessage<\/a>"],[58.620689655172406,14,"<a href=\"A2AProtocol.php.html#96\">A2A\\A2AProtocol::handleRequest<\/a>"],[100,1,"<a href=\"A2AProtocol.php.html#135\">A2A\\A2AProtocol::handleMessage<\/a>"],[0,1,"<a href=\"A2AProtocol.php.html#154\">A2A\\A2AProtocol::addMessageHandler<\/a>"],[37.5,4,"<a href=\"A2AProtocol.php.html#159\">A2A\\A2AProtocol::processMessage<\/a>"],[0,4,"<a href=\"A2AProtocol.php.html#185\">A2A\\A2AProtocol::handleGetTask<\/a>"],[0,3,"<a href=\"A2AProtocol.php.html#212\">A2A\\A2AProtocol::handleCancelTask<\/a>"],[0,2,"<a href=\"A2AProtocol.php.html#230\">A2A\\A2AProtocol::handleResubscribeTask<\/a>"],[0,3,"<a href=\"A2AProtocol.php.html#243\">A2A\\A2AProtocol::handleSetPushConfig<\/a>"],[0,2,"<a href=\"A2AProtocol.php.html#256\">A2A\\A2AProtocol::handleGetPushConfig<\/a>"],[0,1,"<a href=\"A2AProtocol.php.html#268\">A2A\\A2AProtocol::handleListPushConfig<\/a>"],[0,2,"<a href=\"A2AProtocol.php.html#273\">A2A\\A2AProtocol::handleDeletePushConfig<\/a>"],[0,8,"<a href=\"A2AProtocol.php.html#286\">A2A\\A2AProtocol::handleSendTask<\/a>"],[100,1,"<a href=\"A2AProtocol.php.html#353\">A2A\\A2AProtocol::getTaskManager<\/a>"],[100,1,"<a href=\"A2AServer.php.html#30\">A2A\\A2AServer::__construct<\/a>"],[100,1,"<a href=\"A2AServer.php.html#48\">A2A\\A2AServer::addMessageHandler<\/a>"],[70.96774193548387,23,"<a href=\"A2AServer.php.html#53\">A2A\\A2AServer::handleRequest<\/a>"],[61.19402985074627,21,"<a href=\"A2AServer.php.html#149\">A2A\\A2AServer::handleMessage<\/a>"],[0,8,"<a href=\"A2AServer.php.html#276\">A2A\\A2AServer::handleStreamMessage<\/a>"],[76.92307692307693,5,"<a href=\"A2AServer.php.html#324\">A2A\\A2AServer::handleTasksGet<\/a>"],[0,3,"<a href=\"A2AServer.php.html#353\">A2A\\A2AServer::handleTasksCancel<\/a>"],[80,9,"<a href=\"A2AServer.php.html#380\">A2A\\A2AServer::handleTasksSend<\/a>"],[60.71428571428571,4,"<a href=\"A2AServer.php.html#468\">A2A\\A2AServer::handleTasksResubscribe<\/a>"],[67.3469387755102,8,"<a href=\"A2AServer.php.html#510\">A2A\\A2AServer::handlePushNotificationConfigSet<\/a>"],[52.94117647058824,5,"<a href=\"A2AServer.php.html#582\">A2A\\A2AServer::handlePushNotificationConfigGet<\/a>"],[46.666666666666664,5,"<a href=\"A2AServer.php.html#632\">A2A\\A2AServer::handlePushNotificationConfigList<\/a>"],[54.166666666666664,4,"<a href=\"A2AServer.php.html#678\">A2A\\A2AServer::handlePushNotificationConfigDelete<\/a>"],[76.19047619047619,5,"<a href=\"A2AServer.php.html#720\">A2A\\A2AServer::progressTaskState<\/a>"],[0,1,"<a href=\"Client\/GrpcClient.php.html#28\">A2A\\Client\\GrpcClient::__construct<\/a>"],[0,2,"<a href=\"Client\/GrpcClient.php.html#41\">A2A\\Client\\GrpcClient::connect<\/a>"],[0,1,"<a href=\"Client\/GrpcClient.php.html#60\">A2A\\Client\\GrpcClient::sendMessage<\/a>"],[0,1,"<a href=\"Client\/GrpcClient.php.html#79\">A2A\\Client\\GrpcClient::getAgentCard<\/a>"],[0,2,"<a href=\"Client\/GrpcClient.php.html#91\">A2A\\Client\\GrpcClient::ping<\/a>"],[0,1,"<a href=\"Client\/GrpcClient.php.html#113\">A2A\\Client\\GrpcClient::getTask<\/a>"],[0,1,"<a href=\"Client\/GrpcClient.php.html#130\">A2A\\Client\\GrpcClient::cancelTask<\/a>"],[0,1,"<a href=\"Client\/GrpcClient.php.html#146\">A2A\\Client\\GrpcClient::setPushNotificationConfig<\/a>"],[0,1,"<a href=\"Client\/GrpcClient.php.html#162\">A2A\\Client\\GrpcClient::getPushNotificationConfig<\/a>"],[0,1,"<a href=\"Client\/GrpcClient.php.html#178\">A2A\\Client\\GrpcClient::listPushNotificationConfigs<\/a>"],[0,1,"<a href=\"Client\/GrpcClient.php.html#190\">A2A\\Client\\GrpcClient::deletePushNotificationConfig<\/a>"],[0,1,"<a href=\"Client\/GrpcClient.php.html#206\">A2A\\Client\\GrpcClient::resubscribeTask<\/a>"],[0,2,"<a href=\"Client\/GrpcClient.php.html#222\">A2A\\Client\\GrpcClient::disconnect<\/a>"],[0,2,"<a href=\"Client\/GrpcClient.php.html#233\">A2A\\Client\\GrpcClient::ensureConnected<\/a>"],[0,1,"<a href=\"Client\/GrpcClient.php.html#243\">A2A\\Client\\GrpcClient::isAvailable<\/a>"],[0,3,"<a href=\"Client\/GrpcClient.php.html#251\">A2A\\Client\\GrpcClient::getGrpcInfo<\/a>"],[100,1,"<a href=\"Client\/StreamingClient.php.html#19\">A2A\\Client\\StreamingClient::__construct<\/a>"],[0,1,"<a href=\"Client\/StreamingClient.php.html#25\">A2A\\Client\\StreamingClient::sendMessageStream<\/a>"],[0,1,"<a href=\"Client\/StreamingClient.php.html#37\">A2A\\Client\\StreamingClient::resubscribeTask<\/a>"],[0,6,"<a href=\"Client\/StreamingClient.php.html#49\">A2A\\Client\\StreamingClient::streamRequest<\/a>"],[0,2,"<a href=\"Events\/EventBusManager.php.html#13\">A2A\\Events\\EventBusManager::getEventBus<\/a>"],[0,1,"<a href=\"Events\/EventBusManager.php.html#21\">A2A\\Events\\EventBusManager::removeEventBus<\/a>"],[0,1,"<a href=\"Events\/EventBusManager.php.html#26\">A2A\\Events\\EventBusManager::cleanup<\/a>"],[100,4,"<a href=\"Events\/ExecutionEventBusImpl.php.html#13\">A2A\\Events\\ExecutionEventBusImpl::publish<\/a>"],[100,1,"<a href=\"Events\/ExecutionEventBusImpl.php.html#23\">A2A\\Events\\ExecutionEventBusImpl::subscribe<\/a>"],[0,1,"<a href=\"Events\/ExecutionEventBusImpl.php.html#28\">A2A\\Events\\ExecutionEventBusImpl::unsubscribe<\/a>"],[75,1,"<a href=\"Events\/ExecutionEventBusImpl.php.html#33\">A2A\\Events\\ExecutionEventBusImpl::getTaskIdFromEvent<\/a>"],[0,1,"<a href=\"Exceptions\/A2AErrorCodes.php.html#24\">A2A\\Exceptions\\A2AErrorCodes::getErrorMessage<\/a>"],[0,1,"<a href=\"Exceptions\/A2ASpecificErrors.php.html#9\">A2A\\Exceptions\\TaskNotCancelableException::__construct<\/a>"],[0,1,"<a href=\"Exceptions\/A2ASpecificErrors.php.html#17\">A2A\\Exceptions\\PushNotificationNotSupportedException::__construct<\/a>"],[0,1,"<a href=\"Exceptions\/A2ASpecificErrors.php.html#25\">A2A\\Exceptions\\UnsupportedOperationException::__construct<\/a>"],[0,1,"<a href=\"Exceptions\/A2ASpecificErrors.php.html#33\">A2A\\Exceptions\\ContentTypeNotSupportedException::__construct<\/a>"],[0,1,"<a href=\"Exceptions\/A2ASpecificErrors.php.html#41\">A2A\\Exceptions\\InvalidAgentResponseException::__construct<\/a>"],[75,3,"<a href=\"Execution\/DefaultAgentExecutor.php.html#19\">A2A\\Execution\\DefaultAgentExecutor::execute<\/a>"],[100,1,"<a href=\"Execution\/DefaultAgentExecutor.php.html#51\">A2A\\Execution\\DefaultAgentExecutor::cancelTask<\/a>"],[0,1,"<a href=\"Execution\/ResultManager.php.html#15\">A2A\\Execution\\ResultManager::processEvents<\/a>"],[0,6,"<a href=\"Execution\/ResultManager.php.html#24\">A2A\\Execution\\ResultManager::handleEvent<\/a>"],[0,1,"<a href=\"Execution\/ResultManager.php.html#43\">A2A\\Execution\\ResultManager::getResult<\/a>"],[0,1,"<a href=\"Execution\/ResultManager.php.html#48\">A2A\\Execution\\ResultManager::cleanup<\/a>"],[100,1,"<a href=\"Handlers\/EchoMessageHandler.php.html#12\">A2A\\Handlers\\EchoMessageHandler::handle<\/a>"],[100,1,"<a href=\"Handlers\/EchoMessageHandler.php.html#23\">A2A\\Handlers\\EchoMessageHandler::canHandle<\/a>"],[100,1,"<a href=\"Models\/AgentCapabilities.php.html#17\">A2A\\Models\\AgentCapabilities::__construct<\/a>"],[0,1,"<a href=\"Models\/AgentCapabilities.php.html#29\">A2A\\Models\\AgentCapabilities::isStreaming<\/a>"],[0,1,"<a href=\"Models\/AgentCapabilities.php.html#34\">A2A\\Models\\AgentCapabilities::setStreaming<\/a>"],[0,1,"<a href=\"Models\/AgentCapabilities.php.html#39\">A2A\\Models\\AgentCapabilities::isPushNotifications<\/a>"],[0,1,"<a href=\"Models\/AgentCapabilities.php.html#44\">A2A\\Models\\AgentCapabilities::setPushNotifications<\/a>"],[0,1,"<a href=\"Models\/AgentCapabilities.php.html#49\">A2A\\Models\\AgentCapabilities::isStateTransitionHistory<\/a>"],[0,1,"<a href=\"Models\/AgentCapabilities.php.html#54\">A2A\\Models\\AgentCapabilities::setStateTransitionHistory<\/a>"],[0,1,"<a href=\"Models\/AgentCapabilities.php.html#59\">A2A\\Models\\AgentCapabilities::getExtensions<\/a>"],[0,1,"<a href=\"Models\/AgentCapabilities.php.html#64\">A2A\\Models\\AgentCapabilities::addExtension<\/a>"],[63.63636363636363,2,"<a href=\"Models\/AgentCapabilities.php.html#69\">A2A\\Models\\AgentCapabilities::toArray<\/a>"],[80,3,"<a href=\"Models\/AgentCapabilities.php.html#87\">A2A\\Models\\AgentCapabilities::fromArray<\/a>"],[100,1,"<a href=\"Models\/AgentCard.php.html#26\">A2A\\Models\\AgentCard::__construct<\/a>"],[100,1,"<a href=\"Models\/AgentCard.php.html#48\">A2A\\Models\\AgentCard::getName<\/a>"],[100,1,"<a href=\"Models\/AgentCard.php.html#53\">A2A\\Models\\AgentCard::getId<\/a>"],[100,1,"<a href=\"Models\/AgentCard.php.html#58\">A2A\\Models\\AgentCard::getDescription<\/a>"],[0,1,"<a href=\"Models\/AgentCard.php.html#63\">A2A\\Models\\AgentCard::getUrl<\/a>"],[100,1,"<a href=\"Models\/AgentCard.php.html#68\">A2A\\Models\\AgentCard::getVersion<\/a>"],[0,1,"<a href=\"Models\/AgentCard.php.html#73\">A2A\\Models\\AgentCard::getProtocolVersion<\/a>"],[0,1,"<a href=\"Models\/AgentCard.php.html#78\">A2A\\Models\\AgentCard::getCapabilities<\/a>"],[0,1,"<a href=\"Models\/AgentCard.php.html#83\">A2A\\Models\\AgentCard::getDefaultInputModes<\/a>"],[0,1,"<a href=\"Models\/AgentCard.php.html#88\">A2A\\Models\\AgentCard::getDefaultOutputModes<\/a>"],[100,1,"<a href=\"Models\/AgentCard.php.html#93\">A2A\\Models\\AgentCard::getSkills<\/a>"],[100,1,"<a href=\"Models\/AgentCard.php.html#98\">A2A\\Models\\AgentCard::setProvider<\/a>"],[100,1,"<a href=\"Models\/AgentCard.php.html#103\">A2A\\Models\\AgentCard::getProvider<\/a>"],[0,1,"<a href=\"Models\/AgentCard.php.html#108\">A2A\\Models\\AgentCard::setSecuritySchemes<\/a>"],[0,1,"<a href=\"Models\/AgentCard.php.html#113\">A2A\\Models\\AgentCard::setSecurity<\/a>"],[0,1,"<a href=\"Models\/AgentCard.php.html#118\">A2A\\Models\\AgentCard::setAdditionalInterfaces<\/a>"],[0,1,"<a href=\"Models\/AgentCard.php.html#123\">A2A\\Models\\AgentCard::getAdditionalInterfaces<\/a>"],[0,2,"<a href=\"Models\/AgentCard.php.html#128\">A2A\\Models\\AgentCard::addAdditionalInterface<\/a>"],[0,1,"<a href=\"Models\/AgentCard.php.html#136\">A2A\\Models\\AgentCard::setDocumentationUrl<\/a>"],[0,1,"<a href=\"Models\/AgentCard.php.html#141\">A2A\\Models\\AgentCard::setIconUrl<\/a>"],[0,1,"<a href=\"Models\/AgentCard.php.html#146\">A2A\\Models\\AgentCard::setSupportsAuthenticatedExtendedCard<\/a>"],[71.42857142857143,7,"<a href=\"Models\/AgentCard.php.html#151\">A2A\\Models\\AgentCard::toArray<\/a>"],[70.58823529411765,11,"<a href=\"Models\/AgentCard.php.html#196\">A2A\\Models\\AgentCard::fromArray<\/a>"],[0,1,"<a href=\"Models\/AgentCardV2.php.html#36\">A2A\\Models\\AgentCardV2::__construct<\/a>"],[0,1,"<a href=\"Models\/AgentCardV2.php.html#58\">A2A\\Models\\AgentCardV2::getName<\/a>"],[0,1,"<a href=\"Models\/AgentCardV2.php.html#63\">A2A\\Models\\AgentCardV2::getDescription<\/a>"],[0,1,"<a href=\"Models\/AgentCardV2.php.html#68\">A2A\\Models\\AgentCardV2::getUrl<\/a>"],[0,1,"<a href=\"Models\/AgentCardV2.php.html#73\">A2A\\Models\\AgentCardV2::getVersion<\/a>"],[0,1,"<a href=\"Models\/AgentCardV2.php.html#78\">A2A\\Models\\AgentCardV2::getProtocolVersion<\/a>"],[0,1,"<a href=\"Models\/AgentCardV2.php.html#83\">A2A\\Models\\AgentCardV2::getCapabilities<\/a>"],[0,1,"<a href=\"Models\/AgentCardV2.php.html#88\">A2A\\Models\\AgentCardV2::getDefaultInputModes<\/a>"],[0,1,"<a href=\"Models\/AgentCardV2.php.html#93\">A2A\\Models\\AgentCardV2::getDefaultOutputModes<\/a>"],[0,1,"<a href=\"Models\/AgentCardV2.php.html#98\">A2A\\Models\\AgentCardV2::getSkills<\/a>"],[0,1,"<a href=\"Models\/AgentCardV2.php.html#103\">A2A\\Models\\AgentCardV2::setProvider<\/a>"],[0,1,"<a href=\"Models\/AgentCardV2.php.html#108\">A2A\\Models\\AgentCardV2::getProvider<\/a>"],[0,1,"<a href=\"Models\/AgentCardV2.php.html#113\">A2A\\Models\\AgentCardV2::setSecuritySchemes<\/a>"],[0,1,"<a href=\"Models\/AgentCardV2.php.html#118\">A2A\\Models\\AgentCardV2::setSecurity<\/a>"],[0,1,"<a href=\"Models\/AgentCardV2.php.html#123\">A2A\\Models\\AgentCardV2::setAdditionalInterfaces<\/a>"],[0,1,"<a href=\"Models\/AgentCardV2.php.html#128\">A2A\\Models\\AgentCardV2::setPreferredTransport<\/a>"],[0,1,"<a href=\"Models\/AgentCardV2.php.html#133\">A2A\\Models\\AgentCardV2::setDocumentationUrl<\/a>"],[0,1,"<a href=\"Models\/AgentCardV2.php.html#138\">A2A\\Models\\AgentCardV2::setIconUrl<\/a>"],[0,1,"<a href=\"Models\/AgentCardV2.php.html#143\">A2A\\Models\\AgentCardV2::setSupportsAuthenticatedExtendedCard<\/a>"],[0,1,"<a href=\"Models\/AgentCardV2.php.html#148\">A2A\\Models\\AgentCardV2::addSkill<\/a>"],[0,8,"<a href=\"Models\/AgentCardV2.php.html#153\">A2A\\Models\\AgentCardV2::toArray<\/a>"],[0,11,"<a href=\"Models\/AgentCardV2.php.html#199\">A2A\\Models\\AgentCardV2::fromArray<\/a>"],[0,1,"<a href=\"Models\/AgentExtension.php.html#17\">A2A\\Models\\AgentExtension::__construct<\/a>"],[0,1,"<a href=\"Models\/AgentExtension.php.html#29\">A2A\\Models\\AgentExtension::getUri<\/a>"],[0,1,"<a href=\"Models\/AgentExtension.php.html#34\">A2A\\Models\\AgentExtension::setDescription<\/a>"],[0,1,"<a href=\"Models\/AgentExtension.php.html#39\">A2A\\Models\\AgentExtension::getDescription<\/a>"],[0,1,"<a href=\"Models\/AgentExtension.php.html#44\">A2A\\Models\\AgentExtension::setRequired<\/a>"],[0,1,"<a href=\"Models\/AgentExtension.php.html#49\">A2A\\Models\\AgentExtension::isRequired<\/a>"],[0,1,"<a href=\"Models\/AgentExtension.php.html#54\">A2A\\Models\\AgentExtension::setParams<\/a>"],[0,1,"<a href=\"Models\/AgentExtension.php.html#59\">A2A\\Models\\AgentExtension::getParams<\/a>"],[0,4,"<a href=\"Models\/AgentExtension.php.html#64\">A2A\\Models\\AgentExtension::toArray<\/a>"],[0,1,"<a href=\"Models\/AgentExtension.php.html#85\">A2A\\Models\\AgentExtension::fromArray<\/a>"],[0,1,"<a href=\"Models\/AgentInterface.php.html#16\">A2A\\Models\\AgentInterface::__construct<\/a>"],[0,1,"<a href=\"Models\/AgentInterface.php.html#22\">A2A\\Models\\AgentInterface::getTransport<\/a>"],[0,1,"<a href=\"Models\/AgentInterface.php.html#27\">A2A\\Models\\AgentInterface::setTransport<\/a>"],[0,1,"<a href=\"Models\/AgentInterface.php.html#32\">A2A\\Models\\AgentInterface::getUrl<\/a>"],[0,1,"<a href=\"Models\/AgentInterface.php.html#37\">A2A\\Models\\AgentInterface::setUrl<\/a>"],[0,1,"<a href=\"Models\/AgentInterface.php.html#45\">A2A\\Models\\AgentInterface::isJsonRpc<\/a>"],[0,1,"<a href=\"Models\/AgentInterface.php.html#53\">A2A\\Models\\AgentInterface::isGrpc<\/a>"],[0,1,"<a href=\"Models\/AgentInterface.php.html#61\">A2A\\Models\\AgentInterface::isHttpJson<\/a>"],[0,1,"<a href=\"Models\/AgentInterface.php.html#66\">A2A\\Models\\AgentInterface::toArray<\/a>"],[0,1,"<a href=\"Models\/AgentInterface.php.html#74\">A2A\\Models\\AgentInterface::fromArray<\/a>"],[0,1,"<a href=\"Models\/AgentInterface.php.html#85\">A2A\\Models\\AgentInterface::jsonRpc<\/a>"],[0,1,"<a href=\"Models\/AgentInterface.php.html#93\">A2A\\Models\\AgentInterface::grpc<\/a>"],[0,1,"<a href=\"Models\/AgentInterface.php.html#101\">A2A\\Models\\AgentInterface::httpJson<\/a>"],[100,1,"<a href=\"Models\/AgentProvider.php.html#15\">A2A\\Models\\AgentProvider::__construct<\/a>"],[0,1,"<a href=\"Models\/AgentProvider.php.html#21\">A2A\\Models\\AgentProvider::getOrganization<\/a>"],[0,1,"<a href=\"Models\/AgentProvider.php.html#26\">A2A\\Models\\AgentProvider::getUrl<\/a>"],[100,1,"<a href=\"Models\/AgentProvider.php.html#31\">A2A\\Models\\AgentProvider::toArray<\/a>"],[0,1,"<a href=\"Models\/AgentProvider.php.html#39\">A2A\\Models\\AgentProvider::fromArray<\/a>"],[100,1,"<a href=\"Models\/AgentSkill.php.html#20\">A2A\\Models\\AgentSkill::__construct<\/a>"],[0,1,"<a href=\"Models\/AgentSkill.php.html#32\">A2A\\Models\\AgentSkill::getId<\/a>"],[0,1,"<a href=\"Models\/AgentSkill.php.html#37\">A2A\\Models\\AgentSkill::getName<\/a>"],[0,1,"<a href=\"Models\/AgentSkill.php.html#42\">A2A\\Models\\AgentSkill::getDescription<\/a>"],[0,1,"<a href=\"Models\/AgentSkill.php.html#47\">A2A\\Models\\AgentSkill::getTags<\/a>"],[0,1,"<a href=\"Models\/AgentSkill.php.html#52\">A2A\\Models\\AgentSkill::setExamples<\/a>"],[0,1,"<a href=\"Models\/AgentSkill.php.html#57\">A2A\\Models\\AgentSkill::getExamples<\/a>"],[0,1,"<a href=\"Models\/AgentSkill.php.html#62\">A2A\\Models\\AgentSkill::setInputModes<\/a>"],[0,1,"<a href=\"Models\/AgentSkill.php.html#67\">A2A\\Models\\AgentSkill::getInputModes<\/a>"],[0,1,"<a href=\"Models\/AgentSkill.php.html#72\">A2A\\Models\\AgentSkill::setOutputModes<\/a>"],[0,1,"<a href=\"Models\/AgentSkill.php.html#77\">A2A\\Models\\AgentSkill::getOutputModes<\/a>"],[76.92307692307693,4,"<a href=\"Models\/AgentSkill.php.html#82\">A2A\\Models\\AgentSkill::toArray<\/a>"],[76.92307692307693,4,"<a href=\"Models\/AgentSkill.php.html#106\">A2A\\Models\\AgentSkill::fromArray<\/a>"],[0,1,"<a href=\"Models\/Artifact.php.html#19\">A2A\\Models\\Artifact::__construct<\/a>"],[0,1,"<a href=\"Models\/Artifact.php.html#25\">A2A\\Models\\Artifact::getArtifactId<\/a>"],[0,1,"<a href=\"Models\/Artifact.php.html#30\">A2A\\Models\\Artifact::getParts<\/a>"],[0,1,"<a href=\"Models\/Artifact.php.html#35\">A2A\\Models\\Artifact::setParts<\/a>"],[0,1,"<a href=\"Models\/Artifact.php.html#40\">A2A\\Models\\Artifact::addPart<\/a>"],[0,1,"<a href=\"Models\/Artifact.php.html#45\">A2A\\Models\\Artifact::getName<\/a>"],[0,1,"<a href=\"Models\/Artifact.php.html#50\">A2A\\Models\\Artifact::setName<\/a>"],[0,1,"<a href=\"Models\/Artifact.php.html#55\">A2A\\Models\\Artifact::getDescription<\/a>"],[0,1,"<a href=\"Models\/Artifact.php.html#60\">A2A\\Models\\Artifact::setDescription<\/a>"],[0,1,"<a href=\"Models\/Artifact.php.html#65\">A2A\\Models\\Artifact::getExtensions<\/a>"],[0,1,"<a href=\"Models\/Artifact.php.html#70\">A2A\\Models\\Artifact::setExtensions<\/a>"],[0,2,"<a href=\"Models\/Artifact.php.html#75\">A2A\\Models\\Artifact::addExtension<\/a>"],[0,1,"<a href=\"Models\/Artifact.php.html#83\">A2A\\Models\\Artifact::getMetadata<\/a>"],[0,1,"<a href=\"Models\/Artifact.php.html#88\">A2A\\Models\\Artifact::setMetadata<\/a>"],[0,5,"<a href=\"Models\/Artifact.php.html#93\">A2A\\Models\\Artifact::toArray<\/a>"],[0,7,"<a href=\"Models\/Artifact.php.html#119\">A2A\\Models\\Artifact::fromArray<\/a>"],[100,1,"<a href=\"Models\/DataPart.php.html#16\">A2A\\Models\\DataPart::__construct<\/a>"],[100,1,"<a href=\"Models\/DataPart.php.html#21\">A2A\\Models\\DataPart::getKind<\/a>"],[0,1,"<a href=\"Models\/DataPart.php.html#26\">A2A\\Models\\DataPart::getData<\/a>"],[0,1,"<a href=\"Models\/DataPart.php.html#31\">A2A\\Models\\DataPart::setData<\/a>"],[0,1,"<a href=\"Models\/DataPart.php.html#36\">A2A\\Models\\DataPart::getMetadata<\/a>"],[0,1,"<a href=\"Models\/DataPart.php.html#41\">A2A\\Models\\DataPart::setMetadata<\/a>"],[0,2,"<a href=\"Models\/DataPart.php.html#46\">A2A\\Models\\DataPart::toArray<\/a>"],[0,2,"<a href=\"Models\/DataPart.php.html#60\">A2A\\Models\\DataPart::fromArray<\/a>"],[0,4,"<a href=\"Models\/FileFactory.php.html#14\">A2A\\Models\\FileFactory::fromArray<\/a>"],[100,1,"<a href=\"Models\/FilePart.php.html#16\">A2A\\Models\\FilePart::__construct<\/a>"],[100,1,"<a href=\"Models\/FilePart.php.html#21\">A2A\\Models\\FilePart::getKind<\/a>"],[0,1,"<a href=\"Models\/FilePart.php.html#26\">A2A\\Models\\FilePart::getFile<\/a>"],[0,1,"<a href=\"Models\/FilePart.php.html#31\">A2A\\Models\\FilePart::getMetadata<\/a>"],[0,1,"<a href=\"Models\/FilePart.php.html#36\">A2A\\Models\\FilePart::setMetadata<\/a>"],[0,2,"<a href=\"Models\/FilePart.php.html#41\">A2A\\Models\\FilePart::toArray<\/a>"],[0,2,"<a href=\"Models\/FilePart.php.html#55\">A2A\\Models\\FilePart::fromArray<\/a>"],[100,1,"<a href=\"Models\/FileWithBytes.php.html#16\">A2A\\Models\\FileWithBytes::__construct<\/a>"],[0,1,"<a href=\"Models\/FileWithBytes.php.html#21\">A2A\\Models\\FileWithBytes::getBytes<\/a>"],[0,1,"<a href=\"Models\/FileWithBytes.php.html#26\">A2A\\Models\\FileWithBytes::getName<\/a>"],[0,1,"<a href=\"Models\/FileWithBytes.php.html#31\">A2A\\Models\\FileWithBytes::setName<\/a>"],[0,1,"<a href=\"Models\/FileWithBytes.php.html#36\">A2A\\Models\\FileWithBytes::getMimeType<\/a>"],[0,1,"<a href=\"Models\/FileWithBytes.php.html#41\">A2A\\Models\\FileWithBytes::setMimeType<\/a>"],[0,3,"<a href=\"Models\/FileWithBytes.php.html#46\">A2A\\Models\\FileWithBytes::toArray<\/a>"],[0,3,"<a href=\"Models\/FileWithBytes.php.html#63\">A2A\\Models\\FileWithBytes::fromArray<\/a>"],[0,1,"<a href=\"Models\/FileWithUri.php.html#16\">A2A\\Models\\FileWithUri::__construct<\/a>"],[0,1,"<a href=\"Models\/FileWithUri.php.html#21\">A2A\\Models\\FileWithUri::getUri<\/a>"],[0,1,"<a href=\"Models\/FileWithUri.php.html#26\">A2A\\Models\\FileWithUri::getName<\/a>"],[0,1,"<a href=\"Models\/FileWithUri.php.html#31\">A2A\\Models\\FileWithUri::setName<\/a>"],[0,1,"<a href=\"Models\/FileWithUri.php.html#36\">A2A\\Models\\FileWithUri::getMimeType<\/a>"],[0,1,"<a href=\"Models\/FileWithUri.php.html#41\">A2A\\Models\\FileWithUri::setMimeType<\/a>"],[0,3,"<a href=\"Models\/FileWithUri.php.html#46\">A2A\\Models\\FileWithUri::toArray<\/a>"],[0,3,"<a href=\"Models\/FileWithUri.php.html#63\">A2A\\Models\\FileWithUri::fromArray<\/a>"],[100,1,"<a href=\"Models\/Message.php.html#23\">A2A\\Models\\Message::__construct<\/a>"],[100,1,"<a href=\"Models\/Message.php.html#33\">A2A\\Models\\Message::createUserMessage<\/a>"],[100,1,"<a href=\"Models\/Message.php.html#41\">A2A\\Models\\Message::createAgentMessage<\/a>"],[100,1,"<a href=\"Models\/Message.php.html#49\">A2A\\Models\\Message::getMessageId<\/a>"],[100,1,"<a href=\"Models\/Message.php.html#54\">A2A\\Models\\Message::getRole<\/a>"],[100,1,"<a href=\"Models\/Message.php.html#59\">A2A\\Models\\Message::getKind<\/a>"],[100,1,"<a href=\"Models\/Message.php.html#64\">A2A\\Models\\Message::getParts<\/a>"],[100,1,"<a href=\"Models\/Message.php.html#69\">A2A\\Models\\Message::addPart<\/a>"],[100,1,"<a href=\"Models\/Message.php.html#74\">A2A\\Models\\Message::getContextId<\/a>"],[100,1,"<a href=\"Models\/Message.php.html#79\">A2A\\Models\\Message::setContextId<\/a>"],[100,1,"<a href=\"Models\/Message.php.html#84\">A2A\\Models\\Message::getTaskId<\/a>"],[100,1,"<a href=\"Models\/Message.php.html#89\">A2A\\Models\\Message::setTaskId<\/a>"],[100,1,"<a href=\"Models\/Message.php.html#94\">A2A\\Models\\Message::getReferenceTaskIds<\/a>"],[100,1,"<a href=\"Models\/Message.php.html#99\">A2A\\Models\\Message::setReferenceTaskIds<\/a>"],[100,1,"<a href=\"Models\/Message.php.html#104\">A2A\\Models\\Message::getExtensions<\/a>"],[100,1,"<a href=\"Models\/Message.php.html#109\">A2A\\Models\\Message::setExtensions<\/a>"],[100,1,"<a href=\"Models\/Message.php.html#114\">A2A\\Models\\Message::getMetadata<\/a>"],[100,1,"<a href=\"Models\/Message.php.html#119\">A2A\\Models\\Message::setMetadata<\/a>"],[82.35294117647058,6,"<a href=\"Models\/Message.php.html#124\">A2A\\Models\\Message::toArray<\/a>"],[80,8,"<a href=\"Models\/Message.php.html#156\">A2A\\Models\\Message::fromArray<\/a>"],[75,3,"<a href=\"Models\/Message.php.html#194\">A2A\\Models\\Message::getTextContent<\/a>"],[0,1,"<a href=\"Models\/Message.php.html#205\">A2A\\Models\\Message::getId<\/a>"],[0,1,"<a href=\"Models\/Message.php.html#210\">A2A\\Models\\Message::getContent<\/a>"],[0,1,"<a href=\"Models\/Message.php.html#215\">A2A\\Models\\Message::getType<\/a>"],[0,1,"<a href=\"Models\/MessageV2.php.html#28\">A2A\\Models\\MessageV2::__construct<\/a>"],[0,1,"<a href=\"Models\/MessageV2.php.html#38\">A2A\\Models\\MessageV2::createUserMessage<\/a>"],[0,1,"<a href=\"Models\/MessageV2.php.html#46\">A2A\\Models\\MessageV2::createAgentMessage<\/a>"],[0,1,"<a href=\"Models\/MessageV2.php.html#54\">A2A\\Models\\MessageV2::getMessageId<\/a>"],[0,1,"<a href=\"Models\/MessageV2.php.html#59\">A2A\\Models\\MessageV2::getRole<\/a>"],[0,1,"<a href=\"Models\/MessageV2.php.html#64\">A2A\\Models\\MessageV2::getKind<\/a>"],[0,1,"<a href=\"Models\/MessageV2.php.html#69\">A2A\\Models\\MessageV2::getParts<\/a>"],[0,1,"<a href=\"Models\/MessageV2.php.html#74\">A2A\\Models\\MessageV2::addPart<\/a>"],[0,1,"<a href=\"Models\/MessageV2.php.html#79\">A2A\\Models\\MessageV2::getContextId<\/a>"],[0,1,"<a href=\"Models\/MessageV2.php.html#84\">A2A\\Models\\MessageV2::setContextId<\/a>"],[0,1,"<a href=\"Models\/MessageV2.php.html#89\">A2A\\Models\\MessageV2::getTaskId<\/a>"],[0,1,"<a href=\"Models\/MessageV2.php.html#94\">A2A\\Models\\MessageV2::setTaskId<\/a>"],[0,1,"<a href=\"Models\/MessageV2.php.html#99\">A2A\\Models\\MessageV2::getReferenceTaskIds<\/a>"],[0,1,"<a href=\"Models\/MessageV2.php.html#104\">A2A\\Models\\MessageV2::setReferenceTaskIds<\/a>"],[0,2,"<a href=\"Models\/MessageV2.php.html#109\">A2A\\Models\\MessageV2::addReferenceTaskId<\/a>"],[0,1,"<a href=\"Models\/MessageV2.php.html#117\">A2A\\Models\\MessageV2::getExtensions<\/a>"],[0,1,"<a href=\"Models\/MessageV2.php.html#122\">A2A\\Models\\MessageV2::setExtensions<\/a>"],[0,2,"<a href=\"Models\/MessageV2.php.html#127\">A2A\\Models\\MessageV2::addExtension<\/a>"],[0,1,"<a href=\"Models\/MessageV2.php.html#135\">A2A\\Models\\MessageV2::getMetadata<\/a>"],[0,1,"<a href=\"Models\/MessageV2.php.html#140\">A2A\\Models\\MessageV2::setMetadata<\/a>"],[0,2,"<a href=\"Models\/MessageV2.php.html#145\">A2A\\Models\\MessageV2::setMetadataValue<\/a>"],[0,6,"<a href=\"Models\/MessageV2.php.html#153\">A2A\\Models\\MessageV2::toArray<\/a>"],[0,8,"<a href=\"Models\/MessageV2.php.html#185\">A2A\\Models\\MessageV2::fromArray<\/a>"],[0,3,"<a href=\"Models\/MessageV2.php.html#226\">A2A\\Models\\MessageV2::getTextContent<\/a>"],[100,2,"<a href=\"Models\/Part.php.html#14\">A2A\\Models\\Part::__construct<\/a>"],[0,1,"<a href=\"Models\/Part.php.html#23\">A2A\\Models\\Part::getKind<\/a>"],[100,1,"<a href=\"Models\/Part.php.html#28\">A2A\\Models\\Part::getContent<\/a>"],[100,1,"<a href=\"Models\/Part.php.html#33\">A2A\\Models\\Part::getMetadata<\/a>"],[100,1,"<a href=\"Models\/Part.php.html#38\">A2A\\Models\\Part::setMetadata<\/a>"],[100,2,"<a href=\"Models\/Part.php.html#43\">A2A\\Models\\Part::toArray<\/a>"],[100,1,"<a href=\"Models\/Part.php.html#57\">A2A\\Models\\Part::fromArray<\/a>"],[100,1,"<a href=\"Models\/Part.php.html#67\">A2A\\Models\\Part::getType<\/a>"],[40,6,"<a href=\"Models\/PartFactory.php.html#14\">A2A\\Models\\PartFactory::fromArray<\/a>"],[100,1,"<a href=\"Models\/PushNotificationConfig.php.html#14\">A2A\\Models\\PushNotificationConfig::__construct<\/a>"],[100,1,"<a href=\"Models\/PushNotificationConfig.php.html#26\">A2A\\Models\\PushNotificationConfig::getUrl<\/a>"],[100,1,"<a href=\"Models\/PushNotificationConfig.php.html#31\">A2A\\Models\\PushNotificationConfig::getId<\/a>"],[100,1,"<a href=\"Models\/PushNotificationConfig.php.html#36\">A2A\\Models\\PushNotificationConfig::getToken<\/a>"],[100,1,"<a href=\"Models\/PushNotificationConfig.php.html#41\">A2A\\Models\\PushNotificationConfig::getAuthentication<\/a>"],[100,1,"<a href=\"Models\/PushNotificationConfig.php.html#46\">A2A\\Models\\PushNotificationConfig::toArray<\/a>"],[100,1,"<a href=\"Models\/PushNotificationConfig.php.html#56\">A2A\\Models\\PushNotificationConfig::fromArray<\/a>"],[100,1,"<a href=\"Models\/RequestContext.php.html#15\">A2A\\Models\\RequestContext::__construct<\/a>"],[100,1,"<a href=\"Models\/Task.php.html#26\">A2A\\Models\\Task::__construct<\/a>"],[100,1,"<a href=\"Models\/Task.php.html#44\">A2A\\Models\\Task::getId<\/a>"],[100,1,"<a href=\"Models\/Task.php.html#49\">A2A\\Models\\Task::getDescription<\/a>"],[100,1,"<a href=\"Models\/Task.php.html#54\">A2A\\Models\\Task::getContext<\/a>"],[100,1,"<a href=\"Models\/Task.php.html#59\">A2A\\Models\\Task::getContextId<\/a>"],[100,1,"<a href=\"Models\/Task.php.html#64\">A2A\\Models\\Task::getStatus<\/a>"],[100,2,"<a href=\"Models\/Task.php.html#69\">A2A\\Models\\Task::setStatus<\/a>"],[100,1,"<a href=\"Models\/Task.php.html#77\">A2A\\Models\\Task::isTerminal<\/a>"],[0,1,"<a href=\"Models\/Task.php.html#82\">A2A\\Models\\Task::getCreatedAt<\/a>"],[100,1,"<a href=\"Models\/Task.php.html#87\">A2A\\Models\\Task::getCompletedAt<\/a>"],[100,1,"<a href=\"Models\/Task.php.html#92\">A2A\\Models\\Task::addPart<\/a>"],[100,1,"<a href=\"Models\/Task.php.html#97\">A2A\\Models\\Task::getParts<\/a>"],[0,1,"<a href=\"Models\/Task.php.html#102\">A2A\\Models\\Task::getAssignedTo<\/a>"],[0,2,"<a href=\"Models\/Task.php.html#107\">A2A\\Models\\Task::assignTo<\/a>"],[100,1,"<a href=\"Models\/Task.php.html#115\">A2A\\Models\\Task::isCompleted<\/a>"],[100,1,"<a href=\"Models\/Task.php.html#120\">A2A\\Models\\Task::addToHistory<\/a>"],[100,2,"<a href=\"Models\/Task.php.html#125\">A2A\\Models\\Task::getHistory<\/a>"],[100,1,"<a href=\"Models\/Task.php.html#133\">A2A\\Models\\Task::addArtifact<\/a>"],[100,1,"<a href=\"Models\/Task.php.html#138\">A2A\\Models\\Task::getArtifacts<\/a>"],[100,1,"<a href=\"Models\/Task.php.html#143\">A2A\\Models\\Task::setMetadata<\/a>"],[100,1,"<a href=\"Models\/Task.php.html#148\">A2A\\Models\\Task::getMetadata<\/a>"],[0,1,"<a href=\"Models\/Task.php.html#153\">A2A\\Models\\Task::addMetadata<\/a>"],[90.47619047619048,6,"<a href=\"Models\/Task.php.html#158\">A2A\\Models\\Task::toArray<\/a>"],[71.42857142857143,7,"<a href=\"Models\/Task.php.html#193\">A2A\\Models\\Task::toArrayWithHistory<\/a>"],[78.94736842105263,7,"<a href=\"Models\/Task.php.html#229\">A2A\\Models\\Task::fromArray<\/a>"],[0,1,"<a href=\"Models\/TaskArtifactUpdateEvent.php.html#20\">A2A\\Models\\TaskArtifactUpdateEvent::__construct<\/a>"],[0,1,"<a href=\"Models\/TaskArtifactUpdateEvent.php.html#30\">A2A\\Models\\TaskArtifactUpdateEvent::getKind<\/a>"],[0,1,"<a href=\"Models\/TaskArtifactUpdateEvent.php.html#35\">A2A\\Models\\TaskArtifactUpdateEvent::getTaskId<\/a>"],[0,1,"<a href=\"Models\/TaskArtifactUpdateEvent.php.html#40\">A2A\\Models\\TaskArtifactUpdateEvent::getContextId<\/a>"],[0,1,"<a href=\"Models\/TaskArtifactUpdateEvent.php.html#45\">A2A\\Models\\TaskArtifactUpdateEvent::getArtifact<\/a>"],[0,1,"<a href=\"Models\/TaskArtifactUpdateEvent.php.html#50\">A2A\\Models\\TaskArtifactUpdateEvent::setArtifact<\/a>"],[0,1,"<a href=\"Models\/TaskArtifactUpdateEvent.php.html#55\">A2A\\Models\\TaskArtifactUpdateEvent::getAppend<\/a>"],[0,1,"<a href=\"Models\/TaskArtifactUpdateEvent.php.html#60\">A2A\\Models\\TaskArtifactUpdateEvent::setAppend<\/a>"],[0,1,"<a href=\"Models\/TaskArtifactUpdateEvent.php.html#65\">A2A\\Models\\TaskArtifactUpdateEvent::getLastChunk<\/a>"],[0,1,"<a href=\"Models\/TaskArtifactUpdateEvent.php.html#70\">A2A\\Models\\TaskArtifactUpdateEvent::setLastChunk<\/a>"],[0,1,"<a href=\"Models\/TaskArtifactUpdateEvent.php.html#75\">A2A\\Models\\TaskArtifactUpdateEvent::getMetadata<\/a>"],[0,1,"<a href=\"Models\/TaskArtifactUpdateEvent.php.html#80\">A2A\\Models\\TaskArtifactUpdateEvent::setMetadata<\/a>"],[0,4,"<a href=\"Models\/TaskArtifactUpdateEvent.php.html#85\">A2A\\Models\\TaskArtifactUpdateEvent::toArray<\/a>"],[0,4,"<a href=\"Models\/TaskArtifactUpdateEvent.php.html#109\">A2A\\Models\\TaskArtifactUpdateEvent::fromArray<\/a>"],[100,1,"<a href=\"Models\/TaskStatus.php.html#16\">A2A\\Models\\TaskStatus::__construct<\/a>"],[0,1,"<a href=\"Models\/TaskStatus.php.html#22\">A2A\\Models\\TaskStatus::getState<\/a>"],[0,1,"<a href=\"Models\/TaskStatus.php.html#27\">A2A\\Models\\TaskStatus::setState<\/a>"],[0,1,"<a href=\"Models\/TaskStatus.php.html#33\">A2A\\Models\\TaskStatus::getMessage<\/a>"],[0,1,"<a href=\"Models\/TaskStatus.php.html#38\">A2A\\Models\\TaskStatus::setMessage<\/a>"],[0,1,"<a href=\"Models\/TaskStatus.php.html#43\">A2A\\Models\\TaskStatus::getTimestamp<\/a>"],[0,1,"<a href=\"Models\/TaskStatus.php.html#48\">A2A\\Models\\TaskStatus::setTimestamp<\/a>"],[0,3,"<a href=\"Models\/TaskStatus.php.html#53\">A2A\\Models\\TaskStatus::toArray<\/a>"],[0,3,"<a href=\"Models\/TaskStatus.php.html#70\">A2A\\Models\\TaskStatus::fromArray<\/a>"],[100,1,"<a href=\"Models\/TaskStatusUpdateEvent.php.html#19\">A2A\\Models\\TaskStatusUpdateEvent::__construct<\/a>"],[0,1,"<a href=\"Models\/TaskStatusUpdateEvent.php.html#31\">A2A\\Models\\TaskStatusUpdateEvent::getKind<\/a>"],[100,1,"<a href=\"Models\/TaskStatusUpdateEvent.php.html#36\">A2A\\Models\\TaskStatusUpdateEvent::getTaskId<\/a>"],[0,1,"<a href=\"Models\/TaskStatusUpdateEvent.php.html#41\">A2A\\Models\\TaskStatusUpdateEvent::getContextId<\/a>"],[0,1,"<a href=\"Models\/TaskStatusUpdateEvent.php.html#46\">A2A\\Models\\TaskStatusUpdateEvent::getStatus<\/a>"],[0,1,"<a href=\"Models\/TaskStatusUpdateEvent.php.html#51\">A2A\\Models\\TaskStatusUpdateEvent::setStatus<\/a>"],[0,1,"<a href=\"Models\/TaskStatusUpdateEvent.php.html#56\">A2A\\Models\\TaskStatusUpdateEvent::isFinal<\/a>"],[0,1,"<a href=\"Models\/TaskStatusUpdateEvent.php.html#61\">A2A\\Models\\TaskStatusUpdateEvent::setFinal<\/a>"],[0,1,"<a href=\"Models\/TaskStatusUpdateEvent.php.html#66\">A2A\\Models\\TaskStatusUpdateEvent::getMetadata<\/a>"],[0,1,"<a href=\"Models\/TaskStatusUpdateEvent.php.html#71\">A2A\\Models\\TaskStatusUpdateEvent::setMetadata<\/a>"],[0,2,"<a href=\"Models\/TaskStatusUpdateEvent.php.html#76\">A2A\\Models\\TaskStatusUpdateEvent::toArray<\/a>"],[0,2,"<a href=\"Models\/TaskStatusUpdateEvent.php.html#93\">A2A\\Models\\TaskStatusUpdateEvent::fromArray<\/a>"],[0,1,"<a href=\"Models\/TaskV2.php.html#23\">A2A\\Models\\TaskV2::__construct<\/a>"],[0,1,"<a href=\"Models\/TaskV2.php.html#33\">A2A\\Models\\TaskV2::getId<\/a>"],[0,1,"<a href=\"Models\/TaskV2.php.html#38\">A2A\\Models\\TaskV2::getContextId<\/a>"],[0,1,"<a href=\"Models\/TaskV2.php.html#43\">A2A\\Models\\TaskV2::getKind<\/a>"],[0,1,"<a href=\"Models\/TaskV2.php.html#48\">A2A\\Models\\TaskV2::getStatus<\/a>"],[0,1,"<a href=\"Models\/TaskV2.php.html#53\">A2A\\Models\\TaskV2::setStatus<\/a>"],[0,1,"<a href=\"Models\/TaskV2.php.html#58\">A2A\\Models\\TaskV2::getHistory<\/a>"],[0,1,"<a href=\"Models\/TaskV2.php.html#63\">A2A\\Models\\TaskV2::setHistory<\/a>"],[0,2,"<a href=\"Models\/TaskV2.php.html#68\">A2A\\Models\\TaskV2::addToHistory<\/a>"],[0,1,"<a href=\"Models\/TaskV2.php.html#76\">A2A\\Models\\TaskV2::getArtifacts<\/a>"],[0,1,"<a href=\"Models\/TaskV2.php.html#81\">A2A\\Models\\TaskV2::setArtifacts<\/a>"],[0,2,"<a href=\"Models\/TaskV2.php.html#86\">A2A\\Models\\TaskV2::addArtifact<\/a>"],[0,1,"<a href=\"Models\/TaskV2.php.html#94\">A2A\\Models\\TaskV2::getMetadata<\/a>"],[0,1,"<a href=\"Models\/TaskV2.php.html#99\">A2A\\Models\\TaskV2::setMetadata<\/a>"],[0,1,"<a href=\"Models\/TaskV2.php.html#104\">A2A\\Models\\TaskV2::isTerminal<\/a>"],[0,4,"<a href=\"Models\/TaskV2.php.html#109\">A2A\\Models\\TaskV2::toArray<\/a>"],[0,6,"<a href=\"Models\/TaskV2.php.html#139\">A2A\\Models\\TaskV2::fromArray<\/a>"],[100,1,"<a href=\"Models\/TextPart.php.html#16\">A2A\\Models\\TextPart::__construct<\/a>"],[100,1,"<a href=\"Models\/TextPart.php.html#21\">A2A\\Models\\TextPart::getKind<\/a>"],[100,1,"<a href=\"Models\/TextPart.php.html#26\">A2A\\Models\\TextPart::getText<\/a>"],[0,1,"<a href=\"Models\/TextPart.php.html#31\">A2A\\Models\\TextPart::setText<\/a>"],[0,1,"<a href=\"Models\/TextPart.php.html#36\">A2A\\Models\\TextPart::getMetadata<\/a>"],[0,1,"<a href=\"Models\/TextPart.php.html#41\">A2A\\Models\\TextPart::setMetadata<\/a>"],[85.71428571428571,2,"<a href=\"Models\/TextPart.php.html#46\">A2A\\Models\\TextPart::toArray<\/a>"],[75,2,"<a href=\"Models\/TextPart.php.html#60\">A2A\\Models\\TextPart::fromArray<\/a>"],[100,1,"<a href=\"PushNotificationManager.php.html#18\">A2A\\PushNotificationManager::__construct<\/a>"],[60,2,"<a href=\"PushNotificationManager.php.html#26\">A2A\\PushNotificationManager::setConfig<\/a>"],[33.33333333333333,3,"<a href=\"PushNotificationManager.php.html#40\">A2A\\PushNotificationManager::getConfig<\/a>"],[0,1,"<a href=\"PushNotificationManager.php.html#58\">A2A\\PushNotificationManager::listConfigs<\/a>"],[100,2,"<a href=\"PushNotificationManager.php.html#66\">A2A\\PushNotificationManager::listConfigsForTask<\/a>"],[100,1,"<a href=\"PushNotificationManager.php.html#75\">A2A\\PushNotificationManager::deleteConfig<\/a>"],[0,1,"<a href=\"PushNotificationManager.php.html#84\">A2A\\PushNotificationManager::hasConfig<\/a>"],[100,1,"<a href=\"Storage\/Storage.php.html#40\">A2A\\Storage\\Storage::__construct<\/a>"],[100,2,"<a href=\"Storage\/Storage.php.html#51\">A2A\\Storage\\Storage::saveTask<\/a>"],[100,2,"<a href=\"Storage\/Storage.php.html#70\">A2A\\Storage\\Storage::getTask<\/a>"],[0,1,"<a href=\"Storage\/Storage.php.html#84\">A2A\\Storage\\Storage::taskExists<\/a>"],[0,2,"<a href=\"Storage\/Storage.php.html#92\">A2A\\Storage\\Storage::updateTaskStatus<\/a>"],[100,2,"<a href=\"Storage\/Storage.php.html#110\">A2A\\Storage\\Storage::savePushConfig<\/a>"],[0,2,"<a href=\"Storage\/Storage.php.html#128\">A2A\\Storage\\Storage::getPushConfig<\/a>"],[0,3,"<a href=\"Storage\/Storage.php.html#142\">A2A\\Storage\\Storage::listPushConfigs<\/a>"],[85.71428571428571,2,"<a href=\"Storage\/Storage.php.html#161\">A2A\\Storage\\Storage::deletePushConfig<\/a>"],[44.44444444444444,6,"<a href=\"Storage\/Storage.php.html#181\">A2A\\Storage\\Storage::createCacheRepository<\/a>"],[80,2,"<a href=\"Storage\/Storage.php.html#204\">A2A\\Storage\\Storage::createFileStore<\/a>"],[100,1,"<a href=\"Storage\/Storage.php.html#220\">A2A\\Storage\\Storage::createArrayStore<\/a>"],[0,2,"<a href=\"Storage\/Storage.php.html#229\">A2A\\Storage\\Storage::createRedisStore<\/a>"],[0,3,"<a href=\"Storage\/Storage.php.html#256\">A2A\\Storage\\Storage::createMemcachedStore<\/a>"],[0,4,"<a href=\"Streaming\/SSEStreamer.php.html#9\">A2A\\Streaming\\SSEStreamer::sendEvent<\/a>"],[0,2,"<a href=\"Streaming\/SSEStreamer.php.html#27\">A2A\\Streaming\\SSEStreamer::startStream<\/a>"],[0,2,"<a href=\"Streaming\/SSEStreamer.php.html#38\">A2A\\Streaming\\SSEStreamer::endStream<\/a>"],[0,1,"<a href=\"Streaming\/StreamingServer.php.html#19\">A2A\\Streaming\\StreamingServer::__construct<\/a>"],[0,2,"<a href=\"Streaming\/StreamingServer.php.html#25\">A2A\\Streaming\\StreamingServer::handleStreamRequest<\/a>"],[100,1,"<a href=\"TaskManager.php.html#18\">A2A\\TaskManager::__construct<\/a>"],[75,2,"<a href=\"TaskManager.php.html#23\">A2A\\TaskManager::createTask<\/a>"],[100,3,"<a href=\"TaskManager.php.html#39\">A2A\\TaskManager::getTask<\/a>"],[0,2,"<a href=\"TaskManager.php.html#54\">A2A\\TaskManager::taskExists<\/a>"],[100,3,"<a href=\"TaskManager.php.html#59\">A2A\\TaskManager::cancelTask<\/a>"],[100,3,"<a href=\"TaskManager.php.html#77\">A2A\\TaskManager::updateTaskStatus<\/a>"],[100,1,"<a href=\"TaskManager.php.html#88\">A2A\\TaskManager::updateTask<\/a>"],[100,1,"<a href=\"Utils\/HttpClient.php.html#16\">A2A\\Utils\\HttpClient::__construct<\/a>"],[58.333333333333336,3,"<a href=\"Utils\/HttpClient.php.html#30\">A2A\\Utils\\HttpClient::post<\/a>"],[37.5,3,"<a href=\"Utils\/HttpClient.php.html#52\">A2A\\Utils\\HttpClient::get<\/a>"],[100,2,"<a href=\"Utils\/JsonRpc.php.html#13\">A2A\\Utils\\JsonRpc::createRequest<\/a>"],[100,1,"<a href=\"Utils\/JsonRpc.php.html#28\">A2A\\Utils\\JsonRpc::createResponse<\/a>"],[100,1,"<a href=\"Utils\/JsonRpc.php.html#37\">A2A\\Utils\\JsonRpc::createError<\/a>"],[100,4,"<a href=\"Utils\/JsonRpc.php.html#49\">A2A\\Utils\\JsonRpc::parseRequest<\/a>"],[100,2,"<a href=\"Utils\/JsonRpc.php.html#66\">A2A\\Utils\\JsonRpc::isValidRequest<\/a>"],[100,1,"<a href=\"Models\/TaskState.php.html#19\">A2A\\Models\\TaskState::isTerminal<\/a>"]], 'Method Complexity'))
+      .transition()
+      .duration(500)
+      .call(chart);
+
+    nv.utils.windowResize(chart.update);
+
+    return chart;
+  });
+
+  function getComplexityData(data, label) {
+    var values = [];
+    $.each(data, function(key) {
+      var value = Math.round(data[key][0]*100) / 100;
+      values.push({
+        x: value,
+        y: data[key][1],
+        class: data[key][2],
+        size: 0.05,
+        shape: 'diamond'
+      });
+    });
+
+    return [
+      {
+        key: label,
+        values: values,
+        color: "#4572A7"
+      }
+    ];
+  }
+});
+  </script>
+ </body>
+</html>

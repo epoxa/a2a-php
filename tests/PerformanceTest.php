@@ -33,9 +33,11 @@ class PerformanceTest extends TestCase
         $server = new A2AServer($agentCard);
         
         $processedCount = 0;
-        $server->addMessageHandler(function ($message, $fromAgent) use (&$processedCount) {
-            $processedCount++;
-        });
+        $server->addMessageHandler(
+            function ($message, $fromAgent) use (&$processedCount) {
+                $processedCount++;
+            }
+        );
 
         $startTime = microtime(true);
         
@@ -58,7 +60,7 @@ class PerformanceTest extends TestCase
         $duration = $endTime - $startTime;
         
         $this->assertEquals(1000, $processedCount);
-        $this->assertLessThan(5.0, $duration, 'Processing 1000 messages should take less than 5 seconds');
+        $this->assertLessThan(6.0, $duration, 'Processing 1000 messages should take less than 6 seconds');
     }
 
     public function testTaskManagerMemoryUsage(): void

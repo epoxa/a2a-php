@@ -46,10 +46,12 @@ class GrpcClient
 
         // Note: In a real implementation, you would create the actual gRPC client here
         // using the generated protobuf classes from the A2A protocol definition
-        $this->logger->info('gRPC client initialized', [
+        $this->logger->info(
+            'gRPC client initialized', [
             'server_address' => $this->serverAddress,
             'agent' => $this->agentCard->getName()
-        ]);
+            ]
+        );
     }
 
     /**
@@ -61,10 +63,12 @@ class GrpcClient
         
         // In a real implementation, this would use generated protobuf classes
         // For now, we'll simulate the call structure
-        $this->logger->info('Sending message via gRPC', [
+        $this->logger->info(
+            'Sending message via gRPC', [
             'message_id' => $message->getMessageId(),
             'from' => $this->agentCard->getName()
-        ]);
+            ]
+        );
 
         throw new A2AException('gRPC implementation requires protobuf message definitions. See documentation for setup.');
     }
@@ -94,9 +98,11 @@ class GrpcClient
             // In a real implementation, this would call the gRPC ping method
             return true;
         } catch (\Exception $e) {
-            $this->logger->warning('gRPC ping failed', [
+            $this->logger->warning(
+                'gRPC ping failed', [
                 'error' => $e->getMessage()
-            ]);
+                ]
+            );
             return false;
         }
     }
@@ -108,10 +114,12 @@ class GrpcClient
     {
         $this->ensureConnected();
         
-        $this->logger->info('Getting task via gRPC', [
+        $this->logger->info(
+            'Getting task via gRPC', [
             'task_id' => $taskId,
             'history_length' => $historyLength
-        ]);
+            ]
+        );
 
         throw new A2AException('gRPC implementation requires protobuf message definitions. See documentation for setup.');
     }
@@ -123,9 +131,11 @@ class GrpcClient
     {
         $this->ensureConnected();
         
-        $this->logger->info('Cancelling task via gRPC', [
+        $this->logger->info(
+            'Cancelling task via gRPC', [
             'task_id' => $taskId
-        ]);
+            ]
+        );
 
         throw new A2AException('gRPC implementation requires protobuf message definitions. See documentation for setup.');
     }
@@ -137,9 +147,11 @@ class GrpcClient
     {
         $this->ensureConnected();
         
-        $this->logger->info('Setting push notification config via gRPC', [
+        $this->logger->info(
+            'Setting push notification config via gRPC', [
             'task_id' => $taskId
-        ]);
+            ]
+        );
 
         throw new A2AException('gRPC implementation requires protobuf message definitions. See documentation for setup.');
     }
@@ -151,9 +163,11 @@ class GrpcClient
     {
         $this->ensureConnected();
         
-        $this->logger->info('Getting push notification config via gRPC', [
+        $this->logger->info(
+            'Getting push notification config via gRPC', [
             'task_id' => $taskId
-        ]);
+            ]
+        );
 
         throw new A2AException('gRPC implementation requires protobuf message definitions. See documentation for setup.');
     }
@@ -177,9 +191,11 @@ class GrpcClient
     {
         $this->ensureConnected();
         
-        $this->logger->info('Deleting push notification config via gRPC', [
+        $this->logger->info(
+            'Deleting push notification config via gRPC', [
             'task_id' => $taskId
-        ]);
+            ]
+        );
 
         throw new A2AException('gRPC implementation requires protobuf message definitions. See documentation for setup.');
     }
@@ -191,9 +207,11 @@ class GrpcClient
     {
         $this->ensureConnected();
         
-        $this->logger->info('Resubscribing to task via gRPC', [
+        $this->logger->info(
+            'Resubscribing to task via gRPC', [
             'task_id' => $taskId
-        ]);
+            ]
+        );
 
         throw new A2AException('gRPC implementation requires protobuf message definitions. See documentation for setup.');
     }

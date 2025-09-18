@@ -78,7 +78,7 @@ class EdgeCaseTest extends TestCase
         
         $this->assertEquals('2.0', $request['jsonrpc']);
         $this->assertEquals('test_method', $request['method']);
-        $this->assertNull($request['id']);
+        self::assertArrayNotHasKey('id', $request);
     }
 
     public function testJsonRpcErrorHandling(): void
