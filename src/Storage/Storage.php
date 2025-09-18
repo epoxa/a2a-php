@@ -181,20 +181,20 @@ class Storage
     private function createCacheRepository(string $driver, string $dataDir, array $config): Repository
     {
         switch ($driver) {
-            case 'file':
-                return $this->createFileStore($dataDir);
+        case 'file':
+            return $this->createFileStore($dataDir);
 
-            case 'array':
-                return $this->createArrayStore();
+        case 'array':
+            return $this->createArrayStore();
 
-            case 'redis':
-                return $this->createRedisStore($config);
+        case 'redis':
+            return $this->createRedisStore($config);
 
-            case 'memcached':
-                return $this->createMemcachedStore($config);
+        case 'memcached':
+            return $this->createMemcachedStore($config);
 
-            default:
-                throw new \InvalidArgumentException("Unsupported cache driver: {$driver}");
+        default:
+            throw new \InvalidArgumentException("Unsupported cache driver: {$driver}");
         }
     }
 
@@ -232,11 +232,13 @@ class Storage
             throw new \RuntimeException('Redis support requires illuminate/redis package');
         }
 
-        $redisConfig = array_merge([
+        $redisConfig = array_merge(
+            [
             'host' => '127.0.0.1',
             'port' => 6379,
             'database' => 0,
-        ], $config);
+            ], $config
+        );
 
         $redis = new \Illuminate\Redis\RedisManager(
             new Container(),

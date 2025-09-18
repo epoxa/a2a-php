@@ -22,9 +22,11 @@ class StreamingIntegrationTest extends TestCase
         $context = new RequestContext($message, 'task-123', 'ctx-123');
         
         $events = [];
-        $eventBus->subscribe('task-123', function($event) use (&$events) {
-            $events[] = $event;
-        });
+        $eventBus->subscribe(
+            'task-123', function ($event) use (&$events) {
+                $events[] = $event;
+            }
+        );
         
         $executor->execute($context, $eventBus);
         
@@ -40,13 +42,17 @@ class StreamingIntegrationTest extends TestCase
         $events1 = [];
         $events2 = [];
         
-        $eventBus->subscribe('task-1', function($event) use (&$events1) {
-            $events1[] = $event;
-        });
+        $eventBus->subscribe(
+            'task-1', function ($event) use (&$events1) {
+                $events1[] = $event;
+            }
+        );
         
-        $eventBus->subscribe('task-2', function($event) use (&$events2) {
-            $events2[] = $event;
-        });
+        $eventBus->subscribe(
+            'task-2', function ($event) use (&$events2) {
+                $events2[] = $event;
+            }
+        );
         
         $message1 = Message::createUserMessage('Stream 1');
         $context1 = new RequestContext($message1, 'task-1', 'ctx-1');

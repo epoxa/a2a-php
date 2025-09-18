@@ -35,9 +35,11 @@ class IntegrationTest extends TestCase
         );
         
         $server = new A2AServer($serverCard);
-        $server->addMessageHandler(function($message, $fromAgent) {
-            return ['status' => 'processed', 'echo' => $message->getTextContent()];
-        });
+        $server->addMessageHandler(
+            function ($message, $fromAgent) {
+                return ['status' => 'processed', 'echo' => $message->getTextContent()];
+            }
+        );
 
         // Setup client
         $clientCard = new AgentCard(

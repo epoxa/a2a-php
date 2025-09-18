@@ -21,7 +21,7 @@ class A2AProtocolTest extends TestCase
     {
         $capabilities = new \A2A\Models\AgentCapabilities();
         $skill = new \A2A\Models\AgentSkill('test', 'Test', 'Test skill', ['test']);
-        
+
         $this->agentCard = new AgentCard(
             'Test Agent',
             'A test agent for unit testing',

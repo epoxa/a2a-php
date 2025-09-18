@@ -25,9 +25,11 @@ class StreamingClient
     public function sendMessageStream(string $agentUrl, Message $message, callable $eventHandler): void
     {
         $jsonRpc = new JsonRpc();
-        $request = $jsonRpc->createRequest('message/stream', [
+        $request = $jsonRpc->createRequest(
+            'message/stream', [
             'message' => $message->toArray()
-        ], 1);
+            ], 1
+        );
 
         $this->streamRequest($agentUrl, $request, $eventHandler);
     }
@@ -35,22 +37,26 @@ class StreamingClient
     public function resubscribeTask(string $agentUrl, string $taskId, callable $eventHandler): void
     {
         $jsonRpc = new JsonRpc();
-        $request = $jsonRpc->createRequest('tasks/resubscribe', [
+        $request = $jsonRpc->createRequest(
+            'tasks/resubscribe', [
             'id' => $taskId
-        ], 1);
+            ], 1
+        );
 
         $this->streamRequest($agentUrl, $request, $eventHandler);
     }
 
     private function streamRequest(string $url, array $request, callable $eventHandler): void
     {
-        $context = stream_context_create([
+        $context = stream_context_create(
+            [
             'http' => [
                 'method' => 'POST',
                 'header' => "Content-Type: application/json\r\nAccept: text/event-stream\r\n",
                 'content' => json_encode($request)
             ]
-        ]);
+            ]
+        );
 
         $stream = fopen($url, 'r', false, $context);
         if (!$stream) {

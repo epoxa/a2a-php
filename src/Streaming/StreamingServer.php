@@ -39,10 +39,12 @@ class StreamingServer
             $context = new RequestContext($message, $taskId, $contextId);
 
             // Subscribe to events for this task
-            $eventBus->subscribe($taskId, function ($event) use ($parsedRequest) {
-                $response = $this->jsonRpc->createResponse($parsedRequest['id'], $event);
-                $this->streamer->sendEvent(json_encode($response));
-            });
+            $eventBus->subscribe(
+                $taskId, function ($event) use ($parsedRequest) {
+                    $response = $this->jsonRpc->createResponse($parsedRequest['id'], $event);
+                    $this->streamer->sendEvent(json_encode($response));
+                }
+            );
 
             // Execute the task
             $executor->execute($context, $eventBus);

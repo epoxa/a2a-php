@@ -74,9 +74,11 @@ class ComprehensiveTest extends TestCase
         $context = new RequestContext($message, 'task-123', 'ctx-123');
 
         $events = [];
-        $eventBus->subscribe('task-123', function($event) use (&$events) {
-            $events[] = $event;
-        });
+        $eventBus->subscribe(
+            'task-123', function ($event) use (&$events) {
+                $events[] = $event;
+            }
+        );
 
         $executor->execute($context, $eventBus);
         $this->assertGreaterThan(0, count($events));

@@ -11,13 +11,13 @@ class SSEStreamer
         if ($id !== null) {
             echo "id: $id\n";
         }
-        
+
         if ($event !== null) {
             echo "event: $event\n";
         }
-        
+
         echo "data: $data\n\n";
-        
+
         if (ob_get_level()) {
             ob_flush();
         }
@@ -29,7 +29,7 @@ class SSEStreamer
         header('Content-Type: text/event-stream');
         header('Cache-Control: no-cache');
         header('Connection: keep-alive');
-        
+
         if (ob_get_level()) {
             ob_end_flush();
         }

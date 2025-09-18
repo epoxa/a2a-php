@@ -93,7 +93,7 @@ class TaskStatusUpdateEvent
     public static function fromArray(array $data): self
     {
         $status = TaskStatus::fromArray($data['status']);
-        
+
         $event = new self(
             $data['taskId'],
             $data['contextId'],

@@ -75,11 +75,13 @@ class A2AServerTest extends TestCase
     {
         $messageHandled = false;
 
-        $this->server->addMessageHandler(function ($message, $fromAgent) use (&$messageHandled) {
-            $messageHandled = true;
-            $this->assertEquals('Hello Server', $message->getTextContent());
-            $this->assertEquals('client-agent', $fromAgent);
-        });
+        $this->server->addMessageHandler(
+            function ($message, $fromAgent) use (&$messageHandled) {
+                $messageHandled = true;
+                $this->assertEquals('Hello Server', $message->getTextContent());
+                $this->assertEquals('client-agent', $fromAgent);
+            }
+        );
 
         $message = Message::createUserMessage('Hello Server');
         $request = [
@@ -120,9 +122,11 @@ class A2AServerTest extends TestCase
 
     public function testMessageHandlerException(): void
     {
-        $this->server->addMessageHandler(function ($message, $fromAgent) {
-            throw new \Exception('Handler error');
-        });
+        $this->server->addMessageHandler(
+            function ($message, $fromAgent) {
+                throw new \Exception('Handler error');
+            }
+        );
 
         $message = Message::createUserMessage('Test');
         $request = [
@@ -169,13 +173,17 @@ class A2AServerTest extends TestCase
         $handler1Called = false;
         $handler2Called = false;
 
-        $this->server->addMessageHandler(function ($message, $fromAgent) use (&$handler1Called) {
-            $handler1Called = true;
-        });
+        $this->server->addMessageHandler(
+            function ($message, $fromAgent) use (&$handler1Called) {
+                $handler1Called = true;
+            }
+        );
 
-        $this->server->addMessageHandler(function ($message, $fromAgent) use (&$handler2Called) {
-            $handler2Called = true;
-        });
+        $this->server->addMessageHandler(
+            function ($message, $fromAgent) use (&$handler2Called) {
+                $handler2Called = true;
+            }
+        );
 
         $message = Message::createUserMessage('Test');
         $request = [

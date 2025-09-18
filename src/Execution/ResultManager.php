@@ -14,9 +14,11 @@ class ResultManager
 
     public function processEvents(ExecutionEventBus $eventBus, string $taskId): void
     {
-        $eventBus->subscribe($taskId, function($event) use ($taskId) {
-            $this->handleEvent($taskId, $event);
-        });
+        $eventBus->subscribe(
+            $taskId, function ($event) use ($taskId) {
+                $this->handleEvent($taskId, $event);
+            }
+        );
     }
 
     private function handleEvent(string $taskId, object $event): void

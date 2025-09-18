@@ -109,7 +109,7 @@ class TaskArtifactUpdateEvent
     public static function fromArray(array $data): self
     {
         $artifact = Artifact::fromArray($data['artifact']);
-        
+
         $event = new self(
             $data['taskId'],
             $data['contextId'],

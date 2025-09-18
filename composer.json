@@ -22,7 +22,8 @@
     "monolog/monolog": "^3.0",
     "grpc/grpc": "^1.57",
     "illuminate/cache": "^12.20",
-    "illuminate/filesystem": "^12.20"
+    "illuminate/filesystem": "^12.20",
+    "illuminate/container": "^12.20"
   },
   "require-dev": {
     "phpunit/phpunit": "^10.0",

@@ -36,20 +36,24 @@ class EndToEndTest extends TestCase
         $server = new A2AServer($agentCard);
         $messageReceived = false;
         
-        $server->addMessageHandler(function($message, $fromAgent) use (&$messageReceived) {
-            $messageReceived = true;
-            $this->assertEquals('Hello Agent', $message->getTextContent());
-        });
+        $server->addMessageHandler(
+            function ($message, $fromAgent) use (&$messageReceived) {
+                $messageReceived = true;
+                $this->assertEquals('Hello Agent', $message->getTextContent());
+            }
+        );
 
         // Setup client with mock HTTP
         $httpClient = new class extends HttpClient {
             private A2AServer $server;
             
-            public function setServer(A2AServer $server): void {
+            public function setServer(A2AServer $server): void
+            {
                 $this->server = $server;
             }
             
-            public function post(string $url, array $data): array {
+            public function post(string $url, array $data): array
+            {
                 return $this->server->handleRequest($data);
             }
         };

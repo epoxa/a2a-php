@@ -58,11 +58,13 @@ class A2AClientTest extends TestCase
             ->method('post')
             ->with(
                 'http://example.com/api',
-                $this->callback(function ($request) use ($message) {
-                    return $request['method'] === 'message/send' &&
+                $this->callback(
+                    function ($request) use ($message) {
+                        return $request['method'] === 'message/send' &&
                         $request['params']['from'] === 'Client Agent' &&
                         $request['params']['message']['messageId'] === $message->getMessageId();
-                })
+                    }
+                )
             )
             ->willReturn($expectedResponse);
 
@@ -103,11 +105,13 @@ class A2AClientTest extends TestCase
         $this->httpClient
             ->expects($this->once())
             ->method('post')
-            ->willReturn([
+            ->willReturn(
+                [
                 'jsonrpc' => '2.0',
                 'id' => 1,
                 'result' => ['status' => 'pong']
-            ]);
+                ]
+            );
 
         $result = $this->client->ping('http://example.com/api');
 
@@ -206,11 +210,15 @@ class A2AClientTest extends TestCase
         $this->httpClient
             ->expects($this->once())
             ->method('post')
-            ->with('', $this->callback(function ($request) {
-                return $request['method'] === 'tasks/send' &&
-                    $request['params']['id'] === 'task-123' &&
-                    $request['params']['message']['role'] === 'user';
-            }))
+            ->with(
+                '', $this->callback(
+                    function ($request) {
+                        return $request['method'] === 'tasks/send' &&
+                        $request['params']['id'] === 'task-123' &&
+                        $request['params']['message']['role'] === 'user';
+                    }
+                )
+            )
             ->willReturn($taskData);
 
         $task = $this->client->sendTask('task-123', $message, ['priority' => 'high']);
