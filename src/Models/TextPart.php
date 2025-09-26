@@ -5,22 +5,24 @@ declare(strict_types=1);
 namespace A2A\Models;
 
 /**
- * Represents a text segment within parts
+ * Represents a text segment within a message or artifact.
+ *
+ * @see https://a2a-protocol.org/dev/specification/#651-textpart-object
  */
 class TextPart implements PartInterface
 {
-    private string $kind = 'text';
     private string $text;
-    private ?array $metadata = null;
+    private ?array $metadata;
 
-    public function __construct(string $text)
+    public function __construct(string $text, ?array $metadata = null)
     {
         $this->text = $text;
+        $this->metadata = $metadata;
     }
 
     public function getKind(): string
     {
-        return $this->kind;
+        return 'text';
     }
 
     public function getText(): string
@@ -28,43 +30,17 @@ class TextPart implements PartInterface
         return $this->text;
     }
 
-    public function setText(string $text): void
-    {
-        $this->text = $text;
-    }
-
-    public function getMetadata(): ?array
-    {
-        return $this->metadata;
-    }
-
-    public function setMetadata(array $metadata): void
-    {
-        $this->metadata = $metadata;
-    }
-
     public function toArray(): array
     {
-        $result = [
-            'kind' => $this->kind,
-            'text' => $this->text
+        $data = [
+            'kind' => 'text',
+            'text' => $this->text,
         ];
 
         if ($this->metadata !== null) {
-            $result['metadata'] = $this->metadata;
+            $data['metadata'] = $this->metadata;
         }
 
-        return $result;
-    }
-
-    public static function fromArray(array $data): self
-    {
-        $part = new self($data['text']);
-
-        if (isset($data['metadata'])) {
-            $part->setMetadata($data['metadata']);
-        }
-
-        return $part;
+        return $data;
     }
 }

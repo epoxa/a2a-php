@@ -5,16 +5,17 @@ declare(strict_types=1);
 namespace A2A\Models;
 
 /**
- * File content with URI reference
+ * Represents a file with its content located at a specific URI.
+ *
+ * @see https://a2a-protocol.org/dev/specification/#662-filewithuri-object
  */
-class FileWithUri implements FileInterface
+class FileWithUri extends FileBase
 {
     private string $uri;
-    private ?string $name = null;
-    private ?string $mimeType = null;
 
-    public function __construct(string $uri)
+    public function __construct(string $uri, ?string $name = null, ?string $mimeType = null)
     {
+        parent::__construct($name, $mimeType);
         $this->uri = $uri;
     }
 
@@ -23,55 +24,19 @@ class FileWithUri implements FileInterface
         return $this->uri;
     }
 
-    public function getName(): ?string
-    {
-        return $this->name;
-    }
-
-    public function setName(string $name): void
-    {
-        $this->name = $name;
-    }
-
-    public function getMimeType(): ?string
-    {
-        return $this->mimeType;
-    }
-
-    public function setMimeType(string $mimeType): void
-    {
-        $this->mimeType = $mimeType;
-    }
-
     public function toArray(): array
     {
-        $result = [
-            'uri' => $this->uri
+        $data = [
+            'uri' => $this->uri,
         ];
 
         if ($this->name !== null) {
-            $result['name'] = $this->name;
+            $data['name'] = $this->name;
         }
-
         if ($this->mimeType !== null) {
-            $result['mimeType'] = $this->mimeType;
+            $data['mimeType'] = $this->mimeType;
         }
 
-        return $result;
-    }
-
-    public static function fromArray(array $data): self
-    {
-        $file = new self($data['uri']);
-
-        if (isset($data['name'])) {
-            $file->setName($data['name']);
-        }
-
-        if (isset($data['mimeType'])) {
-            $file->setMimeType($data['mimeType']);
-        }
-
-        return $file;
+        return $data;
     }
 }

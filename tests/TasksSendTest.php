@@ -21,17 +21,17 @@ class TasksSendTest extends TestCase
 
     protected function setUp(): void
     {
-        $capabilities = new AgentCapabilities(true, true, true);
+        $capabilities = new AgentCapabilities(true, true);
         $this->agentCard = new AgentCard(
             'Test Agent',
             'A test agent for unit testing',
             'http://localhost:8080',
             '1.0.0',
             $capabilities,
-            ['text'],
-            ['text'],
+            ['text/plain'],
+            ['application/json'],
             [],
-            '0.2.5'
+            '0.3.0'
         );
 
         $this->logger = new NullLogger();
@@ -102,7 +102,7 @@ class TasksSendTest extends TestCase
         $this->assertEquals('test-tasks-send-missing', $response['id']);
         $this->assertArrayHasKey('error', $response);
         $this->assertEquals(-32602, $response['error']['code']);
-        $this->assertStringContainsString('Missing task parameter', $response['error']['message']);
+        $this->assertStringContainsString('Missing or invalid task parameter', $response['error']['message']);
     }
 
     public function testTasksPersistenceBetweenMethods(): void

@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace A2A\Tests;
 
+use A2A\Models\TaskStatus;
+use A2A\Models\TextPart;
 use PHPUnit\Framework\TestCase;
 use A2A\A2AServer;
 use A2A\Models\AgentCard;
@@ -11,13 +13,14 @@ use A2A\Models\AgentCapabilities;
 use A2A\Models\AgentSkill;
 use A2A\Models\Message;
 use A2A\TaskManager;
+use A2A\Models\TaskState;
 
 class A2AServerTest extends TestCase
 {
     private A2AServer $server;
     private AgentCard $agentCard;
     private TestLogger $logger;
-    private TaskManager $taskManager; // Add TaskManager property
+    private TaskManager $taskManager;
 
     protected function setUp(): void
     {
@@ -30,13 +33,13 @@ class A2AServerTest extends TestCase
             'https://example.com/agent',
             '1.0.0',
             $capabilities,
-            ['text'],
-            ['text'],
+            ['text/plain'],
+            ['application/json'],
             [$skill]
         );
 
         $this->logger = new TestLogger();
-        $this->taskManager = new TaskManager(); // Initialize TaskManager
+        $this->taskManager = new TaskManager();
         $this->server = new A2AServer($this->agentCard, $this->logger, $this->taskManager);
     }
 
@@ -76,9 +79,16 @@ class A2AServerTest extends TestCase
         $messageHandled = false;
 
         $this->server->addMessageHandler(
-            function ($message, $fromAgent) use (&$messageHandled) {
+            function (Message $message, $fromAgent) use (&$messageHandled) {
                 $messageHandled = true;
-                $this->assertEquals('Hello Server', $message->getTextContent());
+                $textContent = '';
+                foreach ($message->getParts() as $part) {
+                    if ($part instanceof TextPart) {
+                        $textContent = $part->getText();
+                        break;
+                    }
+                }
+                $this->assertEquals('Hello Server', $textContent);
                 $this->assertEquals('client-agent', $fromAgent);
             }
         );
@@ -141,7 +151,6 @@ class A2AServerTest extends TestCase
 
         $response = $this->server->handleRequest($request);
 
-        // Should still return success despite handler error
         $this->assertEquals('received', $response['result']['status']);
         $this->assertTrue($this->logger->hasRecordThatContains('error', 'Message handler failed'));
     }
@@ -151,7 +160,6 @@ class A2AServerTest extends TestCase
         $request = [
             'method' => 'test',
             'id' => 1
-            // Missing jsonrpc field
         ];
 
         $response = $this->server->handleRequest($request);
@@ -234,7 +242,7 @@ class A2AServerTest extends TestCase
             'method' => 'tasks/send',
             'params' => [
                 'task' => [
-                    'kind' => 'invalid',  // Invalid kind
+                    'kind' => 'invalid',
                     'id' => 'test-task-123'
                 ]
             ],
@@ -255,7 +263,7 @@ class A2AServerTest extends TestCase
         $request = [
             'jsonrpc' => '2.0',
             'method' => 'tasks/send',
-            'params' => [],  // Missing task parameter
+            'params' => [],
             'id' => 'test-tasks-send-missing'
         ];
 
@@ -265,7 +273,7 @@ class A2AServerTest extends TestCase
         $this->assertEquals('test-tasks-send-missing', $response['id']);
         $this->assertArrayHasKey('error', $response);
         $this->assertEquals(-32602, $response['error']['code']);
-        $this->assertStringContainsString('Missing task parameter', $response['error']['message']);
+        $this->assertStringContainsString('Missing or invalid task parameter', $response['error']['message']);
     }
 
     public function testHandleTasksSendInvalidParams(): void
@@ -274,7 +282,6 @@ class A2AServerTest extends TestCase
             'jsonrpc' => '2.0',
             'method' => 'tasks/send',
             'params' => [
-                // Missing required 'task' parameter
                 'metadata' => ['test' => 'value']
             ],
             'id' => 8
@@ -285,7 +292,7 @@ class A2AServerTest extends TestCase
         $this->assertEquals('2.0', $response['jsonrpc']);
         $this->assertEquals(8, $response['id']);
         $this->assertArrayHasKey('error', $response);
-        $this->assertStringContainsString('Missing task parameter', $response['error']['message']);
+        $this->assertStringContainsString('Missing or invalid task parameter', $response['error']['message']);
     }
 
     public function testHandleTasksSendMissingId(): void
@@ -298,7 +305,6 @@ class A2AServerTest extends TestCase
                     'kind' => 'task',
                     'description' => 'Task without ID',
                     'context' => ['priority' => 'low']
-                    // Missing 'id' field
                 ]
             ],
             'id' => 9
@@ -321,7 +327,7 @@ class A2AServerTest extends TestCase
                 'task' => [
                     'kind' => 'task',
                     'id' => 'empty-message-task',
-                    'description' => '', // Empty description
+                    'description' => '',
                     'context' => ['priority' => 'medium']
                 ]
             ],
@@ -333,7 +339,7 @@ class A2AServerTest extends TestCase
         $this->assertEquals('2.0', $response['jsonrpc']);
         $this->assertEquals(10, $response['id']);
         $this->assertArrayHasKey('error', $response);
-        $this->assertStringContainsString('Message content cannot be empty', $response['error']['message']);
+        $this->assertStringContainsString('Task description cannot be empty', $response['error']['message']);
     }
 
     public function testHandleTasksSendInvalidTaskStructure(): void
@@ -342,7 +348,7 @@ class A2AServerTest extends TestCase
             'jsonrpc' => '2.0',
             'method' => 'tasks/send',
             'params' => [
-                'task' => 'not-an-array' // Invalid task structure
+                'task' => 'not-an-array'
             ],
             'id' => 11
         ];
@@ -352,13 +358,11 @@ class A2AServerTest extends TestCase
         $this->assertEquals('2.0', $response['jsonrpc']);
         $this->assertEquals(11, $response['id']);
         $this->assertArrayHasKey('error', $response);
-        $this->assertStringContainsString('Invalid task format', $response['error']['message']);
+        $this->assertStringContainsString('Missing or invalid task parameter', $response['error']['message']);
     }
 
-    // Add test for A2A compliance mode with tasks/send
     public function testA2AComplianceModeTasksSend(): void
     {
-        // Create server in A2A compliance mode
         $complianceServer = new A2AServer($this->agentCard, $this->logger, $this->taskManager, true);
 
         $request = [
@@ -368,7 +372,9 @@ class A2AServerTest extends TestCase
                 'task' => [
                     'kind' => 'task',
                     'id' => 'compliance-task-123',
-                    'description' => 'A2A compliance test task'
+                    'description' => 'A2A compliance test task',
+                    'contextId' => 'ctx-compliance-123',
+                    'status' => ['state' => 'submitted', 'timestamp' => date('c')],
                 ]
             ],
             'id' => 'test-compliance-tasks-send'
@@ -379,16 +385,14 @@ class A2AServerTest extends TestCase
         $this->assertEquals('2.0', $response['jsonrpc']);
         $this->assertEquals('test-compliance-tasks-send', $response['id']);
         $this->assertArrayHasKey('result', $response);
-
-        // In compliance mode, should return full task object
         $this->assertArrayHasKey('kind', $response['result']);
         $this->assertEquals('task', $response['result']['kind']);
         $this->assertEquals('compliance-task-123', $response['result']['id']);
+        $this->assertEquals('A2A compliance test task', $response['result']['metadata']['description']);
     }
 
     public function testTasksPersistenceBetweenMethods(): void
     {
-        // First create a task via tasks/send
         $sendRequest = [
             'jsonrpc' => '2.0',
             'method' => 'tasks/send',
@@ -396,7 +400,9 @@ class A2AServerTest extends TestCase
                 'task' => [
                     'kind' => 'task',
                     'id' => 'persistent-task-123',
-                    'description' => 'Task for persistence test'
+                    'description' => 'Task for persistence test',
+                    'contextId' => 'ctx-persistent-123',
+                    'status' => ['state' => 'submitted', 'timestamp' => date('c')],
                 ]
             ],
             'id' => 'test-send'
@@ -404,7 +410,6 @@ class A2AServerTest extends TestCase
 
         $this->server->handleRequest($sendRequest);
 
-        // Then retrieve it via tasks/get
         $getRequest = [
             'jsonrpc' => '2.0',
             'method' => 'tasks/get',
@@ -418,5 +423,6 @@ class A2AServerTest extends TestCase
         $this->assertEquals('test-get', $response['id']);
         $this->assertArrayHasKey('result', $response);
         $this->assertEquals('persistent-task-123', $response['result']['id']);
+        $this->assertEquals('Task for persistence test', $response['result']['metadata']['description']);
     }
 }

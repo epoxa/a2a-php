@@ -5,62 +5,49 @@ declare(strict_types=1);
 namespace A2A\Models;
 
 /**
- * Represents a File segment within parts
+ * Represents a file segment within a message or artifact.
+ *
+ * @see https://a2a-protocol.org/dev/specification/#652-filepart-object
  */
 class FilePart implements PartInterface
 {
-    private string $kind = 'file';
-    private FileInterface $file;
-    private ?array $metadata = null;
+    /** @var FileWithBytes|FileWithUri */
+    private FileBase $file;
+    private ?array $metadata;
 
-    public function __construct(FileInterface $file)
+    /**
+     * @param FileWithBytes|FileWithUri $file
+     */
+    public function __construct(FileBase $file, ?array $metadata = null)
     {
         $this->file = $file;
+        $this->metadata = $metadata;
     }
 
     public function getKind(): string
     {
-        return $this->kind;
+        return 'file';
     }
 
-    public function getFile(): FileInterface
+    /**
+     * @return FileWithBytes|FileWithUri
+     */
+    public function getFile(): FileBase
     {
         return $this->file;
     }
 
-    public function getMetadata(): ?array
-    {
-        return $this->metadata;
-    }
-
-    public function setMetadata(array $metadata): void
-    {
-        $this->metadata = $metadata;
-    }
-
     public function toArray(): array
     {
-        $result = [
-            'kind' => $this->kind,
-            'file' => $this->file->toArray()
+        $data = [
+            'kind' => 'file',
+            'file' => $this->file->toArray(),
         ];
 
         if ($this->metadata !== null) {
-            $result['metadata'] = $this->metadata;
+            $data['metadata'] = $this->metadata;
         }
 
-        return $result;
-    }
-
-    public static function fromArray(array $data): self
-    {
-        $file = FileFactory::fromArray($data['file']);
-        $part = new self($file);
-
-        if (isset($data['metadata'])) {
-            $part->setMetadata($data['metadata']);
-        }
-
-        return $part;
+        return $data;
     }
 }

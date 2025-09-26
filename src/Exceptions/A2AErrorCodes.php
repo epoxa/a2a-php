@@ -20,6 +20,7 @@ class A2AErrorCodes
     public const UNSUPPORTED_OPERATION = -32004;
     public const CONTENT_TYPE_NOT_SUPPORTED = -32005;
     public const INVALID_AGENT_RESPONSE = -32006;
+    public const AUTHENTICATED_EXTENDED_CARD_NOT_CONFIGURED = -32007;
 
     public static function getErrorMessage(int $code): string
     {
@@ -35,6 +36,7 @@ class A2AErrorCodes
             self::UNSUPPORTED_OPERATION => 'Unsupported operation',
             self::CONTENT_TYPE_NOT_SUPPORTED => 'Content type not supported',
             self::INVALID_AGENT_RESPONSE => 'Invalid agent response',
+            self::AUTHENTICATED_EXTENDED_CARD_NOT_CONFIGURED => 'Authenticated Extended Card not configured',
             default => 'Unknown error'
         };
     }

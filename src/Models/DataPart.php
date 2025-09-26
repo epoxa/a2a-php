@@ -5,22 +5,24 @@ declare(strict_types=1);
 namespace A2A\Models;
 
 /**
- * Represents a structured data segment within a message part
+ * Represents a structured data segment (e.g., JSON) within a message or artifact.
+ *
+ * @see https://a2a-protocol.org/dev/specification/#653-datapart-object
  */
 class DataPart implements PartInterface
 {
-    private string $kind = 'data';
     private array $data;
-    private ?array $metadata = null;
+    private ?array $metadata;
 
-    public function __construct(array $data)
+    public function __construct(array $data, ?array $metadata = null)
     {
         $this->data = $data;
+        $this->metadata = $metadata;
     }
 
     public function getKind(): string
     {
-        return $this->kind;
+        return 'data';
     }
 
     public function getData(): array
@@ -28,43 +30,17 @@ class DataPart implements PartInterface
         return $this->data;
     }
 
-    public function setData(array $data): void
-    {
-        $this->data = $data;
-    }
-
-    public function getMetadata(): ?array
-    {
-        return $this->metadata;
-    }
-
-    public function setMetadata(array $metadata): void
-    {
-        $this->metadata = $metadata;
-    }
-
     public function toArray(): array
     {
-        $result = [
-            'kind' => $this->kind,
-            'data' => $this->data
+        $data = [
+            'kind' => 'data',
+            'data' => $this->data,
         ];
 
         if ($this->metadata !== null) {
-            $result['metadata'] = $this->metadata;
+            $data['metadata'] = $this->metadata;
         }
 
-        return $result;
-    }
-
-    public static function fromArray(array $data): self
-    {
-        $part = new self($data['data']);
-
-        if (isset($data['metadata'])) {
-            $part->setMetadata($data['metadata']);
-        }
-
-        return $part;
+        return $data;
     }
 }

@@ -5,16 +5,17 @@ declare(strict_types=1);
 namespace A2A\Models;
 
 /**
- * File content with base64 encoded bytes
+ * Represents a file with its content provided directly as a base64-encoded string.
+ *
+ * @see https://a2a-protocol.org/dev/specification/#661-filewithbytes-object
  */
-class FileWithBytes implements FileInterface
+class FileWithBytes extends FileBase
 {
     private string $bytes;
-    private ?string $name = null;
-    private ?string $mimeType = null;
 
-    public function __construct(string $bytes)
+    public function __construct(string $bytes, ?string $name = null, ?string $mimeType = null)
     {
+        parent::__construct($name, $mimeType);
         $this->bytes = $bytes;
     }
 
@@ -23,55 +24,19 @@ class FileWithBytes implements FileInterface
         return $this->bytes;
     }
 
-    public function getName(): ?string
-    {
-        return $this->name;
-    }
-
-    public function setName(string $name): void
-    {
-        $this->name = $name;
-    }
-
-    public function getMimeType(): ?string
-    {
-        return $this->mimeType;
-    }
-
-    public function setMimeType(string $mimeType): void
-    {
-        $this->mimeType = $mimeType;
-    }
-
     public function toArray(): array
     {
-        $result = [
-            'bytes' => $this->bytes
+        $data = [
+            'bytes' => $this->bytes,
         ];
 
         if ($this->name !== null) {
-            $result['name'] = $this->name;
+            $data['name'] = $this->name;
         }
-
         if ($this->mimeType !== null) {
-            $result['mimeType'] = $this->mimeType;
+            $data['mimeType'] = $this->mimeType;
         }
 
-        return $result;
-    }
-
-    public static function fromArray(array $data): self
-    {
-        $file = new self($data['bytes']);
-
-        if (isset($data['name'])) {
-            $file->setName($data['name']);
-        }
-
-        if (isset($data['mimeType'])) {
-            $file->setMimeType($data['mimeType']);
-        }
-
-        return $file;
+        return $data;
     }
 }

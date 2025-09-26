@@ -6,14 +6,23 @@ namespace A2A\Handlers;
 
 use A2A\Interfaces\MessageHandlerInterface;
 use A2A\Models\Message;
+use A2A\Models\TextPart;
 
 class EchoMessageHandler implements MessageHandlerInterface
 {
     public function handle(Message $message, string $fromAgent): array
     {
+        $textContent = '';
+        foreach ($message->getParts() as $part) {
+            if ($part instanceof TextPart) {
+                $textContent = $part->getText();
+                break; // Echo the first text part found
+            }
+        }
+
         return [
             'status' => 'processed',
-            'echo' => $message->getTextContent(),
+            'echo' => $textContent,
             'from' => $fromAgent,
             'message_id' => $message->getMessageId(),
             'timestamp' => time()
@@ -22,6 +31,12 @@ class EchoMessageHandler implements MessageHandlerInterface
 
     public function canHandle(Message $message): bool
     {
-        return true; // All messages have text content
+        // This handler can process any message that contains at least one text part.
+        foreach ($message->getParts() as $part) {
+            if ($part instanceof TextPart) {
+                return true;
+            }
+        }
+        return false;
     }
 }

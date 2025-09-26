@@ -17,7 +17,11 @@ class MessageV2Test extends TestCase
         $this->assertEquals('user', $message->getRole());
         $this->assertEquals('message', $message->getKind());
         $this->assertNotEmpty($message->getMessageId());
-        $this->assertEquals('Hello World', $message->getTextContent());
+
+        $parts = $message->getParts();
+        $this->assertCount(1, $parts);
+        $this->assertInstanceOf(TextPart::class, $parts[0]);
+        $this->assertEquals('Hello World', $parts[0]->getText());
     }
 
     public function testCreateAgentMessage(): void
@@ -26,7 +30,11 @@ class MessageV2Test extends TestCase
         
         $this->assertEquals('agent', $message->getRole());
         $this->assertEquals('message', $message->getKind());
-        $this->assertEquals('Hello User', $message->getTextContent());
+
+        $parts = $message->getParts();
+        $this->assertCount(1, $parts);
+        $this->assertInstanceOf(TextPart::class, $parts[0]);
+        $this->assertEquals('Hello User', $parts[0]->getText());
     }
 
     public function testToArray(): void

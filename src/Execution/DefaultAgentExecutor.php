@@ -22,7 +22,9 @@ class DefaultAgentExecutor implements AgentExecutor
 
         // Publish initial task if new
         if (!$requestContext->task) {
-            $task = new Task($taskId, 'Processing message', [], $requestContext->contextId);
+            $status = new TaskStatus(TaskState::SUBMITTED);
+            $metadata = ['description' => 'Processing message'];
+            $task = new Task($taskId, $requestContext->contextId, $status, [], [], $metadata);
             $eventBus->publish($task);
         }
 

@@ -4,9 +4,11 @@ declare(strict_types=1);
 
 namespace A2A\Tests\Handlers;
 
+use A2A\Models\DataPart;
 use PHPUnit\Framework\TestCase;
 use A2A\Handlers\EchoMessageHandler;
 use A2A\Models\Message;
+use A2A\Models\TextPart;
 
 class EchoMessageHandlerTest extends TestCase
 {
@@ -25,8 +27,8 @@ class EchoMessageHandlerTest extends TestCase
 
     public function testCannotHandleNonTextMessage(): void
     {
-        $message = Message::createUserMessage('data');
-        $this->assertTrue($this->handler->canHandle($message)); // All messages are text-based now
+        $message = new Message('msg-1', 'user', [new DataPart(['data' => 'some data'])]);
+        $this->assertFalse($this->handler->canHandle($message));
     }
 
     public function testHandleMessage(): void

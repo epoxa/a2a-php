@@ -4,19 +4,24 @@ declare(strict_types=1);
 
 namespace A2A\Models;
 
+use A2A\Models\Message;
+
 /**
- * TaskState and accompanying message
+ * Represents the status of a task at a specific point in time.
+ *
+ * @see https://a2a-protocol.org/dev/specification/#62-taskstatus-object
  */
 class TaskStatus
 {
     private TaskState $state;
-    private ?MessageV2 $message = null;
-    private ?string $timestamp = null;
+    private ?Message $message;
+    private ?string $timestamp;
 
-    public function __construct(TaskState $state)
+    public function __construct(TaskState $state, ?Message $message = null, ?string $timestamp = null)
     {
         $this->state = $state;
-        $this->timestamp = date('c'); // ISO 8601 format
+        $this->message = $message;
+        $this->timestamp = $timestamp ?? date('c');
     }
 
     public function getState(): TaskState
@@ -24,20 +29,9 @@ class TaskStatus
         return $this->state;
     }
 
-    public function setState(TaskState $state): void
-    {
-        $this->state = $state;
-        $this->timestamp = date('c');
-    }
-
-    public function getMessage(): ?MessageV2
+    public function getMessage(): ?Message
     {
         return $this->message;
-    }
-
-    public function setMessage(MessageV2 $message): void
-    {
-        $this->message = $message;
     }
 
     public function getTimestamp(): ?string
@@ -45,41 +39,26 @@ class TaskStatus
         return $this->timestamp;
     }
 
-    public function setTimestamp(string $timestamp): void
-    {
-        $this->timestamp = $timestamp;
-    }
-
     public function toArray(): array
     {
-        $result = [
-            'state' => $this->state->value
+        $data = [
+            'state' => $this->state->value,
+            'timestamp' => $this->timestamp,
         ];
 
         if ($this->message !== null) {
-            $result['message'] = $this->message->toArray();
+            $data['message'] = $this->message->toArray();
         }
 
-        if ($this->timestamp !== null) {
-            $result['timestamp'] = $this->timestamp;
-        }
-
-        return $result;
+        return $data;
     }
 
     public static function fromArray(array $data): self
     {
         $state = TaskState::from($data['state']);
-        $status = new self($state);
+        $message = isset($data['message']) ? Message::fromArray($data['message']) : null;
+        $timestamp = $data['timestamp'] ?? null;
 
-        if (isset($data['message'])) {
-            $status->setMessage(MessageV2::fromArray($data['message']));
-        }
-
-        if (isset($data['timestamp'])) {
-            $status->setTimestamp($data['timestamp']);
-        }
-
-        return $status;
+        return new self($state, $message, $timestamp);
     }
 }

@@ -21,8 +21,7 @@ class PushNotificationConfigTest extends TestCase
     {
         $capabilities = new AgentCapabilities(
             streaming: true,
-            pushNotifications: true,
-            stateTransitionHistory: true
+            pushNotifications: true
         );
 
         $agentCard = new AgentCard(
@@ -31,10 +30,10 @@ class PushNotificationConfigTest extends TestCase
             'https://example.com/agent',
             '1.0.0',
             $capabilities,
-            ['text'],
-            ['text'],
+            ['text/plain'],
+            ['application/json'],
             [],
-            '0.2.5'
+            '0.3.0'
         );
 
         // Use array storage driver for tests to ensure isolation
@@ -57,7 +56,7 @@ class PushNotificationConfigTest extends TestCase
                     'url' => 'https://example.com/webhook',
                     'id' => 'webhook-id',
                     'token' => 'secret-token',
-                    'authentication' => ['type' => 'bearer']
+                    'authentication' => ['schemes' => ['bearer']]
                 ]
             ],
             'id' => 1

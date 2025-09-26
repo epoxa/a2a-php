@@ -80,12 +80,18 @@ class A2AClientTest extends TestCase
             'jsonrpc' => '2.0',
             'id' => 1,
             'result' => [
-                'id' => 'remote-agent-001',
                 'name' => 'Remote Agent',
                 'description' => 'A remote agent',
+                'url' => 'https://remote.example.com/agent',
                 'version' => '1.0.0',
-                'capabilities' => ['messaging'],
-                'metadata' => []
+                'protocolVersion' => '0.3.0',
+                'capabilities' => [
+                    'streaming' => false,
+                    'pushNotifications' => false
+                ],
+                'defaultInputModes' => ['text/plain'],
+                'defaultOutputModes' => ['text/plain'],
+                'skills' => [],
             ]
         ];
 
@@ -96,7 +102,7 @@ class A2AClientTest extends TestCase
 
         $remoteCard = $this->client->getAgentCard('http://example.com/api');
 
-        $this->assertEquals('Remote Agent', $remoteCard->getId());
+        $this->assertInstanceOf(AgentCard::class, $remoteCard);
         $this->assertEquals('Remote Agent', $remoteCard->getName());
     }
 
@@ -166,8 +172,10 @@ class A2AClientTest extends TestCase
             'id' => 1,
             'result' => [
                 'id' => 'task-123',
-                'description' => 'Test task',
-                'status' => ['state' => 'submitted']
+                'contextId' => 'context-456',
+                'status' => ['state' => 'submitted', 'timestamp' => date('c')],
+                'kind' => 'task',
+                'metadata' => ['description' => 'Test task']
             ]
         ];
 
@@ -202,7 +210,7 @@ class A2AClientTest extends TestCase
             'result' => [
                 'id' => 'task-123',
                 'kind' => 'task',
-                'status' => ['state' => 'working'],
+                'status' => ['state' => 'working', 'timestamp' => date('c')],
                 'contextId' => 'context-123'
             ]
         ];
@@ -224,7 +232,7 @@ class A2AClientTest extends TestCase
         $task = $this->client->sendTask('task-123', $message, ['priority' => 'high']);
         $this->assertNotNull($task);
         $this->assertEquals('task-123', $task->getId());
-        $this->assertEquals('working', $task->getStatus()->value);
+        $this->assertEquals('working', $task->getStatus()->getState()->value);
     }
 
     public function testSendTaskFailure(): void
