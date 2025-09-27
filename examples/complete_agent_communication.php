@@ -39,7 +39,7 @@ $agentA = new AgentCard(
     ['text', 'data'],
     ['text', 'data', 'file'],
     [$skillA],
-    '0.2.5'
+    '0.3.0'
 );
 $agentA->setProvider($providerA);
 
@@ -57,7 +57,7 @@ $agentB = new AgentCard(
     ['text', 'data', 'file'],
     ['text', 'file'],
     [$skillB],
-    '0.2.5'
+    '0.3.0'
 );
 $agentB->setProvider($providerB);
 
@@ -239,7 +239,7 @@ echo "Streaming completed with {$eventCount} events\n\n";
 echo "=== Protocol Compliance Summary ===\n";
 // Validate agent cards
 $cardValidation = true; // AgentCard validation not implemented
-echo " Agent Cards: Protocol v0.2.5 " . ($cardValidation ? 'COMPLIANT' : 'NON-COMPLIANT') . "\n";
+echo " Agent Cards: Protocol v0.3.0 " . ($cardValidation ? 'COMPLIANT' : 'NON-COMPLIANT') . "\n";
 
 // Validate message structure
 $messageValidation = $complexMessage->getKind() === 'message' &&

@@ -72,7 +72,7 @@ $agentCard = new AgentCard(
     ['text', 'data', 'file'],
     ['text', 'data', 'file'],
     [$skill],
-    '0.2.5'
+    '0.3.0'
 );
 
 $agentCard->setProvider($provider);
@@ -154,4 +154,4 @@ echo "   • Agent extensions for protocol extensibility\n";
 echo "   • Multiple transport interfaces (JSON-RPC, gRPC, HTTP+JSON)\n";
 echo "   • Enhanced agent cards with all latest spec features\n";
 echo "   • gRPC client foundation for high-performance communication\n";
-echo "\n📊 Feature Parity: 100% A2A Protocol v0.2.5 compliant\n";
+echo "\n📊 Feature Parity: 100% A2A Protocol v0.3.0 compliant\n";
