@@ -44,7 +44,7 @@ class Artifact
     {
         $data = [
             'artifactId' => $this->artifactId,
-            'parts' => array_map(fn(Part $part) => $part->toArray(), $this->parts),
+            'parts' => array_map(fn(PartInterface $part) => $part->toArray(), $this->parts),
         ];
 
         if ($this->name !== null) {
