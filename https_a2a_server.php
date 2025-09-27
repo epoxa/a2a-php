@@ -305,7 +305,7 @@ class A2AHttpsServer
             ['text', 'file', 'data'],                                      // defaultInputModes
             ['text', 'file', 'data'],                                      // defaultOutputModes
             $skills,                                                        // skills
-            '0.2.5'                                                         // protocolVersion
+            '0.3.0'                                                         // protocolVersion
         );
 
         // Initialize server with agent card and enable task object responses

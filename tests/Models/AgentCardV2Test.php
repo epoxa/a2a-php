@@ -27,7 +27,7 @@ class AgentCardV2Test extends TestCase
             ['text'],
             ['text'],
             [$skill],
-            '0.2.5'
+            '0.3.0'
         );
         $agentCard->setProvider($provider);
 
@@ -35,7 +35,7 @@ class AgentCardV2Test extends TestCase
 
         $this->assertEquals('Test Agent', $array['name']);
         $this->assertEquals('https://example.com/agent', $array['url']);
-        $this->assertEquals('0.2.5', $array['protocolVersion']);
+        $this->assertEquals('0.3.0', $array['protocolVersion']);
         $this->assertCount(1, $array['skills']);
         $this->assertTrue($array['capabilities']['streaming']);
         $this->assertEquals('Test Org', $array['provider']['organization']);

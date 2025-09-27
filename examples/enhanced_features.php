@@ -72,7 +72,7 @@ $agentCard = new AgentCard(
     ['text', 'data', 'file'],
     ['text', 'data', 'file'],
     [$skill],
-    '0.2.5'
+    '0.3.0'
 );
 
 $agentCard->setProvider($provider);

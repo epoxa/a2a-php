@@ -46,7 +46,7 @@ $agentCard = new AgentCard(
     ['text'],
     ['text'],
     [$skill],
-    '0.2.5'
+    '0.3.0'
 );
 $agentCard->setProvider($provider);
 
@@ -55,7 +55,7 @@ test("Has required 'name' field", isset($cardArray['name']));
 test("Has required 'description' field", isset($cardArray['description']));
 test("Has required 'url' field", isset($cardArray['url']));
 test("Has required 'version' field", isset($cardArray['version']));
-test("Has required 'protocolVersion' field", $cardArray['protocolVersion'] === '0.2.5');
+test("Has required 'protocolVersion' field", $cardArray['protocolVersion'] === '0.3.0');
 test("Has required 'capabilities' object", isset($cardArray['capabilities']) && is_array($cardArray['capabilities']));
 test("Has required 'defaultInputModes' array", isset($cardArray['defaultInputModes']) && is_array($cardArray['defaultInputModes']));
 test("Has required 'defaultOutputModes' array", isset($cardArray['defaultOutputModes']) && is_array($cardArray['defaultOutputModes']));

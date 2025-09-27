@@ -39,7 +39,7 @@ $agentA = new AgentCard(
     ['text', 'data'],
     ['text', 'data', 'file'],
     [$skillA],
-    '0.2.5'
+    '0.3.0'
 );
 $agentA->setProvider($providerA);
 
@@ -57,7 +57,7 @@ $agentB = new AgentCard(
     ['text', 'data', 'file'],
     ['text', 'file'],
     [$skillB],
-    '0.2.5'
+    '0.3.0'
 );
 $agentB->setProvider($providerB);
 

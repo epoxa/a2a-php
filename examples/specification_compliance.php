@@ -48,12 +48,12 @@ $agentCard = new AgentCard(
     ['text/plain'],
     ['text/plain'],
     [$skill],
-    '0.2.5'
+    '0.3.0'
 );
 $agentCard->setProvider($provider);
 
 $cardArray = $agentCard->toArray();
-check("protocolVersion field (required)", isset($cardArray['protocolVersion']) && $cardArray['protocolVersion'] === '0.2.5');
+check("protocolVersion field (required)", isset($cardArray['protocolVersion']) && $cardArray['protocolVersion'] === '0.3.0');
 check("name field (required)", isset($cardArray['name']));
 check("description field (required)", isset($cardArray['description']));
 check("url field (required)", isset($cardArray['url']));
