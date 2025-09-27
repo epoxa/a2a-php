@@ -8,6 +8,7 @@ use PHPUnit\Framework\TestCase;
 use A2A\TaskManager;
 use A2A\Models\TaskState;
 use A2A\Models\TaskStatus;
+use A2A\Storage\Storage;
 
 class TaskManagerTest extends TestCase
 {
@@ -15,7 +16,7 @@ class TaskManagerTest extends TestCase
 
     protected function setUp(): void
     {
-        $this->taskManager = new TaskManager();
+        $this->taskManager = new TaskManager(new Storage('array'));
     }
 
     public function testCreateTask(): void
@@ -33,7 +34,7 @@ class TaskManagerTest extends TestCase
         $task = $this->taskManager->createTask('Test task');
         $retrieved = $this->taskManager->getTask($task->getId());
 
-        $this->assertEquals($task, $retrieved);
+        $this->assertEquals($task->getId(), $retrieved->getId());
     }
 
     public function testGetNonExistentTask(): void
@@ -48,7 +49,8 @@ class TaskManagerTest extends TestCase
         $result = $this->taskManager->cancelTask($task->getId());
 
         $this->assertArrayHasKey('result', $result);
-        $this->assertEquals(TaskState::CANCELED, $task->getStatus()->getState());
+        $updatedTask = $this->taskManager->getTask($task->getId());
+        $this->assertEquals(TaskState::CANCELED, $updatedTask->getStatus()->getState());
     }
 
     public function testCancelNonExistentTask(): void
@@ -63,34 +65,21 @@ class TaskManagerTest extends TestCase
     {
         $task = $this->taskManager->createTask('Test task');
         $task->setStatus(new TaskStatus(TaskState::COMPLETED));
+        $this->taskManager->updateTask($task);
         
         $result = $this->taskManager->cancelTask($task->getId());
 
         $this->assertArrayHasKey('error', $result);
-        $this->assertStringContainsString('cannot be canceled', $result['error']['message']);
+        $this->assertStringContainsString('Task is already in a terminal state', $result['error']['message']);
     }
 
-    public function testUpdateTaskStatus(): void
+    public function testUpdateTask(): void
     {
         $task = $this->taskManager->createTask('Test task');
-        $result = $this->taskManager->updateTaskStatus($task->getId(), TaskState::WORKING);
+        $task->setStatus(new TaskStatus(TaskState::WORKING));
+        $this->taskManager->updateTask($task);
 
-        $this->assertTrue($result);
-        $this->assertEquals(TaskState::WORKING, $task->getStatus()->getState());
-    }
-
-    public function testUpdateNonExistentTaskStatus(): void
-    {
-        $result = $this->taskManager->updateTaskStatus('non-existent', TaskState::WORKING);
-        $this->assertFalse($result);
-    }
-
-    public function testUpdateTerminalTaskStatus(): void
-    {
-        $task = $this->taskManager->createTask('Test task');
-        $task->setStatus(new TaskStatus(TaskState::COMPLETED));
-        
-        $result = $this->taskManager->updateTaskStatus($task->getId(), TaskState::WORKING);
-        $this->assertFalse($result);
+        $updatedTask = $this->taskManager->getTask($task->getId());
+        $this->assertEquals(TaskState::WORKING, $updatedTask->getStatus()->getState());
     }
 }

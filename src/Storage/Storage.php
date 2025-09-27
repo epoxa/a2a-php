@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace A2A\Storage;
 
-use A2A\Models\Task;
+use A2A\Models\v0_3_0\Task;
 use A2A\Models\PushNotificationConfig;
 use Illuminate\Cache\Repository;
 use Illuminate\Cache\FileStore;

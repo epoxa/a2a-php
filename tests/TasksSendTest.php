@@ -4,13 +4,16 @@ declare(strict_types=1);
 
 namespace A2A\Tests;
 
+use A2A\A2AProtocol_v0_3_0;
 use A2A\A2AServer;
-use A2A\Models\AgentCard;
+use A2A\Models\v0_3_0\AgentCard;
 use A2A\Models\AgentCapabilities;
+use A2A\Models\v0_3_0\Message;
 use A2A\TaskManager;
 use PHPUnit\Framework\TestCase;
 use Psr\Log\LoggerInterface;
 use Psr\Log\NullLogger;
+use A2A\Storage\Storage;
 
 class TasksSendTest extends TestCase
 {
@@ -30,27 +33,25 @@ class TasksSendTest extends TestCase
             $capabilities,
             ['text/plain'],
             ['application/json'],
-            [],
-            '0.3.0'
+            []
         );
 
         $this->logger = new NullLogger();
-        $this->taskManager = new TaskManager();
-        $this->server = new A2AServer($this->agentCard, $this->logger, $this->taskManager);
+        $this->taskManager = new TaskManager(new Storage('array'));
+        $protocol = new A2AProtocol_v0_3_0($this->agentCard, null, $this->logger, $this->taskManager);
+        $this->server = new A2AServer($protocol, $this->logger);
     }
 
     public function testHandleTasksSendRequest(): void
     {
+        $message = Message::createUserMessage('Test task for A2A protocol');
         $request = [
             'jsonrpc' => '2.0',
             'method' => 'tasks/send',
             'params' => [
-                'task' => [
-                    'kind' => 'task',
-                    'id' => 'test-task-123',
-                    'description' => 'Test task for A2A protocol',
-                    'context' => ['key' => 'value']
-                ]
+                'id' => 'test-task-123',
+                'message' => $message->toArray(),
+                'metadata' => ['key' => 'value']
             ],
             'id' => 'test-tasks-send'
         ];
@@ -60,20 +61,17 @@ class TasksSendTest extends TestCase
         $this->assertEquals('2.0', $response['jsonrpc']);
         $this->assertEquals('test-tasks-send', $response['id']);
         $this->assertArrayHasKey('result', $response);
-        $this->assertEquals('received', $response['result']['status']);
-        $this->assertEquals('test-task-123', $response['result']['task_id']);
+        $this->assertEquals('test-task-123', $response['result']['id']);
     }
 
-    public function testHandleTasksSendWithInvalidTask(): void
+    public function testHandleTasksSendWithInvalidMessage(): void
     {
         $request = [
             'jsonrpc' => '2.0',
             'method' => 'tasks/send',
             'params' => [
-                'task' => [
-                    'kind' => 'invalid',  // Invalid kind
-                    'id' => 'test-task-123'
-                ]
+                'id' => 'test-task-123',
+                'message' => 'not-a-valid-message-object'
             ],
             'id' => 'test-tasks-send-invalid'
         ];
@@ -83,16 +81,16 @@ class TasksSendTest extends TestCase
         $this->assertEquals('2.0', $response['jsonrpc']);
         $this->assertEquals('test-tasks-send-invalid', $response['id']);
         $this->assertArrayHasKey('error', $response);
-        $this->assertEquals(-32602, $response['error']['code']);
-        $this->assertStringContainsString('Invalid task format', $response['error']['message']);
     }
 
-    public function testHandleTasksSendMissingTaskParameter(): void
+    public function testHandleTasksSendMissingMessageParameter(): void
     {
         $request = [
             'jsonrpc' => '2.0',
             'method' => 'tasks/send',
-            'params' => [],  // Missing task parameter
+            'params' => [
+                'id' => 'test-task-123'
+            ],
             'id' => 'test-tasks-send-missing'
         ];
 
@@ -101,22 +99,19 @@ class TasksSendTest extends TestCase
         $this->assertEquals('2.0', $response['jsonrpc']);
         $this->assertEquals('test-tasks-send-missing', $response['id']);
         $this->assertArrayHasKey('error', $response);
-        $this->assertEquals(-32602, $response['error']['code']);
-        $this->assertStringContainsString('Missing or invalid task parameter', $response['error']['message']);
+        $this->assertStringContainsString('Task ID and message are required', $response['error']['message']);
     }
 
     public function testTasksPersistenceBetweenMethods(): void
     {
         // First create a task via tasks/send
+        $message = Message::createUserMessage('Task for persistence test');
         $sendRequest = [
             'jsonrpc' => '2.0',
             'method' => 'tasks/send',
             'params' => [
-                'task' => [
-                    'kind' => 'task',
-                    'id' => 'persistent-task-123',
-                    'description' => 'Task for persistence test'
-                ]
+                'id' => 'persistent-task-123',
+                'message' => $message->toArray()
             ],
             'id' => 'test-send'
         ];

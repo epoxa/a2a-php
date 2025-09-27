@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace A2A\Handlers;
 
 use A2A\Interfaces\MessageHandlerInterface;
-use A2A\Models\Message;
+use A2A\Models\v0_3_0\Message;
 use A2A\Models\TextPart;
 
 class EchoMessageHandler implements MessageHandlerInterface

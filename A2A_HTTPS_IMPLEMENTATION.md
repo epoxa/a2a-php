@@ -47,7 +47,7 @@ The HTTPS-enabled server has been thoroughly tested and **maintains 100% compati
 # Standard HTTP mode - no changes needed
 php -S localhost:8081 https_a2a_server.php
 
-# Agent Card: http://localhost:8081/.well-known/agent.json
+# Agent Card: http://localhost:8081/.well-known/agent-card.json
 # Server Info: http://localhost:8081/server-info
 ```
 
@@ -211,10 +211,10 @@ python3 run_tck.py --sut-url https://your-domain.com --category all
 ### Benchmarks
 ```bash
 # Original server performance maintained
-ab -n 1000 -c 10 http://localhost:8081/.well-known/agent.json
+ab -n 1000 -c 10 http://localhost:8081/.well-known/agent-card.json
 
 # HTTPS performance (behind nginx)
-ab -n 1000 -c 10 https://your-domain.com/.well-known/agent.json
+ab -n 1000 -c 10 https://your-domain.com/.well-known/agent-card.json
 ```
 
 ## 🔧 Configuration Options
@@ -294,10 +294,10 @@ grep "SSL certificate generated" a2a_server.log
 ### Health Checks
 ```bash
 # HTTP health check
-curl -f http://localhost:8081/.well-known/agent.json
+curl -f http://localhost:8081/.well-known/agent-card.json
 
 # HTTPS health check
-curl -f https://your-domain.com/.well-known/agent.json
+curl -f https://your-domain.com/.well-known/agent-card.json
 
 # SSL certificate validation
 openssl s_client -connect your-domain.com:443 -servername your-domain.com

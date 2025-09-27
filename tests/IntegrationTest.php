@@ -4,18 +4,19 @@ declare(strict_types=1);
 
 namespace A2A\Tests;
 
+use A2A\A2AProtocol_v0_3_0;
+use A2A\Interfaces\MessageHandlerInterface;
 use A2A\Models\TextPart;
 use PHPUnit\Framework\TestCase;
 use A2A\A2AClient;
 use A2A\A2AServer;
-use A2A\A2AProtocol;
-use A2A\Models\AgentCard;
+use A2A\Models\v0_3_0\AgentCard;
 use A2A\Models\AgentCapabilities;
 use A2A\Models\AgentSkill;
-use A2A\Models\Message;
+use A2A\Models\v0_3_0\Message;
 use A2A\Utils\HttpClient;
-use A2A\Handlers\EchoMessageHandler;
 use A2A\TaskManager;
+use A2A\Storage\Storage;
 
 class IntegrationTest extends TestCase
 {
@@ -36,9 +37,17 @@ class IntegrationTest extends TestCase
             [$skill]
         );
         
-        $server = new A2AServer($serverCard);
-        $server->addMessageHandler(
-            function (Message $message, $fromAgent) {
+        $protocol = new A2AProtocol_v0_3_0($serverCard);
+        $server = new A2AServer($protocol);
+
+        $messageHandler = new class implements MessageHandlerInterface {
+            public function canHandle(Message $message): bool
+            {
+                return true;
+            }
+
+            public function handle(Message $message, string $fromAgent): array
+            {
                 $textContent = '';
                 foreach ($message->getParts() as $part) {
                     if ($part instanceof TextPart) {
@@ -48,7 +57,8 @@ class IntegrationTest extends TestCase
                 }
                 return ['status' => 'processed', 'echo' => $textContent];
             }
-        );
+        };
+        $protocol->addMessageHandler($messageHandler);
 
         // Setup client
         $clientCard = new AgentCard(
@@ -81,7 +91,7 @@ class IntegrationTest extends TestCase
 
         $this->assertEquals('2.0', $response['jsonrpc']);
         $this->assertEquals(1, $response['id']);
-        $this->assertEquals('received', $response['result']['status']);
+        $this->assertEquals(['status' => 'processed', 'echo' => 'Hello Server'], $response['result']);
     }
 
     public function testProtocolTaskManagement(): void
@@ -100,8 +110,8 @@ class IntegrationTest extends TestCase
             [$skill]
         );
         
-        $taskManager = new TaskManager();
-        $protocol = new A2AProtocol($agentCard, null, null, $taskManager);
+        $taskManager = new TaskManager(new Storage('array'));
+        $protocol = new A2AProtocol_v0_3_0($agentCard, null, null, $taskManager);
 
         // Create task through protocol
         $task = $protocol->createTask('Integration test task', ['test' => true]);

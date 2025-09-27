@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace A2A;
 
-use A2A\Models\AgentCard;
-use A2A\Models\Message;
+use A2A\Models\v0_3_0\AgentCard;
+use A2A\Models\v0_3_0\Message;
 use A2A\Models\Task;
 use A2A\Models\PushNotificationConfig;
 use A2A\Utils\HttpClient;
@@ -66,9 +66,28 @@ class A2AClient
 
         try {
             $response = $this->httpClient->post($agentUrl, $request);
+            if (isset($response['error'])) {
+                throw new A2AException($response['error']['message'], $response['error']['code'] ?? 0);
+            }
             return AgentCard::fromArray($response['result']);
         } catch (\Exception $e) {
             throw new A2AException('Failed to get agent card: ' . $e->getMessage());
+        }
+    }
+
+    public function getAuthenticatedExtendedCard(string $agentUrl): AgentCard
+    {
+        $jsonRpc = new JsonRpc();
+        $request = $jsonRpc->createRequest('agent/getAuthenticatedExtendedCard', [], 1);
+
+        try {
+            $response = $this->httpClient->post($agentUrl, $request);
+            if (isset($response['error'])) {
+                throw new A2AException($response['error']['message'], $response['error']['code'] ?? 0);
+            }
+            return AgentCard::fromArray($response['result']);
+        } catch (\Exception $e) {
+            throw new A2AException('Failed to get authenticated extended agent card: ' . $e->getMessage());
         }
     }
 

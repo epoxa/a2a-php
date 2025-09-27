@@ -7,7 +7,7 @@ namespace A2A\Tests\Handlers;
 use A2A\Models\DataPart;
 use PHPUnit\Framework\TestCase;
 use A2A\Handlers\EchoMessageHandler;
-use A2A\Models\Message;
+use A2A\Models\v0_3_0\Message;
 use A2A\Models\TextPart;
 
 class EchoMessageHandlerTest extends TestCase

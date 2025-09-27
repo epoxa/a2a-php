@@ -6,8 +6,10 @@ namespace A2A\Tests;
 
 use PHPUnit\Framework\TestCase;
 use A2A\A2AClient;
-use A2A\Models\AgentCard;
-use A2A\Models\Message;
+use A2A\Models\v0_3_0\AgentCard;
+use A2A\Models\v0_3_0\Message;
+use A2A\Models\AgentCapabilities;
+use A2A\Models\AgentSkill;
 use A2A\Utils\HttpClient;
 use A2A\Exceptions\A2AException;
 
@@ -20,8 +22,8 @@ class A2AClientTest extends TestCase
 
     protected function setUp(): void
     {
-        $capabilities = new \A2A\Models\AgentCapabilities();
-        $skill = new \A2A\Models\AgentSkill('test', 'Test', 'Test skill', ['test']);
+        $capabilities = new AgentCapabilities();
+        $skill = new AgentSkill('test', 'Test', 'Test skill', ['test']);
 
         $this->agentCard = new AgentCard(
             'Client Agent',

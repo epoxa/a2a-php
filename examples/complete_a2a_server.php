@@ -5,12 +5,12 @@ declare(strict_types=1);
 /**
  * Complete A2A Protocol Server Implementation
  * 
- * This server provides a full implementation of the A2A Protocol v0.2.5
+ * This server provides a full implementation of the A2A Protocol v0.3.0
  * with enhanced task management, streaming capabilities, and comprehensive
  * error handling for complete TCK compliance.
  * 
  * Features:
- * - Complete A2A Protocol v0.2.5 compliance
+ * - Complete A2A Protocol v0.3.0 compliance
  * - JSON-RPC 2.0 transport with proper error codes
  * - Task lifecycle management with custom ID support
  * - Event-driven architecture for real-time updates
@@ -24,10 +24,11 @@ declare(strict_types=1);
 require_once __DIR__ . '/../vendor/autoload.php';
 
 use A2A\A2AServer;
+use A2A\A2AProtocol_v0_3_0;
 use A2A\TaskManager;
-use A2A\Models\AgentCard;
+use A2A\Models\v0_3_0\AgentCard;
 use A2A\Models\AgentCapabilities;
-use A2A\Models\Message;
+use A2A\Models\v0_3_0\Message;
 use A2A\Models\TaskState;
 use A2A\Events\EventBusManager;
 use A2A\Events\ExecutionEventBusImpl;
@@ -175,13 +176,13 @@ class CompleteA2AServer
             $capabilities,                            // capabilities
             ['text', 'file', 'data'],                // defaultInputModes
             ['text', 'file', 'data'],                // defaultOutputModes
-            $skills,                                  // skills (at least one required)
-            '0.2.5'                                   // protocolVersion
+            $skills                                   // skills (at least one required)
         );
 
         // Initialize server with enhanced components and shared TaskManager
         // Enable A2A Protocol compliance mode for TCK tests
-        $this->server = new A2AServer($this->agentCard, $this->logger, $this->taskManager, true, $this->sharedStorage);
+        $protocol = new A2AProtocol_v0_3_0($this->agentCard, null, $this->logger, $this->taskManager);
+        $this->server = new A2AServer($protocol, $this->logger);
 
         $this->logger->info('Agent card configured', [
             'agent_id' => $this->agentCard->getName(),
@@ -484,7 +485,7 @@ class CompleteA2AServer
 
     public function getAgentCard(): array
     {
-        return $this->agentCard->toArray();
+        return $this->server->getAgentCard()->toArray();
     }
 
     public function getServerInfo(): array
@@ -492,7 +493,7 @@ class CompleteA2AServer
         return [
             'server' => 'Complete A2A Server',
             'version' => '1.0.0',
-            'protocol' => 'A2A v0.2.5',
+            'protocol' => 'A2A v0.3.0',
             'transport' => 'JSON-RPC 2.0',
             'features' => [
                 'task_management' => true,
@@ -501,7 +502,7 @@ class CompleteA2AServer
                 'comprehensive_errors' => true,
                 'tck_compliant' => true
             ],
-            'agent_card' => $this->agentCard->toArray(),
+            'agent_card' => $this->server->getAgentCard()->toArray(),
             'endpoints' => [
                 'message/send' => 'Send message to agent',
                 'message/stream' => 'Stream message processing',
@@ -544,7 +545,7 @@ if (
 // Handle A2A well-known agent card endpoint
 if (
     ($_SERVER['REQUEST_METHOD'] ?? '') === 'GET' &&
-    ($_SERVER['REQUEST_URI'] ?? '') === '/.well-known/agent.json'
+    ($_SERVER['REQUEST_URI'] ?? '') === '/.well-known/agent-card.json'
 ) {
     header('Content-Type: application/json');
     echo json_encode($server->getAgentCard(), JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
