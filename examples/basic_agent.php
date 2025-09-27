@@ -49,14 +49,22 @@ echo json_encode($response, JSON_PRETTY_PRINT) . "\n\n";
 echo "Creating a task...\n";
 $task = $protocol->createTask('Example task', ['priority' => 'normal']);
 echo "Task created: " . $task->getId() . "\n";
-echo "Task description: " . $task->getDescription() . "\n";
-echo "Task status: " . $task->getStatus()->value . "\n\n";
+echo "Task description: " . ($task->getMetadata()['description'] ?? 'No description') . "\n";
+echo "Task status: " . $task->getStatus()->getState()->value . "\n\n";
 
 // Example: Create a message
 echo "Creating a message...\n";
 $message = Message::createUserMessage('Hello from Basic Agent!');
 echo "Message ID: " . $message->getMessageId() . "\n";
-echo "Message content: " . $message->getTextContent() . "\n";
+// Get text content from first text part
+$textContent = '';
+foreach ($message->getParts() as $part) {
+    if ($part instanceof \A2A\Models\TextPart) {
+        $textContent = $part->getText();
+        break;
+    }
+}
+echo "Message content: " . $textContent . "\n";
 echo "Message role: " . $message->getRole() . "\n\n";
 
 // Example: Handle ping request

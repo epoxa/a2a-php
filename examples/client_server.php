@@ -4,10 +4,10 @@ require_once __DIR__ . '/../vendor/autoload.php';
 
 use A2A\A2AClient;
 use A2A\A2AServer;
-use A2A\Models\AgentCard;
+use A2A\Models\v0_3_0\AgentCard;
 use A2A\Models\AgentCapabilities;
 use A2A\Models\AgentSkill;
-use A2A\Models\Message;
+use A2A\Models\v0_3_0\Message;
 use A2A\Utils\HttpClient;
 
 echo "=== Client-Server Communication Example ===\n\n";
@@ -27,12 +27,29 @@ $serverCard = new AgentCard(
     [$skill]
 );
 
-$server = new A2AServer($serverCard);
+$protocol = new \A2A\A2AProtocol_v0_3_0($serverCard);
+$server = new A2AServer($protocol);
 
 // Add message handler to server
-$server->addMessageHandler(function($message, $fromAgent) {
-    echo "Server received message from {$fromAgent}: {$message->getTextContent()}\n";
-});
+$messageHandler = new class implements \A2A\Interfaces\MessageHandlerInterface {
+    public function canHandle(Message $message): bool {
+        return true;
+    }
+    
+    public function handle(Message $message, string $fromAgent): array {
+        // Get text content from first text part
+        $textContent = '';
+        foreach ($message->getParts() as $part) {
+            if ($part instanceof \A2A\Models\TextPart) {
+                $textContent = $part->getText();
+                break;
+            }
+        }
+        echo "Server received message from {$fromAgent}: {$textContent}\n";
+        return ['status' => 'received'];
+    }
+};
+$server->addMessageHandler($messageHandler);
 
 // Create client agent
 $clientCard = new AgentCard(
@@ -71,7 +88,7 @@ echo "Server is " . ($isAlive ? "alive" : "not responding") . "\n\n";
 // Test get agent card
 echo "Getting server agent card...\n";
 $remoteCard = $client->getAgentCard('http://example.com/api');
-echo "Remote agent: {$remoteCard->getName()} (ID: {$remoteCard->getId()})\n\n";
+echo "Remote agent: {$remoteCard->getName()}\n\n";
 
 // Test send message
 echo "Sending message to server...\n";

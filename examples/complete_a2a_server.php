@@ -193,27 +193,45 @@ class CompleteA2AServer
     private function setupMessageHandlers(): void
     {
         // Add comprehensive message handler with task integration
-        $this->server->addMessageHandler(function (Message $message, string $fromAgent) {
-            $this->logger->info('Processing message', [
-                'from' => $fromAgent,
-                'message_id' => $message->getMessageId(),
-                'role' => $message->getRole()
-            ]);
-
-            // The A2AServer handles task state progression automatically
-            // via the progressTaskState method - no manual override needed
-            $taskId = $message->getTaskId();
-            if ($taskId) {
-                $task = $this->taskManager->getTask($taskId);
-                if ($task) {
-                    $this->logger->info('Message task ready for interaction', [
-                        'task_id' => $taskId,
-                        'message_id' => $message->getMessageId(),
-                        'state' => $task->getStatus()->value
-                    ]);
-                }
+        $messageHandler = new class($this->logger, $this->taskManager) implements \A2A\Interfaces\MessageHandlerInterface {
+            private $logger;
+            private $taskManager;
+            
+            public function __construct($logger, $taskManager) {
+                $this->logger = $logger;
+                $this->taskManager = $taskManager;
             }
-        });
+            
+            public function canHandle(Message $message): bool {
+                return true;
+            }
+            
+            public function handle(Message $message, string $fromAgent): array {
+                $this->logger->info('Processing message', [
+                    'from' => $fromAgent,
+                    'message_id' => $message->getMessageId(),
+                    'role' => $message->getRole()
+                ]);
+
+                // The A2AServer handles task state progression automatically
+                // via the progressTaskState method - no manual override needed
+                $taskId = $message->getTaskId();
+                if ($taskId) {
+                    $task = $this->taskManager->getTask($taskId);
+                    if ($task) {
+                        $this->logger->info('Message task ready for interaction', [
+                            'task_id' => $taskId,
+                            'message_id' => $message->getMessageId(),
+                            'state' => $task->getStatus()->getState()->value
+                        ]);
+                    }
+                }
+                
+                return ['status' => 'processed'];
+            }
+        };
+        
+        $this->server->addMessageHandler($messageHandler);
     }
 
     private function processMessage(Message $message, $task): void
