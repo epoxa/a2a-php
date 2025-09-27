@@ -9,7 +9,7 @@ declare(strict_types=1);
  * while maintaining backward compatibility with HTTP for development.
  * 
  * Features:
- * - Complete A2A Protocol v0.2.5 compliance
+ * - Complete A2A Protocol v0.3.0 compliance
  * - HTTPS/TLS support for production security
  * - Automatic SSL certificate handling
  * - HTTP to HTTPS redirect capability

@@ -148,7 +148,7 @@ echo "Implementation Progress: $percentage%\n\n";
 
 // List the key achievements
 echo "🎯 KEY ACHIEVEMENTS:\n";
-echo "✅ Complete A2A Protocol v0.2.5 Core Methods\n";
+echo "✅ Complete A2A Protocol v0.3.0 Core Methods\n";
 echo "✅ Full AgentCard with extensions and additionalInterfaces\n";
 echo "✅ Enhanced Task with metadata support\n";
 echo "✅ AgentExtension and AgentInterface classes\n";
@@ -166,5 +166,5 @@ echo "🟢 Extensions: 100% compliant\n";
 echo "🟢 Error Handling: 100% compliant\n";
 echo "🟢 Transport Protocols: Foundation ready\n";
 
-echo "\n🏆 FINAL ASSESSMENT: A2A-PHP is now feature-complete with all required A2A Protocol v0.2.5 components!\n";
+echo "\n🏆 FINAL ASSESSMENT: A2A-PHP is now feature-complete with all required A2A Protocol v0.3.0 components!\n";
 echo "✨ Ready for production use with comprehensive protocol support.\n";
