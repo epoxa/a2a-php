@@ -37,7 +37,7 @@ class A2AProtocol
         ?TaskManager $taskManager = null
     ) {
         $this->agentCard = $agentCard;
-        $this->agentId = $agentCard->getId();
+        $this->agentId = $agentCard->getName();
         $this->httpClient = $httpClient ?? new HttpClient();
         $this->logger = $logger ?? new NullLogger();
         $this->taskManager = $taskManager ?? new TaskManager();
@@ -51,7 +51,14 @@ class A2AProtocol
     public function createTask(string $description, array $context = []): Task
     {
         $taskId = Uuid::uuid4()->toString();
-        $task = new Task($taskId, $description, $context);
+        $contextId = $context['contextId'] ?? Uuid::uuid4()->toString();
+
+        $status = new \A2A\Models\TaskStatus(\A2A\Models\TaskState::SUBMITTED);
+
+        $metadata = $context;
+        $metadata['description'] = $description;
+
+        $task = new Task($taskId, $contextId, $status, [], [], $metadata);
 
         $this->logger->info(
             'Task created', [
@@ -121,6 +128,8 @@ class A2AProtocol
                 return $this->handleDeletePushConfig($parsedRequest['params'], $parsedRequest['id']);
             case 'get_agent_card':
                 return $jsonRpc->createResponse($parsedRequest['id'], $this->agentCard->toArray());
+            case 'agent/getAuthenticatedExtendedCard':
+                return $this->handleGetAuthenticatedExtendedCard($parsedRequest['id']);
             case 'ping':
                 return $jsonRpc->createResponse($parsedRequest['id'], ['status' => 'pong']);
             default:
@@ -130,6 +139,24 @@ class A2AProtocol
             $this->logger->error('Request handling failed', ['error' => $e->getMessage()]);
             return $jsonRpc->createError($request['id'] ?? null, $e->getMessage());
         }
+    }
+
+    private function handleGetAuthenticatedExtendedCard($requestId): array
+    {
+        $jsonRpc = new JsonRpc();
+
+        if (!$this->agentCard->getSupportsAuthenticatedExtendedCard()) {
+            return $jsonRpc->createError(
+                $requestId,
+                A2AErrorCodes::getErrorMessage(A2AErrorCodes::AUTHENTICATED_EXTENDED_CARD_NOT_CONFIGURED),
+                A2AErrorCodes::AUTHENTICATED_EXTENDED_CARD_NOT_CONFIGURED
+            );
+        }
+
+        // NOTE: In a real implementation, this would check authentication
+        // and potentially return a different, more detailed AgentCard.
+        // For this implementation, we return the same card.
+        return $jsonRpc->createResponse($requestId, $this->agentCard->toArray());
     }
 
     private function handleMessage(array $params, $requestId): array

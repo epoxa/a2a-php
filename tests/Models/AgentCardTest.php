@@ -55,12 +55,13 @@ class AgentCardTest extends TestCase
             'description' => 'Description',
             'url' => 'https://example.com/agent',
             'version' => '1.0.0',
-            'protocolVersion' => '0.2.5',
+            'protocolVersion' => '0.3.0',
             'capabilities' => $capabilities->toArray(),
             'defaultInputModes' => ['text'],
             'defaultOutputModes' => ['text'],
             'skills' => [$skill->toArray()],
-            'supportsAuthenticatedExtendedCard' => false
+            'supportsAuthenticatedExtendedCard' => false,
+            'preferredTransport' => 'JSONRPC',
         ];
 
         $this->assertEquals($expected, $card->toArray());

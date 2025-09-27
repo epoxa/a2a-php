@@ -4,15 +4,20 @@ declare(strict_types=1);
 
 namespace A2A\Models;
 
-use DateTime;
-use DateTimeInterface;
 use Ramsey\Uuid\Uuid;
 
+/**
+ * Represents a single communication turn or a piece of contextual
+ * information between a client and an agent.
+ *
+ * @see https://a2a-protocol.org/dev/specification/#64-message-object
+ */
 class Message
 {
     private string $messageId;
     private string $role;
     private string $kind = 'message';
+    /** @var PartInterface[] */
     private array $parts;
     private ?string $contextId = null;
     private ?string $taskId = null;
@@ -127,7 +132,7 @@ class Message
             'kind' => $this->kind,
             'messageId' => $this->messageId,
             'role' => $this->role,
-            'parts' => array_map(fn(PartInterface $part) => $part->toArray(), $this->parts)
+            'parts' => array_map(fn (PartInterface $part) => $part->toArray(), $this->parts)
         ];
 
         if ($this->contextId !== null) {
@@ -158,7 +163,7 @@ class Message
         $parts = [];
         if (isset($data['parts'])) {
             foreach ($data['parts'] as $partData) {
-                $parts[] = PartFactory::fromArray($partData);
+                $parts[] = Part::fromArray($partData);
             }
         }
 
@@ -189,31 +194,5 @@ class Message
         }
 
         return $message;
-    }
-
-    public function getTextContent(): string
-    {
-        foreach ($this->parts as $part) {
-            if ($part instanceof TextPart) {
-                return $part->getText();
-            }
-        }
-        return '';
-    }
-
-    // Legacy compatibility methods
-    public function getId(): string
-    {
-        return $this->messageId;
-    }
-
-    public function getContent(): string
-    {
-        return $this->getTextContent();
-    }
-
-    public function getType(): string
-    {
-        return 'text';
     }
 }

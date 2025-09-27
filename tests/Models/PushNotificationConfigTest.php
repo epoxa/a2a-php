@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace A2A\Tests\Models;
 
+use A2A\Models\PushNotificationAuthenticationInfo;
 use PHPUnit\Framework\TestCase;
 use A2A\Models\PushNotificationConfig;
 
@@ -11,17 +12,18 @@ class PushNotificationConfigTest extends TestCase
 {
     public function testCreateConfig(): void
     {
+        $authInfo = new PushNotificationAuthenticationInfo(['bearer']);
         $config = new PushNotificationConfig(
             'https://example.com/webhook',
             'config-123',
             'token-456',
-            ['type' => 'bearer']
+            $authInfo
         );
 
         $this->assertEquals('https://example.com/webhook', $config->getUrl());
         $this->assertEquals('config-123', $config->getId());
         $this->assertEquals('token-456', $config->getToken());
-        $this->assertEquals(['type' => 'bearer'], $config->getAuthentication());
+        $this->assertSame($authInfo, $config->getAuthentication());
     }
 
     public function testCreateMinimalConfig(): void
@@ -31,23 +33,27 @@ class PushNotificationConfigTest extends TestCase
         $this->assertEquals('https://example.com/webhook', $config->getUrl());
         $this->assertNull($config->getId());
         $this->assertNull($config->getToken());
-        $this->assertEquals([], $config->getAuthentication());
+        $this->assertNull($config->getAuthentication());
     }
 
     public function testToArray(): void
     {
+        $authInfo = new PushNotificationAuthenticationInfo(['bearer'], 'creds');
         $config = new PushNotificationConfig(
             'https://example.com/webhook',
             'config-123',
             'token-456',
-            ['type' => 'bearer']
+            $authInfo
         );
 
         $expected = [
             'url' => 'https://example.com/webhook',
             'id' => 'config-123',
             'token' => 'token-456',
-            'authentication' => ['type' => 'bearer']
+            'authentication' => [
+                'schemes' => ['bearer'],
+                'credentials' => 'creds',
+            ]
         ];
 
         $this->assertEquals($expected, $config->toArray());
@@ -59,7 +65,7 @@ class PushNotificationConfigTest extends TestCase
             'url' => 'https://example.com/webhook',
             'id' => 'config-789',
             'token' => 'token-abc',
-            'authentication' => ['type' => 'api-key']
+            'authentication' => ['schemes' => ['api-key']]
         ];
 
         $config = PushNotificationConfig::fromArray($data);
@@ -67,6 +73,7 @@ class PushNotificationConfigTest extends TestCase
         $this->assertEquals('https://example.com/webhook', $config->getUrl());
         $this->assertEquals('config-789', $config->getId());
         $this->assertEquals('token-abc', $config->getToken());
-        $this->assertEquals(['type' => 'api-key'], $config->getAuthentication());
+        $this->assertInstanceOf(PushNotificationAuthenticationInfo::class, $config->getAuthentication());
+        $this->assertEquals(['api-key'], $config->getAuthentication()->toArray()['schemes']);
     }
 }

@@ -7,6 +7,7 @@ namespace A2A\Tests;
 use PHPUnit\Framework\TestCase;
 use A2A\TaskManager;
 use A2A\Models\TaskState;
+use A2A\Models\TaskStatus;
 
 class TaskManagerTest extends TestCase
 {
@@ -22,9 +23,9 @@ class TaskManagerTest extends TestCase
         $task = $this->taskManager->createTask('Test task', ['priority' => 'high']);
 
         $this->assertNotEmpty($task->getId());
-        $this->assertEquals('Test task', $task->getDescription());
-        $this->assertEquals(['priority' => 'high'], $task->getContext());
-        $this->assertEquals(TaskState::SUBMITTED, $task->getStatus());
+        $this->assertEquals('Test task', $task->getMetadata()['description']);
+        $this->assertEquals('high', $task->getMetadata()['priority']);
+        $this->assertEquals(TaskState::SUBMITTED, $task->getStatus()->getState());
     }
 
     public function testGetTask(): void
@@ -47,7 +48,7 @@ class TaskManagerTest extends TestCase
         $result = $this->taskManager->cancelTask($task->getId());
 
         $this->assertArrayHasKey('result', $result);
-        $this->assertEquals(TaskState::CANCELED, $task->getStatus());
+        $this->assertEquals(TaskState::CANCELED, $task->getStatus()->getState());
     }
 
     public function testCancelNonExistentTask(): void
@@ -61,7 +62,7 @@ class TaskManagerTest extends TestCase
     public function testCancelCompletedTask(): void
     {
         $task = $this->taskManager->createTask('Test task');
-        $task->setStatus(TaskState::COMPLETED);
+        $task->setStatus(new TaskStatus(TaskState::COMPLETED));
         
         $result = $this->taskManager->cancelTask($task->getId());
 
@@ -75,7 +76,7 @@ class TaskManagerTest extends TestCase
         $result = $this->taskManager->updateTaskStatus($task->getId(), TaskState::WORKING);
 
         $this->assertTrue($result);
-        $this->assertEquals(TaskState::WORKING, $task->getStatus());
+        $this->assertEquals(TaskState::WORKING, $task->getStatus()->getState());
     }
 
     public function testUpdateNonExistentTaskStatus(): void
@@ -87,7 +88,7 @@ class TaskManagerTest extends TestCase
     public function testUpdateTerminalTaskStatus(): void
     {
         $task = $this->taskManager->createTask('Test task');
-        $task->setStatus(TaskState::COMPLETED);
+        $task->setStatus(new TaskStatus(TaskState::COMPLETED));
         
         $result = $this->taskManager->updateTaskStatus($task->getId(), TaskState::WORKING);
         $this->assertFalse($result);

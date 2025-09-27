@@ -4,41 +4,36 @@ declare(strict_types=1);
 
 namespace A2A\Models;
 
-use DateTime;
-use DateTimeInterface;
 use Ramsey\Uuid\Uuid;
 
+/**
+ * Represents the stateful unit of work being processed by the A2A Server.
+ *
+ * @see https://a2a-protocol.org/dev/specification/#61-task-object
+ */
 class Task
 {
     private string $id;
     private string $contextId;
-    private string $description;
-    private array $context;
-    private TaskState $status;
-    private DateTime $createdAt;
-    private ?DateTime $completedAt;
-    private array $parts;
-    private ?string $assignedTo;
-    private array $history = [];
-    private array $artifacts = [];
-    private array $metadata = [];
+    private TaskStatus $status;
+    private array $history;
+    private array $artifacts;
+    private array $metadata;
 
     public function __construct(
         string $id,
-        string $description,
-        array $context = [],
-        ?string $contextId = null,
-        TaskState $status = TaskState::SUBMITTED
+        string $contextId,
+        TaskStatus $status,
+        array $history = [],
+        array $artifacts = [],
+        array $metadata = []
     ) {
         $this->id = $id;
-        $this->contextId = $contextId ?? Uuid::uuid4()->toString();
-        $this->description = $description;
-        $this->context = $context;
+        $this->contextId = $contextId;
         $this->status = $status;
-        $this->createdAt = new DateTime();
-        $this->completedAt = null;
-        $this->parts = [];
-        $this->assignedTo = null;
+        $this->history = $history;
+        $this->artifacts = $artifacts;
+        $this->metadata = $metadata;
     }
 
     public function getId(): string
@@ -46,80 +41,19 @@ class Task
         return $this->id;
     }
 
-    public function getDescription(): string
-    {
-        return $this->description;
-    }
-
-    public function getContext(): array
-    {
-        return $this->context;
-    }
-
     public function getContextId(): string
     {
         return $this->contextId;
     }
 
-    public function getStatus(): TaskState
+    public function getStatus(): TaskStatus
     {
         return $this->status;
     }
 
-    public function setStatus(TaskState $status): void
+    public function setStatus(TaskStatus $status): void
     {
         $this->status = $status;
-        if ($status === TaskState::COMPLETED) {
-            $this->completedAt = new DateTime();
-        }
-    }
-
-    public function isTerminal(): bool
-    {
-        return $this->status->isTerminal();
-    }
-
-    public function getCreatedAt(): DateTime
-    {
-        return $this->createdAt;
-    }
-
-    public function getCompletedAt(): ?DateTime
-    {
-        return $this->completedAt;
-    }
-
-    public function addPart(Part $part): void
-    {
-        $this->parts[] = $part;
-    }
-
-    public function getParts(): array
-    {
-        return $this->parts;
-    }
-
-    public function getAssignedTo(): ?string
-    {
-        return $this->assignedTo;
-    }
-
-    public function assignTo(string $agentId): void
-    {
-        $this->assignedTo = $agentId;
-        if ($this->status === TaskState::SUBMITTED) {
-            $this->status = TaskState::WORKING;
-        }
-    }
-
-    public function isCompleted(): bool
-    {
-        return $this->status === TaskState::COMPLETED;
-    }
-
-    public function addToHistory(Message $message): void
-    {
-        $this->history[] = $message;
     }
 
     public function getHistory(int $limit = null): array
@@ -130,9 +64,9 @@ class Task
         return array_slice($this->history, -$limit);
     }
 
-    public function addArtifact(array $artifact): void
+    public function addToHistory(Message $message): void
     {
-        $this->artifacts[] = $artifact;
+        $this->history[] = $message;
     }
 
     public function getArtifacts(): array
@@ -140,9 +74,9 @@ class Task
         return $this->artifacts;
     }
 
-    public function setMetadata(array $metadata): void
+    public function addArtifact(Artifact $artifact): void
     {
-        $this->metadata = $metadata;
+        $this->artifacts[] = $artifact;
     }
 
     public function getMetadata(): array
@@ -150,9 +84,9 @@ class Task
         return $this->metadata;
     }
 
-    public function addMetadata(string $key, $value): void
+    public function setMetadata(array $metadata): void
     {
-        $this->metadata[$key] = $value;
+        $this->metadata = $metadata;
     }
 
     public function toArray(): array
@@ -161,66 +95,19 @@ class Task
             'kind' => 'task',
             'id' => $this->id,
             'contextId' => $this->contextId,
-            'status' => [
-                'state' => $this->status->value,
-                'timestamp' => $this->completedAt?->format(DateTimeInterface::ISO8601) ?? $this->createdAt->format(DateTimeInterface::ISO8601)
-            ]
+            'status' => $this->status->toArray(),
         ];
 
         if (!empty($this->artifacts)) {
-            $result['artifacts'] = $this->artifacts;
+            $result['artifacts'] = array_map(fn(Artifact $artifact) => $artifact->toArray(), $this->artifacts);
         }
 
         if (!empty($this->history)) {
-            $result['history'] = array_map(fn($msg) => $msg->toArray(), $this->history);
+            $result['history'] = array_map(fn(Message $message) => $message->toArray(), $this->history);
         }
 
-        // Merge context and metadata
-        $metadata = [];
-        if (!empty($this->context)) {
-            $metadata = array_merge($metadata, $this->context);
-        }
         if (!empty($this->metadata)) {
-            $metadata = array_merge($metadata, $this->metadata);
-        }
-        if (!empty($metadata)) {
-            $result['metadata'] = $metadata;
-        }
-
-        return $result;
-    }
-
-    public function toArrayWithHistory(?int $historyLength = null): array
-    {
-        $result = [
-            'kind' => 'task',
-            'id' => $this->id,
-            'contextId' => $this->contextId,
-            'status' => [
-                'state' => $this->status->value,
-                'timestamp' => $this->completedAt?->format(DateTimeInterface::ISO8601) ?? $this->createdAt->format(DateTimeInterface::ISO8601)
-            ]
-        ];
-
-        if (!empty($this->artifacts)) {
-            $result['artifacts'] = $this->artifacts;
-        }
-
-        // Include history when historyLength is specified, even if empty
-        if ($historyLength !== null) {
-            $historyItems = $historyLength > 0 ? $this->getHistory($historyLength) : $this->getHistory();
-            $result['history'] = array_map(fn($msg) => $msg->toArray(), $historyItems);
-        } elseif (!empty($this->history)) {
-            $result['history'] = array_map(fn($msg) => $msg->toArray(), $this->history);
-        }
-
-        if (!empty($this->context)) {
-            $result['metadata'] = $this->context;
-        }
-
-        // Add task metadata if present
-        if (!empty($this->metadata)) {
-            $result['metadata'] = array_merge($result['metadata'] ?? [], $this->metadata);
+            $result['metadata'] = $this->metadata;
         }
 
         return $result;
@@ -228,36 +115,29 @@ class Task
 
     public static function fromArray(array $data): self
     {
-        $status = TaskState::SUBMITTED;
-        if (isset($data['status']['state'])) {
-            $status = TaskState::from($data['status']['state']);
-        }
+        $status = TaskStatus::fromArray($data['status']);
 
-        $task = new self(
-            $data['id'],
-            $data['description'] ?? '',
-            $data['context'] ?? [], // Keep context separate
-            $data['contextId'] ?? null,
-            $status
-        );
-
-        // Set metadata separately from context
-        if (isset($data['metadata'])) {
-            $task->setMetadata($data['metadata']);
-        }
-
-        if (isset($data['artifacts'])) {
-            foreach ($data['artifacts'] as $artifact) {
-                $task->addArtifact($artifact);
-            }
-        }
-
+        $history = [];
         if (isset($data['history'])) {
             foreach ($data['history'] as $messageData) {
-                $task->addToHistory(Message::fromArray($messageData));
+                $history[] = Message::fromArray($messageData);
             }
         }
 
-        return $task;
+        $artifacts = [];
+        if (isset($data['artifacts'])) {
+            foreach ($data['artifacts'] as $artifactData) {
+                $artifacts[] = Artifact::fromArray($artifactData);
+            }
+        }
+
+        return new self(
+            $data['id'],
+            $data['contextId'] ?? Uuid::uuid4()->toString(),
+            $status,
+            $history,
+            $artifacts,
+            $data['metadata'] ?? []
+        );
     }
 }

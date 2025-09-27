@@ -4,6 +4,24 @@ declare(strict_types=1);
 
 namespace A2A\Models;
 
+use A2A\Models\Security\APIKeySecurityScheme;
+use A2A\Models\Security\HTTPAuthSecurityScheme;
+use A2A\Models\Security\MutualTLSSecurityScheme;
+use A2A\Models\Security\OAuth2SecurityScheme;
+use A2A\Models\Security\OpenIdConnectSecurityScheme;
+use A2A\Models\Security\SecurityScheme;
+
+/**
+ * A2A Protocol compliant AgentCard implementation.
+ *
+ * An AgentCard conveys key information:
+ * - Overall details (version, name, description, uses)
+ * - Skills: A set of capabilities the agent can perform
+ * - Default modalities/content types supported by the agent
+ * - Authentication requirements
+ *
+ * @see https://a2a-protocol.org/dev/specification/#55-agentcard-object-structure
+ */
 class AgentCard
 {
     private string $name;
@@ -16,12 +34,17 @@ class AgentCard
     private array $defaultOutputModes;
     private array $skills;
     private ?AgentProvider $provider = null;
+    /** @var array<string, SecurityScheme>|null */
     private ?array $securitySchemes = null;
     private ?array $security = null;
+    /** @var AgentInterface[]|null */
     private ?array $additionalInterfaces = null;
+    private ?string $preferredTransport = null;
     private ?string $documentationUrl = null;
     private ?string $iconUrl = null;
     private bool $supportsAuthenticatedExtendedCard = false;
+    /** @var AgentCardSignature[]|null */
+    private ?array $signatures = null;
 
     public function __construct(
         string $name,
@@ -32,7 +55,8 @@ class AgentCard
         array $defaultInputModes,
         array $defaultOutputModes,
         array $skills,
-        string $protocolVersion = '0.2.5'
+        string $protocolVersion = '0.3.0',
+        ?string $preferredTransport = 'JSONRPC'
     ) {
         $this->name = $name;
         $this->description = $description;
@@ -43,16 +67,12 @@ class AgentCard
         $this->defaultInputModes = $defaultInputModes;
         $this->defaultOutputModes = $defaultOutputModes;
         $this->skills = $skills;
+        $this->preferredTransport = $preferredTransport;
     }
 
     public function getName(): string
     {
         return $this->name;
-    }
-
-    public function getId(): string
-    {
-        return $this->name; // Use name as ID for backward compatibility
     }
 
     public function getDescription(): string
@@ -120,17 +140,9 @@ class AgentCard
         $this->additionalInterfaces = $additionalInterfaces;
     }
 
-    public function getAdditionalInterfaces(): ?array
+    public function setPreferredTransport(string $preferredTransport): void
     {
-        return $this->additionalInterfaces;
-    }
-
-    public function addAdditionalInterface(AgentInterface $interface): void
-    {
-        if ($this->additionalInterfaces === null) {
-            $this->additionalInterfaces = [];
-        }
-        $this->additionalInterfaces[] = $interface;
+        $this->preferredTransport = $preferredTransport;
     }
 
     public function setDocumentationUrl(string $documentationUrl): void
@@ -148,6 +160,26 @@ class AgentCard
         $this->supportsAuthenticatedExtendedCard = $supports;
     }
 
+    public function setSignatures(?array $signatures): void
+    {
+        $this->signatures = $signatures;
+    }
+
+    public function getSignatures(): ?array
+    {
+        return $this->signatures;
+    }
+
+    public function getSupportsAuthenticatedExtendedCard(): bool
+    {
+        return $this->supportsAuthenticatedExtendedCard;
+    }
+
+    public function addSkill(AgentSkill $skill): void
+    {
+        $this->skills[] = $skill;
+    }
+
     public function toArray(): array
     {
         $result = [
@@ -159,7 +191,7 @@ class AgentCard
             'capabilities' => $this->capabilities->toArray(),
             'defaultInputModes' => $this->defaultInputModes,
             'defaultOutputModes' => $this->defaultOutputModes,
-            'skills' => array_map(fn(AgentSkill $skill) => $skill->toArray(), $this->skills),
+            'skills' => array_map(fn (AgentSkill $skill) => $skill->toArray(), $this->skills),
             'supportsAuthenticatedExtendedCard' => $this->supportsAuthenticatedExtendedCard
         ];
 
@@ -168,7 +200,7 @@ class AgentCard
         }
 
         if ($this->securitySchemes !== null) {
-            $result['securitySchemes'] = $this->securitySchemes;
+            $result['securitySchemes'] = array_map(fn (SecurityScheme $scheme) => $scheme->toArray(), $this->securitySchemes);
         }
 
         if ($this->security !== null) {
@@ -176,10 +208,11 @@ class AgentCard
         }
 
         if ($this->additionalInterfaces !== null) {
-            $result['additionalInterfaces'] = array_map(
-                fn(AgentInterface $interface) => $interface->toArray(),
-                $this->additionalInterfaces
-            );
+            $result['additionalInterfaces'] = array_map(fn (AgentInterface $interface) => $interface->toArray(), $this->additionalInterfaces);
+        }
+
+        if ($this->preferredTransport !== null) {
+            $result['preferredTransport'] = $this->preferredTransport;
         }
 
         if ($this->documentationUrl !== null) {
@@ -188,6 +221,10 @@ class AgentCard
 
         if ($this->iconUrl !== null) {
             $result['iconUrl'] = $this->iconUrl;
+        }
+
+        if ($this->signatures !== null) {
+            $result['signatures'] = array_map(fn (AgentCardSignature $signature) => $signature->toArray(), $this->signatures);
         }
 
         return $result;
@@ -207,13 +244,14 @@ class AgentCard
         $agentCard = new self(
             $data['name'],
             $data['description'],
-            $data['url'] ?? 'https://example.com/agent',
+            $data['url'],
             $data['version'],
             $capabilities,
             $data['defaultInputModes'] ?? [],
             $data['defaultOutputModes'] ?? [],
             $skills,
-            $data['protocolVersion'] ?? '0.2.5'
+            $data['protocolVersion'] ?? '0.3.0',
+            $data['preferredTransport'] ?? 'JSONRPC'
         );
 
         if (isset($data['provider'])) {
@@ -221,7 +259,27 @@ class AgentCard
         }
 
         if (isset($data['securitySchemes'])) {
-            $agentCard->setSecuritySchemes($data['securitySchemes']);
+            $schemes = [];
+            foreach ($data['securitySchemes'] as $name => $schemeData) {
+                switch ($schemeData['type']) {
+                    case 'apiKey':
+                        $schemes[$name] = APIKeySecurityScheme::fromArray($schemeData);
+                        break;
+                    case 'http':
+                        $schemes[$name] = HTTPAuthSecurityScheme::fromArray($schemeData);
+                        break;
+                    case 'oauth2':
+                        $schemes[$name] = OAuth2SecurityScheme::fromArray($schemeData);
+                        break;
+                    case 'openIdConnect':
+                        $schemes[$name] = OpenIdConnectSecurityScheme::fromArray($schemeData);
+                        break;
+                    case 'mutualTLS':
+                        $schemes[$name] = MutualTLSSecurityScheme::fromArray($schemeData);
+                        break;
+                }
+            }
+            $agentCard->setSecuritySchemes($schemes);
         }
 
         if (isset($data['security'])) {
@@ -229,11 +287,11 @@ class AgentCard
         }
 
         if (isset($data['additionalInterfaces'])) {
-            $additionalInterfaces = [];
+            $interfaces = [];
             foreach ($data['additionalInterfaces'] as $interfaceData) {
-                $additionalInterfaces[] = AgentInterface::fromArray($interfaceData);
+                $interfaces[] = AgentInterface::fromArray($interfaceData);
             }
-            $agentCard->setAdditionalInterfaces($additionalInterfaces);
+            $agentCard->setAdditionalInterfaces($interfaces);
         }
 
         if (isset($data['documentationUrl'])) {
@@ -246,6 +304,14 @@ class AgentCard
 
         if (isset($data['supportsAuthenticatedExtendedCard'])) {
             $agentCard->setSupportsAuthenticatedExtendedCard($data['supportsAuthenticatedExtendedCard']);
+        }
+
+        if (isset($data['signatures'])) {
+            $signatures = [];
+            foreach ($data['signatures'] as $signatureData) {
+                $signatures[] = AgentCardSignature::fromArray($signatureData);
+            }
+            $agentCard->setSignatures($signatures);
         }
 
         return $agentCard;

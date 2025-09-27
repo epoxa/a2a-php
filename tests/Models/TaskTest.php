@@ -4,53 +4,58 @@ declare(strict_types=1);
 
 namespace A2A\Tests\Models;
 
+use A2A\Models\Artifact;
 use PHPUnit\Framework\TestCase;
 use A2A\Models\Task;
+use A2A\Models\TaskStatus;
 use A2A\Models\TaskState;
 use A2A\Models\Message;
 use A2A\Models\Part;
+use Ramsey\Uuid\Uuid;
 
 class TaskTest extends TestCase
 {
+    private function createTask(array $metadata = []): Task
+    {
+        $status = new TaskStatus(TaskState::SUBMITTED);
+        $metadata['description'] = 'Test task';
+
+        return new Task(
+            'task-123',
+            Uuid::uuid4()->toString(),
+            $status,
+            [],
+            [],
+            $metadata
+        );
+    }
+
     public function testCreateTask(): void
     {
-        $task = new Task('task-123', 'Test task', ['priority' => 'high']);
+        $task = $this->createTask(['priority' => 'high']);
 
         $this->assertEquals('task-123', $task->getId());
-        $this->assertEquals('Test task', $task->getDescription());
-        $this->assertEquals(['priority' => 'high'], $task->getContext());
-        $this->assertEquals(TaskState::SUBMITTED, $task->getStatus());
-        $this->assertFalse($task->isCompleted());
-        $this->assertFalse($task->isTerminal());
+        $this->assertEquals('Test task', $task->getMetadata()['description']);
+        $this->assertEquals('high', $task->getMetadata()['priority']);
+        $this->assertEquals(TaskState::SUBMITTED, $task->getStatus()->getState());
     }
 
     public function testTaskStatusTransitions(): void
     {
-        $task = new Task('task-123', 'Test task');
+        $task = $this->createTask();
 
-        $task->setStatus(TaskState::WORKING);
-        $this->assertEquals(TaskState::WORKING, $task->getStatus());
+        $newStatus = new TaskStatus(TaskState::WORKING);
+        $task->setStatus($newStatus);
+        $this->assertEquals(TaskState::WORKING, $task->getStatus()->getState());
 
-        $task->setStatus(TaskState::COMPLETED);
-        $this->assertEquals(TaskState::COMPLETED, $task->getStatus());
-        $this->assertTrue($task->isCompleted());
-        $this->assertTrue($task->isTerminal());
-        $this->assertNotNull($task->getCompletedAt());
-    }
-
-    public function testAddPart(): void
-    {
-        $task = new Task('task-123', 'Test task');
-        $part = new Part('text', 'Hello World');
-        $task->addPart($part);
-
-        $this->assertCount(1, $task->getParts());
-        $this->assertEquals($part, $task->getParts()[0]);
+        $completedStatus = new TaskStatus(TaskState::COMPLETED);
+        $task->setStatus($completedStatus);
+        $this->assertEquals(TaskState::COMPLETED, $task->getStatus()->getState());
     }
 
     public function testTaskHistory(): void
     {
-        $task = new Task('task-123', 'Test task');
+        $task = $this->createTask();
         $message1 = Message::createUserMessage('First message');
         $message2 = Message::createUserMessage('Second message');
 
@@ -64,8 +69,9 @@ class TaskTest extends TestCase
 
     public function testTaskArtifacts(): void
     {
-        $task = new Task('task-123', 'Test task');
-        $artifact = ['type' => 'file', 'name' => 'output.txt'];
+        $task = $this->createTask();
+        $part = new Part('text', 'artifact content');
+        $artifact = new Artifact('artifact-1', [$part]);
         $task->addArtifact($artifact);
 
         $this->assertCount(1, $task->getArtifacts());
@@ -74,29 +80,31 @@ class TaskTest extends TestCase
 
     public function testToArray(): void
     {
-        $task = new Task('task-123', 'Test task', ['key' => 'value']);
+        $task = $this->createTask(['key' => 'value']);
         $array = $task->toArray();
 
         $this->assertEquals('task', $array['kind']);
         $this->assertEquals('task-123', $array['id']);
         $this->assertEquals('submitted', $array['status']['state']);
-        $this->assertEquals(['key' => 'value'], $array['metadata']);
+        $this->assertEquals('Test task', $array['metadata']['description']);
+        $this->assertEquals('value', $array['metadata']['key']);
     }
 
     public function testFromArray(): void
     {
         $data = [
             'id' => 'task-456',
-            'description' => 'Another task',
-            'metadata' => ['type' => 'test'],
-            'status' => ['state' => 'working']
+            'contextId' => 'ctx-789',
+            'status' => ['state' => 'working', 'timestamp' => date('c')],
+            'metadata' => ['description' => 'Another task', 'type' => 'test'],
+            'kind' => 'task'
         ];
 
         $task = Task::fromArray($data);
 
         $this->assertEquals('task-456', $task->getId());
-        $this->assertEquals('Another task', $task->getDescription());
-        $this->assertEquals(TaskState::WORKING, $task->getStatus());
-        $this->assertEquals(['type' => 'test'], $task->getMetadata());
+        $this->assertEquals(TaskState::WORKING, $task->getStatus()->getState());
+        $this->assertEquals('Another task', $task->getMetadata()['description']);
+        $this->assertEquals('test', $task->getMetadata()['type']);
     }
 }

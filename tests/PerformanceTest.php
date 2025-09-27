@@ -25,8 +25,8 @@ class PerformanceTest extends TestCase
             'https://example.com/perf',
             '1.0.0',
             $capabilities,
-            ['text'],
-            ['text'],
+            ['text/plain'],
+            ['application/json'],
             [$skill]
         );
         

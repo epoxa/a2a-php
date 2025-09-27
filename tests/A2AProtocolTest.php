@@ -4,12 +4,15 @@ declare(strict_types=1);
 
 namespace A2A\Tests;
 
-use PHPUnit\Framework\TestCase;
 use A2A\A2AProtocol;
+use A2A\Exceptions\A2AErrorCodes;
 use A2A\Models\AgentCard;
+use A2A\Models\AgentCapabilities;
+use A2A\Models\AgentSkill;
 use A2A\Models\Message;
 use A2A\Models\TaskState;
 use A2A\Utils\HttpClient;
+use PHPUnit\Framework\TestCase;
 
 class A2AProtocolTest extends TestCase
 {
@@ -19,8 +22,8 @@ class A2AProtocolTest extends TestCase
 
     protected function setUp(): void
     {
-        $capabilities = new \A2A\Models\AgentCapabilities();
-        $skill = new \A2A\Models\AgentSkill('test', 'Test', 'Test skill', ['test']);
+        $capabilities = new AgentCapabilities();
+        $skill = new AgentSkill('test', 'Test', 'Test skill', ['test']);
 
         $this->agentCard = new AgentCard(
             'Test Agent',
@@ -28,9 +31,10 @@ class A2AProtocolTest extends TestCase
             'https://example.com/agent',
             '1.0.0',
             $capabilities,
-            ['text'],
-            ['text'],
-            [$skill]
+            ['text/plain'],
+            ['application/json'],
+            [$skill],
+            '0.3.0'
         );
 
         $this->logger = new TestLogger();
@@ -47,8 +51,8 @@ class A2AProtocolTest extends TestCase
     {
         $card = $this->protocol->getAgentCard();
 
-        $this->assertEquals('Test Agent', $card->getId());
         $this->assertEquals('Test Agent', $card->getName());
+        $this->assertEquals('1.0.0', $card->getVersion());
     }
 
     public function testCreateTask(): void
@@ -56,9 +60,9 @@ class A2AProtocolTest extends TestCase
         $task = $this->protocol->createTask('Test task', ['priority' => 'high']);
 
         $this->assertNotEmpty($task->getId());
-        $this->assertEquals('Test task', $task->getDescription());
-        $this->assertEquals(['priority' => 'high'], $task->getContext());
-        $this->assertEquals(TaskState::SUBMITTED, $task->getStatus());
+        // Note: The description is now part of the metadata, not a direct property of the task
+        $this->assertEquals('Test task', $task->getMetadata()['description']);
+        $this->assertEquals(TaskState::SUBMITTED, $task->getStatus()->getState());
 
         // Verify that the task creation was logged
         $this->assertTrue($this->logger->hasRecordThatContains('info', 'Task created'));
@@ -79,6 +83,48 @@ class A2AProtocolTest extends TestCase
         $this->assertArrayHasKey('result', $response);
         $this->assertEquals('Test Agent', $response['result']['name']);
     }
+
+    public function testHandleGetAuthenticatedExtendedCardRequestSuccess(): void
+    {
+        // Enable the feature on the agent card
+        $this->agentCard->setSupportsAuthenticatedExtendedCard(true);
+
+        $request = [
+            'jsonrpc' => '2.0',
+            'method' => 'agent/getAuthenticatedExtendedCard',
+            'id' => 4
+        ];
+
+        $response = $this->protocol->handleRequest($request);
+
+        $this->assertEquals('2.0', $response['jsonrpc']);
+        $this->assertEquals(4, $response['id']);
+        $this->assertArrayHasKey('result', $response);
+        $this->assertArrayNotHasKey('error', $response);
+        $this->assertEquals('Test Agent', $response['result']['name']);
+        $this->assertTrue($response['result']['supportsAuthenticatedExtendedCard']);
+    }
+
+    public function testHandleGetAuthenticatedExtendedCardRequestFailure(): void
+    {
+        // Feature is disabled by default
+        $this->agentCard->setSupportsAuthenticatedExtendedCard(false);
+
+        $request = [
+            'jsonrpc' => '2.0',
+            'method' => 'agent/getAuthenticatedExtendedCard',
+            'id' => 5
+        ];
+
+        $response = $this->protocol->handleRequest($request);
+
+        $this->assertEquals('2.0', $response['jsonrpc']);
+        $this->assertEquals(5, $response['id']);
+        $this->assertArrayNotHasKey('result', $response);
+        $this->assertArrayHasKey('error', $response);
+        $this->assertEquals(A2AErrorCodes::AUTHENTICATED_EXTENDED_CARD_NOT_CONFIGURED, $response['error']['code']);
+    }
+
 
     public function testHandlePingRequest(): void
     {

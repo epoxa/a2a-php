@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace A2A\Tests;
 
+use A2A\Models\TextPart;
 use PHPUnit\Framework\TestCase;
 use A2A\A2AClient;
 use A2A\A2AServer;
@@ -18,7 +19,7 @@ class EndToEndTest extends TestCase
     public function testCompleteAgentScenario(): void
     {
         // Setup agent
-        $capabilities = new AgentCapabilities(true, false, true);
+        $capabilities = new AgentCapabilities(true, false);
         $skill = new AgentSkill('chat', 'Chat', 'Chat capability', ['chat']);
         
         $agentCard = new AgentCard(
@@ -27,8 +28,8 @@ class EndToEndTest extends TestCase
             'https://example.com/agent',
             '1.0.0',
             $capabilities,
-            ['text'],
-            ['text'],
+            ['text/plain'],
+            ['application/json'],
             [$skill]
         );
 
@@ -37,9 +38,16 @@ class EndToEndTest extends TestCase
         $messageReceived = false;
         
         $server->addMessageHandler(
-            function ($message, $fromAgent) use (&$messageReceived) {
+            function (Message $message, $fromAgent) use (&$messageReceived) {
                 $messageReceived = true;
-                $this->assertEquals('Hello Agent', $message->getTextContent());
+                $textContent = '';
+                foreach ($message->getParts() as $part) {
+                    if ($part instanceof TextPart) {
+                        $textContent = $part->getText();
+                        break;
+                    }
+                }
+                $this->assertEquals('Hello Agent', $textContent);
             }
         );
 

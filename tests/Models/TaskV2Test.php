@@ -7,21 +7,28 @@ namespace A2A\Tests\Models;
 use PHPUnit\Framework\TestCase;
 use A2A\Models\Task;
 use A2A\Models\TaskState;
+use A2A\Models\TaskStatus;
 
 class TaskV2Test extends TestCase
 {
+    private function createTask(string $id, string $contextId, TaskState $state): Task
+    {
+        $status = new TaskStatus($state);
+        return new Task($id, $contextId, $status);
+    }
+
     public function testCreateTask(): void
     {
-        $task = new Task('task-123', 'Test task', [], 'ctx-123');
+        $task = $this->createTask('task-123', 'ctx-123', TaskState::SUBMITTED);
         
         $this->assertEquals('task-123', $task->getId());
         $this->assertEquals('ctx-123', $task->getContextId());
-        $this->assertEquals(TaskState::SUBMITTED, $task->getStatus());
+        $this->assertEquals(TaskState::SUBMITTED, $task->getStatus()->getState());
     }
 
     public function testToArray(): void
     {
-        $task = new Task('task-123', 'Test task', [], 'ctx-123');
+        $task = $this->createTask('task-123', 'ctx-123', TaskState::SUBMITTED);
         $array = $task->toArray();
         
         $this->assertEquals('task', $array['kind']);
@@ -33,12 +40,14 @@ class TaskV2Test extends TestCase
 
     public function testTaskStates(): void
     {
-        $task = new Task('task-123', 'Test task');
+        $task = $this->createTask('task-123', 'ctx-123', TaskState::SUBMITTED);
         
-        $task->setStatus(TaskState::WORKING);
-        $this->assertEquals(TaskState::WORKING, $task->getStatus());
+        $task->setStatus(new TaskStatus(TaskState::WORKING));
+        $this->assertEquals(TaskState::WORKING, $task->getStatus()->getState());
         
-        $task->setStatus(TaskState::COMPLETED);
-        $this->assertTrue($task->isTerminal());
+        // A Task's status is terminal if it's completed, failed, or canceled.
+        // We'll simulate this by setting the status directly.
+        $task->setStatus(new TaskStatus(TaskState::COMPLETED));
+        $this->assertTrue($task->getStatus()->getState()->isTerminal());
     }
 }

@@ -23,14 +23,23 @@ class TaskManager
     public function createTask(string $description, array $context = [], ?string $taskId = null): Task
     {
         $taskId = $taskId ?? \Ramsey\Uuid\Uuid::uuid4()->toString();
+        $contextId = $context['contextId'] ?? \Ramsey\Uuid\Uuid::uuid4()->toString();
 
         // If a custom taskId is provided in context, use it
         if (isset($context['taskId'])) {
             $taskId = $context['taskId'];
-            unset($context['taskId']); // Remove from context to avoid duplication
+            unset($context['taskId']);
+        }
+        if (isset($context['contextId'])) {
+            unset($context['contextId']);
         }
 
-        $task = new Task($taskId, $description, $context);
+        $status = new \A2A\Models\TaskStatus(\A2A\Models\TaskState::SUBMITTED);
+
+        $metadata = $context;
+        $metadata['description'] = $description;
+
+        $task = new Task($taskId, $contextId, $status, [], [], $metadata);
         $this->tasks[$taskId] = $task;
         $this->storage->saveTask($task);
         return $task;
@@ -65,11 +74,11 @@ class TaskManager
             return $jsonRpc->createError(null, 'Task not found', A2AErrorCodes::TASK_NOT_FOUND);
         }
 
-        if ($task->isTerminal()) {
+        if ($task->getStatus()->getState()->isTerminal()) {
             return $jsonRpc->createError(null, 'Task cannot be canceled', A2AErrorCodes::TASK_NOT_CANCELABLE);
         }
 
-        $task->setStatus(TaskState::CANCELED);
+        $task->setStatus(new \A2A\Models\TaskStatus(TaskState::CANCELED));
         $this->storage->saveTask($task);
         return ['result' => $task->toArray()];
     }
@@ -77,8 +86,8 @@ class TaskManager
     public function updateTaskStatus(string $taskId, TaskState $status): bool
     {
         $task = $this->getTask($taskId);
-        if ($task && !$task->isTerminal()) {
-            $task->setStatus($status);
+        if ($task && !$task->getStatus()->getState()->isTerminal()) {
+            $task->setStatus(new \A2A\Models\TaskStatus($status));
             $this->storage->saveTask($task);
             return true;
         }

@@ -5,32 +5,32 @@ declare(strict_types=1);
 namespace A2A\Models;
 
 /**
- * Sent by server during sendStream or subscribe requests
+ * An event sent by the agent to notify the client of a change in a task's status.
+ * This is typically used in streaming or subscription models.
+ *
+ * @see https://a2a-protocol.org/dev/specification/#722-taskstatusupdateevent-object
  */
 class TaskStatusUpdateEvent
 {
-    private string $kind = 'status-update';
     private string $taskId;
     private string $contextId;
+    private string $kind = 'status-update';
     private TaskStatus $status;
     private bool $final;
-    private ?array $metadata = null;
+    private ?array $metadata;
 
     public function __construct(
         string $taskId,
         string $contextId,
         TaskStatus $status,
-        bool $final = false
+        bool $final = false,
+        ?array $metadata = null
     ) {
         $this->taskId = $taskId;
         $this->contextId = $contextId;
         $this->status = $status;
         $this->final = $final;
-    }
-
-    public function getKind(): string
-    {
-        return $this->kind;
+        $this->metadata = $metadata;
     }
 
     public function getTaskId(): string
@@ -48,19 +48,9 @@ class TaskStatusUpdateEvent
         return $this->status;
     }
 
-    public function setStatus(TaskStatus $status): void
-    {
-        $this->status = $status;
-    }
-
     public function isFinal(): bool
     {
         return $this->final;
-    }
-
-    public function setFinal(bool $final): void
-    {
-        $this->final = $final;
     }
 
     public function getMetadata(): ?array
@@ -68,43 +58,20 @@ class TaskStatusUpdateEvent
         return $this->metadata;
     }
 
-    public function setMetadata(array $metadata): void
-    {
-        $this->metadata = $metadata;
-    }
-
     public function toArray(): array
     {
-        $result = [
+        $data = [
             'kind' => $this->kind,
             'taskId' => $this->taskId,
             'contextId' => $this->contextId,
             'status' => $this->status->toArray(),
-            'final' => $this->final
+            'final' => $this->final,
         ];
 
         if ($this->metadata !== null) {
-            $result['metadata'] = $this->metadata;
+            $data['metadata'] = $this->metadata;
         }
 
-        return $result;
-    }
-
-    public static function fromArray(array $data): self
-    {
-        $status = TaskStatus::fromArray($data['status']);
-
-        $event = new self(
-            $data['taskId'],
-            $data['contextId'],
-            $status,
-            $data['final'] ?? false
-        );
-
-        if (isset($data['metadata'])) {
-            $event->setMetadata($data['metadata']);
-        }
-
-        return $event;
+        return $data;
     }
 }
