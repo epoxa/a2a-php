@@ -43,4 +43,12 @@ class DataPart implements PartInterface
 
         return $data;
     }
+
+    public static function fromArray(array $data): self
+    {
+        return new self(
+            $data['data'],
+            $data['metadata'] ?? null
+        );
+    }
 }

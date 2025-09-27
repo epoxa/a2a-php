@@ -10,7 +10,7 @@ use Illuminate\Cache\Repository;
 use Illuminate\Cache\FileStore;
 use Illuminate\Cache\ArrayStore;
 use Illuminate\Filesystem\Filesystem;
-use Illuminate\Container\Container;
+
 
 /**
  * Laravel Cache-based storage for task and push notification persistence
@@ -240,14 +240,8 @@ class Storage
             ], $config
         );
 
-        $redis = new \Illuminate\Redis\RedisManager(
-            new Container(),
-            'predis',
-            ['default' => $redisConfig]
-        );
-
-        $store = new \Illuminate\Cache\RedisStore($redis, 'a2a');
-        return new Repository($store);
+        // Note: Redis support requires proper Laravel container setup
+        throw new \RuntimeException('Redis support requires full Laravel framework setup');
     }
 
     /**

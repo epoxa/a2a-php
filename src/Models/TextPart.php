@@ -43,4 +43,12 @@ class TextPart implements PartInterface
 
         return $data;
     }
+
+    public static function fromArray(array $data): self
+    {
+        return new self(
+            $data['text'],
+            $data['metadata'] ?? null
+        );
+    }
 }

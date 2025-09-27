@@ -50,4 +50,18 @@ class FilePart implements PartInterface
 
         return $data;
     }
+
+    public static function fromArray(array $data): self
+    {
+        $fileData = $data['file'];
+        if (isset($fileData['bytes'])) {
+            $file = FileWithBytes::fromArray($fileData);
+        } elseif (isset($fileData['uri'])) {
+            $file = FileWithUri::fromArray($fileData);
+        } else {
+            throw new \InvalidArgumentException('File must have either bytes or uri');
+        }
+
+        return new self($file, $data['metadata'] ?? null);
+    }
 }

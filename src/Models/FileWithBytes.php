@@ -39,4 +39,13 @@ class FileWithBytes extends FileBase
 
         return $data;
     }
+
+    public static function fromArray(array $data): self
+    {
+        return new self(
+            $data['bytes'],
+            $data['name'] ?? null,
+            $data['mimeType'] ?? null
+        );
+    }
 }

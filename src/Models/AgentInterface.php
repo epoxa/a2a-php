@@ -43,4 +43,19 @@ class AgentInterface
             $data['transport']
         );
     }
+
+    public static function jsonRpc(string $url): self
+    {
+        return new self($url, 'JSONRPC');
+    }
+
+    public static function grpc(string $url): self
+    {
+        return new self($url, 'GRPC');
+    }
+
+    public static function httpJson(string $url): self
+    {
+        return new self($url, 'HTTP_JSON');
+    }
 }

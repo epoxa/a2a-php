@@ -180,6 +180,19 @@ class AgentCard
         $this->skills[] = $skill;
     }
 
+    public function addAdditionalInterface(AgentInterface $interface): void
+    {
+        if ($this->additionalInterfaces === null) {
+            $this->additionalInterfaces = [];
+        }
+        $this->additionalInterfaces[] = $interface;
+    }
+
+    public function getAdditionalInterfaces(): ?array
+    {
+        return $this->additionalInterfaces;
+    }
+
     public function toArray(): array
     {
         $result = [

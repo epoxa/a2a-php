@@ -39,4 +39,13 @@ class FileWithUri extends FileBase
 
         return $data;
     }
+
+    public static function fromArray(array $data): self
+    {
+        return new self(
+            $data['uri'],
+            $data['name'] ?? null,
+            $data['mimeType'] ?? null
+        );
+    }
 }
