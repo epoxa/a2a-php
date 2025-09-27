@@ -19,15 +19,13 @@ Main server implementation for hosting A2A agents.
 class A2AServer
 {
     public function __construct(
-        AgentCard $agentCard,
+        A2AProtocol_v0_3_0 $protocol,
         ?LoggerInterface $logger = null
     );
     
     public function addMessageHandler(MessageHandlerInterface $handler): void;
-    public function start(): void;
-    public function handleRequest(string $input): string;
-    public function setTaskManager(TaskManager $taskManager): void;
-    public function setPushNotificationManager(PushNotificationManager $manager): void;
+    public function handleRequest(array $request): array;
+    public function getAgentCard(): AgentCard;
 }
 ```
 
@@ -47,15 +45,23 @@ Client for connecting to and communicating with A2A agents.
 class A2AClient
 {
     public function __construct(
-        string $baseUrl,
-        ?HttpClient $httpClient = null
+        AgentCard $agentCard,
+        ?HttpClient $httpClient = null,
+        ?LoggerInterface $logger = null
     );
     
-    public function getAgentCard(): AgentCard;
-    public function ping(): array;
-    public function sendMessage(Message $message): Message;
-    public function sendTask(Message $message): string;
-    public function getTask(string $taskId): Task;
+    public function sendMessage(string $agentUrl, Message $message): array;
+    public function getAgentCard(string $agentUrl): AgentCard;
+    public function getAuthenticatedExtendedCard(string $agentUrl): AgentCard;
+    public function ping(string $agentUrl): bool;
+    public function getTask(string $taskId, ?int $historyLength = null): ?Task;
+    public function cancelTask(string $taskId): bool;
+    public function sendTask(string $taskId, Message $message, array $metadata = []): ?Task;
+    public function setPushNotificationConfig(string $taskId, PushNotificationConfig $config): bool;
+    public function getPushNotificationConfig(string $taskId): ?PushNotificationConfig;
+    public function listPushNotificationConfigs(): array;
+    public function deletePushNotificationConfig(string $taskId): bool;
+    public function resubscribeTask(string $taskId): bool;
 }
 ```
 
@@ -66,22 +72,26 @@ $agentCard = $client->getAgentCard();
 $response = $client->sendMessage($message);
 ```
 
-### A2AProtocol
+### A2AProtocol_v0_3_0
 
-Core protocol handler for processing A2A requests.
+Core protocol handler for A2A Protocol v0.3.0 compliance.
 
 ```php
-class A2AProtocol
+class A2AProtocol_v0_3_0
 {
     public function __construct(
         AgentCard $agentCard,
-        ?LoggerInterface $logger = null
+        ?HttpClient $httpClient = null,
+        ?LoggerInterface $logger = null,
+        ?TaskManager $taskManager = null
     );
     
-    public function handleRequest(array $request): array;
     public function getAgentCard(): AgentCard;
-    public function createTask(Message $message): Task;
+    public function createTask(string $description, array $context = []): Task;
+    public function sendMessage(string $recipientUrl, Message $message): array;
+    public function handleRequest(array $request): array;
     public function addMessageHandler(MessageHandlerInterface $handler): void;
+    public function getTaskManager(): TaskManager;
 }
 ```
 
@@ -94,11 +104,10 @@ class TaskManager
 {
     public function __construct(?Storage $storage = null);
     
-    public function createTask(Message $message): Task;
-    public function getTask(string $taskId): Task;
-    public function updateTask(string $taskId, TaskStatus $status, $result = null): Task;
-    public function cancelTask(string $taskId): Task;
-    public function listTasks(): array;
+    public function createTask(string $description, array $context = [], ?string $taskId = null): Task;
+    public function getTask(string $taskId): ?Task;
+    public function updateTask(Task $task): void;
+    public function cancelTask(string $taskId): array;
 }
 ```
 
@@ -380,21 +389,32 @@ class FileWithUri implements FileInterface
 
 ### Security Schemes
 
+#### SecurityScheme (Interface)
+
+Base interface for all security schemes.
+
+```php
+interface SecurityScheme
+{
+    public function toArray(): array;
+}
+```
+
 #### APIKeySecurityScheme
 
 API key authentication.
 
 ```php
-class APIKeySecurityScheme extends SecurityScheme
+class APIKeySecurityScheme implements SecurityScheme
 {
     public function __construct(
         string $name,
-        string $in = 'header', // 'header', 'query', 'cookie'
+        string $in, // 'header', 'query', 'cookie'
         ?string $description = null
     );
     
-    public function getName(): string;
-    public function getIn(): string;
+    public function toArray(): array;
+    public static function fromArray(array $data): self;
 }
 ```
 
@@ -403,7 +423,7 @@ class APIKeySecurityScheme extends SecurityScheme
 HTTP authentication (Basic, Bearer, etc.).
 
 ```php
-class HTTPAuthSecurityScheme extends SecurityScheme
+class HTTPAuthSecurityScheme implements SecurityScheme
 {
     public function __construct(
         string $scheme, // 'basic', 'bearer', 'digest'
@@ -411,8 +431,8 @@ class HTTPAuthSecurityScheme extends SecurityScheme
         ?string $description = null
     );
     
-    public function getScheme(): string;
-    public function getBearerFormat(): ?string;
+    public function toArray(): array;
+    public static function fromArray(array $data): self;
 }
 ```
 
@@ -421,14 +441,46 @@ class HTTPAuthSecurityScheme extends SecurityScheme
 OAuth 2.0 authentication.
 
 ```php
-class OAuth2SecurityScheme extends SecurityScheme
+class OAuth2SecurityScheme implements SecurityScheme
 {
     public function __construct(
-        array $flows,
+        OAuthFlows $flows,
         ?string $description = null
     );
     
-    public function getFlows(): array;
+    public function toArray(): array;
+    public static function fromArray(array $data): self;
+}
+```
+
+#### OpenIdConnectSecurityScheme
+
+OpenID Connect authentication.
+
+```php
+class OpenIdConnectSecurityScheme implements SecurityScheme
+{
+    public function __construct(
+        string $openIdConnectUrl,
+        ?string $description = null
+    );
+    
+    public function toArray(): array;
+    public static function fromArray(array $data): self;
+}
+```
+
+#### MutualTLSSecurityScheme
+
+Mutual TLS authentication.
+
+```php
+class MutualTLSSecurityScheme implements SecurityScheme
+{
+    public function __construct(?string $description = null);
+    
+    public function toArray(): array;
+    public static function fromArray(array $data): self;
 }
 ```
 
@@ -441,10 +493,55 @@ HTTP client for making requests.
 ```php
 class HttpClient
 {
-    public function __construct(?ClientInterface $client = null);
+    public function __construct(int $timeout = 30);
     
-    public function post(string $url, array $data, array $headers = []): array;
-    public function get(string $url, array $headers = []): array;
+    public function post(string $url, array $data): array;
+    public function get(string $url): array;
+}
+```
+
+### GrpcClient
+
+gRPC client for high-performance A2A communication.
+
+```php
+class GrpcClient
+{
+    public function __construct(
+        AgentCard $agentCard,
+        string $serverAddress,
+        ?LoggerInterface $logger = null
+    );
+    
+    public function connect(): void;
+    public function sendMessage(Message $message): array;
+    public function getAgentCard(): AgentCard;
+    public function ping(): bool;
+    public function getTask(string $taskId, ?int $historyLength = null): ?Task;
+    public function cancelTask(string $taskId): bool;
+    public function setPushNotificationConfig(string $taskId, PushNotificationConfig $config): bool;
+    public function getPushNotificationConfig(string $taskId): ?PushNotificationConfig;
+    public function listPushNotificationConfigs(): array;
+    public function deletePushNotificationConfig(string $taskId): bool;
+    public function resubscribeTask(string $taskId): bool;
+    public function disconnect(): void;
+    
+    public static function isAvailable(): bool;
+    public static function getGrpcInfo(): array;
+}
+```
+
+### StreamingClient
+
+Client for streaming A2A communication.
+
+```php
+class StreamingClient
+{
+    public function __construct(AgentCard $agentCard, ?LoggerInterface $logger = null);
+    
+    public function sendMessageStream(string $agentUrl, Message $message, callable $eventHandler): void;
+    public function resubscribeTask(string $agentUrl, string $taskId, callable $eventHandler): void;
 }
 ```
 
@@ -600,6 +697,64 @@ interface AgentExecutor
 }
 ```
 
+## Storage
+
+### Storage
+
+Laravel Cache-based storage for task and push notification persistence.
+
+```php
+class Storage
+{
+    public function __construct(
+        string $driver = 'file',
+        string $dataDir = '/tmp/a2a_storage',
+        array $config = []
+    );
+    
+    public function saveTask(Task $task): void;
+    public function getTask(string $taskId): ?Task;
+    public function taskExists(string $taskId): bool;
+    public function updateTaskStatus(string $taskId, string $status): bool;
+    public function savePushConfig(string $taskId, PushNotificationConfig $config): void;
+    public function getPushConfig(string $taskId): ?PushNotificationConfig;
+    public function listPushConfigs(): array;
+    public function deletePushConfig(string $taskId): bool;
+}
+```
+
+## Streaming
+
+### SSEStreamer
+
+Server-Sent Events streamer for real-time communication.
+
+```php
+class SSEStreamer
+{
+    public function sendEvent(string $data, ?string $event = null, ?string $id = null): void;
+    public function startStream(): void;
+    public function endStream(): void;
+}
+```
+
+### StreamingServer
+
+Server for handling streaming requests.
+
+```php
+class StreamingServer
+{
+    public function __construct();
+    
+    public function handleStreamRequest(
+        array $request,
+        AgentExecutor $executor,
+        ExecutionEventBus $eventBus
+    ): void;
+}
+```
+
 ## Factory Classes
 
 ### PartFactory
@@ -609,7 +764,7 @@ Factory for creating message parts.
 ```php
 class PartFactory
 {
-    public static function create(array $data): PartInterface;
+    public static function fromArray(array $data): PartInterface;
 }
 ```
 
@@ -620,7 +775,7 @@ Factory for creating file objects.
 ```php
 class FileFactory
 {
-    public static function create(array $data): FileInterface;
+    public static function fromArray(array $data): FileInterface;
 }
 ```
 

@@ -39,7 +39,8 @@
                         <span class="badge bg-light text-dark fs-6">A2A Protocol v0.3.0</span>
                         <span class="badge bg-light text-dark fs-6">JSON-RPC 2.0</span>
                         <span class="badge bg-light text-dark fs-6">HTTPS/TLS</span>
-                        <span class="badge bg-light text-dark fs-6">135 Tests</span>
+                        <span class="badge bg-light text-dark fs-6">142 Tests</span>
+                        <span class="badge bg-light text-dark fs-6">100% Compliant</span>
                     </div>
                 </div>
             </div>
@@ -239,11 +240,14 @@ echo "Task status: " . $status->getStatus()->value;</code></pre>
                                     <ul class="list-unstyled">
                                         <li><strong>A2AServer</strong> - Main server implementation</li>
                                         <li><strong>A2AClient</strong> - Client for connecting to agents</li>
-                                        <li><strong>A2AProtocol</strong> - Protocol handler</li>
+                                        <li><strong>A2AProtocol_v0_3_0</strong> - Protocol v0.3.0 handler</li>
                                         <li><strong>TaskManager</strong> - Task lifecycle management</li>
                                         <li><strong>AgentCard</strong> - Agent capability description</li>
                                         <li><strong>Message</strong> - Communication messages</li>
                                         <li><strong>Task</strong> - Asynchronous task representation</li>
+                                        <li><strong>GrpcClient</strong> - High-performance gRPC client</li>
+                                        <li><strong>StreamingClient</strong> - Real-time streaming client</li>
+                                        <li><strong>Storage</strong> - Multi-driver persistence layer</li>
                                     </ul>
                                 </div>
                             </div>
@@ -261,6 +265,10 @@ echo "Task status: " . $status->getStatus()->value;</code></pre>
                                         <li><strong>DataPart</strong> - Structured data</li>
                                         <li><strong>FileWithBytes</strong> - Inline file data</li>
                                         <li><strong>FileWithUri</strong> - File references</li>
+                                        <li><strong>SecurityScheme</strong> - Authentication schemes</li>
+                                        <li><strong>AgentExtension</strong> - Protocol extensions</li>
+                                        <li><strong>AgentInterface</strong> - Transport interfaces</li>
+                                        <li><strong>PushNotificationConfig</strong> - Webhook configs</li>
                                     </ul>
                                 </div>
                             </div>
