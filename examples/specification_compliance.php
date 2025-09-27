@@ -2,19 +2,20 @@
 
 require_once __DIR__ . '/../vendor/autoload.php';
 
-use A2A\Models\AgentCard;
+use A2A\Models\v0_3_0\AgentCard;
 use A2A\Models\AgentCapabilities;
 use A2A\Models\AgentSkill;
 use A2A\Models\AgentProvider;
-use A2A\Models\Message;
-use A2A\Models\Task;
+use A2A\Models\v0_3_0\Message;
+use A2A\Models\v0_3_0\Task;
 use A2A\Models\TaskState;
+use A2A\Models\TaskStatus;
 use A2A\Models\TextPart;
 use A2A\Models\FilePart;
 use A2A\Models\DataPart;
 use A2A\Models\FileWithBytes;
 use A2A\Models\FileWithUri;
-use A2A\A2AProtocol;
+use A2A\A2AProtocol_v0_3_0;
 use A2A\A2AClient;
 use A2A\A2AServer;
 use A2A\Exceptions\A2AErrorCodes;
@@ -83,7 +84,7 @@ check("metadata field (optional)", isset($msgArray['metadata']));
 
 // 3. Task Compliance (Section 6.1)
 echo "\n3. TASK COMPLIANCE (Section 6.1):\n";
-$task = new Task('task-123', 'Test task', [], 'ctx-123');
+$task = new Task('task-123', 'ctx-123', new TaskStatus(TaskState::SUBMITTED), [], [], ['description' => 'Test task']);
 $taskArray = $task->toArray();
 check("kind field = 'task'", $taskArray['kind'] === 'task');
 check("id field (required)", isset($taskArray['id']));
@@ -111,7 +112,7 @@ check("DataPart data field", isset($dataArray['data']));
 
 // 5. Protocol Methods Compliance (Section 7)
 echo "\n5. PROTOCOL METHODS COMPLIANCE (Section 7):\n";
-$protocol = new A2AProtocol($agentCard);
+$protocol = new A2AProtocol_v0_3_0($agentCard);
 $client = new A2AClient($agentCard);
 
 // Test message/send (7.1)

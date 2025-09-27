@@ -2,11 +2,12 @@
 
 require_once __DIR__ . '/../vendor/autoload.php';
 
-use A2A\Models\AgentCard;
+use A2A\Models\v0_3_0\AgentCard;
 use A2A\Models\AgentCapabilities;
 use A2A\Models\AgentSkill;
-use A2A\Models\Message;
+use A2A\Models\v0_3_0\Message;
 use A2A\Models\RequestContext;
+use A2A\Models\Message as BaseMessage;
 use A2A\Events\ExecutionEventBusImpl;
 use A2A\Execution\DefaultAgentExecutor;
 use A2A\Streaming\SSEStreamer;
@@ -44,13 +45,23 @@ $message = Message::createUserMessage('Hello, streaming agent!');
 $message->setContextId('ctx-123');
 $message->setTaskId('task-456');
 
+// Convert v0_3_0 message to base message for RequestContext
+$baseMessage = BaseMessage::fromArray($message->toArray());
 $context = new RequestContext(
-    $message,
+    $baseMessage,
     'task-456',
     'ctx-123'
 );
 
-echo "Created message: " . $message->getTextContent() . "\n";
+// Get text content from first text part
+$textContent = '';
+foreach ($message->getParts() as $part) {
+    if ($part instanceof \A2A\Models\TextPart) {
+        $textContent = $part->getText();
+        break;
+    }
+}
+echo "Created message: " . $textContent . "\n";
 echo "Task ID: " . $context->taskId . "\n";
 echo "Context ID: " . $context->contextId . "\n\n";
 

@@ -2,13 +2,13 @@
 
 require_once __DIR__ . '/../vendor/autoload.php';
 
-use A2A\A2AProtocol;
-use A2A\Models\AgentCard;
+use A2A\A2AProtocol_v0_3_0;
+use A2A\Models\v0_3_0\AgentCard;
 use A2A\Models\AgentCapabilities;
 use A2A\Models\AgentSkill;
-use A2A\Models\Task;
+use A2A\Models\v0_3_0\Task;
 use A2A\Models\TaskState;
-use A2A\Models\Part;
+use A2A\Models\TaskStatus;
 
 echo "=== Task Management Example ===\n\n";
 
@@ -27,7 +27,7 @@ $agentCard = new AgentCard(
     [$skill]
 );
 
-$protocol = new A2AProtocol($agentCard);
+$protocol = new A2AProtocol_v0_3_0($agentCard);
 
 // Create multiple tasks
 echo "Creating tasks...\n";
@@ -46,38 +46,46 @@ $task3 = $protocol->createTask(
     ['user_id' => 123, 'preferences' => ['newsletter' => true]]
 );
 
-echo "Created {$task1->getId()}: {$task1->getDescription()}\n";
-echo "Created {$task2->getId()}: {$task2->getDescription()}\n";
-echo "Created {$task3->getId()}: {$task3->getDescription()}\n\n";
+echo "Created {$task1->getId()}: {$task1->getMetadata()['description']}\n";
+echo "Created {$task2->getId()}: {$task2->getMetadata()['description']}\n";
+echo "Created {$task3->getId()}: {$task3->getMetadata()['description']}\n\n";
 
-// Assign tasks
-echo "Assigning tasks...\n";
-$task1->assignTo('worker-agent-001');
-$task2->assignTo('email-agent-001');
-$task3->assignTo('preference-agent-001');
+// Update task metadata
+echo "Updating task metadata...\n";
+$metadata1 = $task1->getMetadata();
+$metadata1['assigned_to'] = 'worker-agent-001';
+$task1->setMetadata($metadata1);
 
-echo "Task 1 assigned to: {$task1->getAssignedTo()}\n";
-echo "Task 2 assigned to: {$task2->getAssignedTo()}\n";
-echo "Task 3 assigned to: {$task3->getAssignedTo()}\n\n";
+$metadata2 = $task2->getMetadata();
+$metadata2['assigned_to'] = 'email-agent-001';
+$task2->setMetadata($metadata2);
+
+$metadata3 = $task3->getMetadata();
+$metadata3['assigned_to'] = 'preference-agent-001';
+$task3->setMetadata($metadata3);
+
+echo "Task 1 assigned to: {$task1->getMetadata()['assigned_to']}\n";
+echo "Task 2 assigned to: {$task2->getMetadata()['assigned_to']}\n";
+echo "Task 3 assigned to: {$task3->getMetadata()['assigned_to']}\n\n";
 
 // Update task statuses
 echo "Updating task statuses...\n";
-$task1->setStatus(TaskState::WORKING);
-$task2->setStatus(TaskState::COMPLETED);
-$task3->setStatus(TaskState::WORKING);
+$task1->setStatus(new TaskStatus(TaskState::WORKING));
+$task2->setStatus(new TaskStatus(TaskState::COMPLETED));
+$task3->setStatus(new TaskStatus(TaskState::WORKING));
 
-echo "Task 1 status: {$task1->getStatus()->value}\n";
-echo "Task 2 status: {$task2->getStatus()->value} - Completed at: {$task2->getCompletedAt()?->format('Y-m-d H:i:s')}\n";
-echo "Task 3 status: {$task3->getStatus()->value}\n\n";
+echo "Task 1 status: {$task1->getStatus()->getState()->value}\n";
+echo "Task 2 status: {$task2->getStatus()->getState()->value}\n";
+echo "Task 3 status: {$task3->getStatus()->getState()->value}\n\n";
 
-// Add parts to tasks
-echo "Adding parts to task 1...\n";
-$part1 = new Part('validation', 'Email validation completed');
-$part2 = new Part('database', 'User record created');
-$task1->addPart($part1);
-$task1->addPart($part2);
+// Add metadata to tasks
+echo "Adding metadata to task 1...\n";
+$metadata = $task1->getMetadata();
+$metadata['validation'] = 'Email validation completed';
+$metadata['database'] = 'User record created';
+$task1->setMetadata($metadata);
 
-echo "Task 1 now has " . count($task1->getParts()) . " parts\n\n";
+echo "Task 1 now has " . count($task1->getMetadata()) . " metadata fields\n\n";
 
 // Convert to array for storage/transmission
 echo "Task 1 as array:\n";
@@ -85,12 +93,12 @@ echo json_encode($task1->toArray(), JSON_PRETTY_PRINT) . "\n\n";
 
 // Complete remaining tasks
 echo "Completing remaining tasks...\n";
-$task1->setStatus(TaskState::COMPLETED);
-$task3->setStatus(TaskState::COMPLETED);
+$task1->setStatus(new TaskStatus(TaskState::COMPLETED));
+$task3->setStatus(new TaskStatus(TaskState::COMPLETED));
 
 $completedTasks = array_filter(
     [$task1, $task2, $task3],
-    fn(Task $task) => $task->isCompleted()
+    fn(Task $task) => $task->getStatus()->getState() === TaskState::COMPLETED
 );
 
 echo "Completed " . count($completedTasks) . " out of 3 tasks\n";

@@ -2,14 +2,15 @@
 
 require_once __DIR__ . '/../vendor/autoload.php';
 
-use A2A\Models\AgentCard;
+use A2A\Models\v0_3_0\AgentCard;
 use A2A\Models\AgentCapabilities;
 use A2A\Models\AgentSkill;
 use A2A\Models\AgentProvider;
 use A2A\Models\AgentExtension;
 use A2A\Models\AgentInterface;
-use A2A\Models\Task;
+use A2A\Models\v0_3_0\Task;
 use A2A\Models\TaskState;
+use A2A\Models\TaskStatus;
 use A2A\Client\GrpcClient;
 
 echo "=== A2A PHP Enhanced Features Example ===\n\n";
@@ -76,33 +77,36 @@ $agentCard = new AgentCard(
 );
 
 $agentCard->setProvider($provider);
-$agentCard->addAdditionalInterface($jsonRpcInterface);
-$agentCard->addAdditionalInterface($grpcInterface);
-$agentCard->addAdditionalInterface($httpJsonInterface);
+$agentCard->setAdditionalInterfaces([$jsonRpcInterface, $grpcInterface, $httpJsonInterface]);
 $agentCard->setDocumentationUrl('https://docs.example.com/enhanced-agent');
 $agentCard->setIconUrl('https://example.com/icons/enhanced-agent.png');
 
 echo "Agent: {$agentCard->getName()}\n";
 echo "Protocol Version: {$agentCard->getProtocolVersion()}\n";
-echo "Additional Interfaces: " . count($agentCard->getAdditionalInterfaces()) . "\n";
+echo "Additional Interfaces: " . count($agentCard->toArray()['additionalInterfaces'] ?? []) . "\n";
 echo "Provider: {$agentCard->getProvider()->getOrganization()}\n\n";
 
 // 5. Demonstrate Task with metadata support
 echo "5. Creating Task with Metadata:\n";
 $task = new Task(
     'enhanced-task-001',
-    'Process multi-format data with metadata tracking',
-    ['priority' => 'high', 'department' => 'analytics'],
-    'ctx-enhanced-001'
+    'ctx-enhanced-001',
+    new TaskStatus(TaskState::SUBMITTED),
+    [],
+    [],
+    [
+        'description' => 'Process multi-format data with metadata tracking',
+        'priority' => 'high',
+        'department' => 'analytics',
+        'created_by' => 'enhanced-agent',
+        'processing_stage' => 'initial',
+        'estimated_duration' => '5 minutes'
+    ]
 );
-
-$task->addMetadata('created_by', 'enhanced-agent');
-$task->addMetadata('processing_stage', 'initial');
-$task->addMetadata('estimated_duration', '5 minutes');
 
 echo "Task ID: {$task->getId()}\n";
 echo "Context ID: {$task->getContextId()}\n";
-echo "Status: {$task->getStatus()->value}\n";
+echo "Status: {$task->getStatus()->getState()->value}\n";
 echo "Metadata: " . json_encode($task->getMetadata(), JSON_PRETTY_PRINT) . "\n\n";
 
 // 6. Demonstrate gRPC client availability
@@ -140,7 +144,7 @@ echo "9. Roundtrip Validation:\n";
 $recreatedAgentCard = AgentCard::fromArray($agentCardArray);
 echo "✅ Agent card recreated: {$recreatedAgentCard->getName()}\n";
 echo "✅ Extensions preserved: " . count($recreatedAgentCard->getCapabilities()->getExtensions()) . "\n";
-echo "✅ Interfaces preserved: " . count($recreatedAgentCard->getAdditionalInterfaces()) . "\n";
+echo "✅ Interfaces preserved: " . count($recreatedAgentCard->toArray()['additionalInterfaces'] ?? []) . "\n";
 
 $taskArray = $task->toArray();
 $recreatedTask = Task::fromArray($taskArray);

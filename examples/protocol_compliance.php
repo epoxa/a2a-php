@@ -2,18 +2,19 @@
 
 require_once __DIR__ . '/../vendor/autoload.php';
 
-use A2A\Models\AgentCard;
+use A2A\Models\v0_3_0\AgentCard;
 use A2A\Models\AgentCapabilities;
 use A2A\Models\AgentSkill;
 use A2A\Models\AgentProvider;
-use A2A\Models\Message;
-use A2A\Models\Task;
+use A2A\Models\v0_3_0\Message;
+use A2A\Models\v0_3_0\Task;
 use A2A\Models\TaskState;
+use A2A\Models\TaskStatus;
 use A2A\Models\TextPart;
 use A2A\Models\FilePart;
 use A2A\Models\DataPart;
 use A2A\Models\FileWithBytes;
-use A2A\A2AProtocol;
+use A2A\A2AProtocol_v0_3_0;
 use A2A\A2AClient;
 use A2A\A2AServer;
 
@@ -81,7 +82,7 @@ test("Has optional 'metadata' field", isset($messageArray['metadata']));
 
 // 3. Task Protocol Compliance
 echo "\n3. Task Structure (A2A Protocol v0.3.0):\n";
-$task = new Task('task-123', 'Test task', [], 'ctx-123');
+$task = new Task('task-123', 'ctx-123', new TaskStatus(TaskState::SUBMITTED), [], [], ['description' => 'Test task']);
 $taskArray = $task->toArray();
 test("Has required 'kind' field with value 'task'", $taskArray['kind'] === 'task');
 test("Has required 'id' field", isset($taskArray['id']));
@@ -109,8 +110,8 @@ test("DataPart has 'data' field", isset($dataArray['data']));
 
 // 5. Protocol Methods Implementation
 echo "\n5. A2A Protocol Methods:\n";
-$protocol = new A2AProtocol($agentCard);
-$server = new A2AServer($agentCard);
+$protocol = new A2AProtocol_v0_3_0($agentCard);
+$server = new A2AServer($protocol);
 $client = new A2AClient($agentCard);
 
 // Test ping method

@@ -4,14 +4,15 @@ require_once __DIR__ . '/../vendor/autoload.php';
 
 use A2A\A2AClient;
 use A2A\A2AServer;
-use A2A\A2AProtocol;
-use A2A\Models\AgentCard;
+use A2A\A2AProtocol_v0_3_0;
+use A2A\Models\v0_3_0\AgentCard;
 use A2A\Models\AgentCapabilities;
 use A2A\Models\AgentSkill;
 use A2A\Models\AgentProvider;
-use A2A\Models\Message;
-use A2A\Models\Task;
+use A2A\Models\v0_3_0\Message;
+use A2A\Models\v0_3_0\Task;
 use A2A\Models\TaskState;
+use A2A\Models\TaskStatus;
 use A2A\Models\PushNotificationConfig;
 use A2A\Models\TextPart;
 use A2A\Models\FilePart;
@@ -66,10 +67,10 @@ echo "- Agent A: {$agentA->getName()} (streaming: {$capabilitiesA->isStreaming()
 echo "- Agent B: {$agentB->getName()} (streaming: {$capabilitiesB->isStreaming()}, push: {$capabilitiesB->isPushNotifications()})\n\n";
 
 // 3. Setup servers and protocols
-$protocolA = new A2AProtocol($agentA);
-$protocolB = new A2AProtocol($agentB);
-$serverA = new A2AServer($agentA);
-$serverB = new A2AServer($agentB);
+$protocolA = new A2AProtocol_v0_3_0($agentA);
+$protocolB = new A2AProtocol_v0_3_0($agentB);
+$serverA = new A2AServer($protocolA);
+$serverB = new A2AServer($protocolB);
 
 // 4. Setup mock HTTP clients for communication
 $httpClientA = new class extends HttpClient {

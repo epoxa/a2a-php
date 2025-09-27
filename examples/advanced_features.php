@@ -4,11 +4,12 @@ require_once __DIR__ . '/../vendor/autoload.php';
 
 use A2A\A2AClient;
 use A2A\A2AServer;
+use A2A\A2AProtocol_v0_3_0;
 use A2A\TaskManager;
-use A2A\Models\AgentCard;
+use A2A\Models\v0_3_0\AgentCard;
 use A2A\Models\AgentCapabilities;
 use A2A\Models\AgentSkill;
-use A2A\Models\Message;
+use A2A\Models\v0_3_0\Message;
 use A2A\Models\PushNotificationConfig;
 use A2A\Client\StreamingClient;
 use A2A\Execution\ResultManager;
@@ -45,7 +46,8 @@ echo "- State History: " . ($capabilities->isStateTransitionHistory() ? 'Yes' : 
 // 2. Create a local server for testing
 $taskManager = new TaskManager();
 $logger = new NullLogger();
-$server = new A2AServer($agentCard, $logger, $taskManager);
+$protocol = new A2AProtocol_v0_3_0($agentCard, null, $logger, $taskManager);
+$server = new A2AServer($protocol, $logger);
 
 // Mock client that uses direct method calls instead of HTTP
 class MockA2AClient
