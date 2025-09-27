@@ -28,9 +28,9 @@ require_once __DIR__ . '/vendor/autoload.php';
 
 use A2A\A2AServer;
 use A2A\TaskManager;
-use A2A\Models\AgentCard;
+use A2A\Models\v0_3_0\AgentCard;
 use A2A\Models\AgentCapabilities;
-use A2A\Models\Message;
+use A2A\Models\v0_3_0\Message;
 use A2A\Models\TaskState;
 use A2A\Events\EventBusManager;
 use A2A\Events\ExecutionEventBusImpl;
@@ -308,13 +308,10 @@ class A2AHttpsServer
             '0.3.0'                                                         // protocolVersion
         );
 
-        // Initialize server with agent card and enable task object responses
-        $this->server = new A2AServer(
-            $this->agentCard,
-            $this->logger,
-            $this->taskManager,
-            true  // useTaskObjectResponses
-        );
+        // Initialize server with enhanced components and shared TaskManager
+        // Enable A2A Protocol compliance mode for TCK tests
+        $protocol = new \A2A\A2AProtocol_v0_3_0($this->agentCard, null, $this->logger, $this->taskManager);
+        $this->server = new A2AServer($protocol, $this->logger);
 
         $this->logger->info('Agent card configured', [
             'agent_id' => $this->agentCard->getName(),
@@ -326,27 +323,47 @@ class A2AHttpsServer
 
     private function setupMessageHandlers(): void
     {
-        $this->server->addMessageHandler(function (Message $message, string $fromAgent) {
-            $this->logger->info('Processing message', [
-                'from' => $fromAgent,
-                'message_id' => $message->getMessageId(),
-                'role' => $message->getRole(),
-                'https_mode' => $this->httpsMode
-            ]);
-
-            $taskId = $message->getTaskId();
-            if ($taskId) {
-                $task = $this->taskManager->getTask($taskId);
-                if ($task) {
-                    $this->logger->info('Message task ready for interaction', [
-                        'task_id' => $taskId,
-                        'message_id' => $message->getMessageId(),
-                        'state' => $task->getStatus()->value,
-                        'secure' => $this->httpsMode
-                    ]);
-                }
+        $messageHandler = new class($this->logger, $this->taskManager, $this->httpsMode) implements \A2A\Interfaces\MessageHandlerInterface {
+            private $logger;
+            private $taskManager;
+            private $httpsMode;
+            
+            public function __construct($logger, $taskManager, $httpsMode) {
+                $this->logger = $logger;
+                $this->taskManager = $taskManager;
+                $this->httpsMode = $httpsMode;
             }
-        });
+            
+            public function canHandle(\A2A\Models\v0_3_0\Message $message): bool {
+                return true;
+            }
+            
+            public function handle(\A2A\Models\v0_3_0\Message $message, string $fromAgent): array {
+                $this->logger->info('Processing message', [
+                    'from' => $fromAgent,
+                    'message_id' => $message->getMessageId(),
+                    'role' => $message->getRole(),
+                    'https_mode' => $this->httpsMode
+                ]);
+
+                $taskId = $message->getTaskId();
+                if ($taskId) {
+                    $task = $this->taskManager->getTask($taskId);
+                    if ($task) {
+                        $this->logger->info('Message task ready for interaction', [
+                            'task_id' => $taskId,
+                            'message_id' => $message->getMessageId(),
+                            'state' => $task->getStatus()->getState()->value,
+                            'secure' => $this->httpsMode
+                        ]);
+                    }
+                }
+                
+                return ['status' => 'processed'];
+            }
+        };
+        
+        $this->server->addMessageHandler($messageHandler);
     }
 
     public function handleHttpsRedirect(): bool
