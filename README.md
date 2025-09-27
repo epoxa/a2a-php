@@ -1,10 +1,9 @@
-
 # A2A PHP SDK
 
-PHP library implementation of the A2A (AI Agent-to-Agent) Protocol v0.2.5.
+PHP library implementation of the A2A (AI Agent-to-Agent) Protocol v0.3.0.
 
 
-[![A2A Protocol](https://img.shields.io/badge/A2A_Protocol-v0.2.5-blue)](https://github.com/a2aproject/A2A)
+[![A2A Protocol](https://img.shields.io/badge/A2A_Protocol-v0.3.0-blue)](https://github.com/a2aproject/A2A)
 [![PHP Version](https://img.shields.io/badge/PHP-8.0%2B-purple)](https://php.net/)
 [![Test Coverage](https://img.shields.io/badge/Coverage-95%25-green)](https://github.com/andreibesleaga/a2a-php)
 
@@ -32,12 +31,12 @@ This implementation has been thoroughly tested against the official A2A Test Com
 
 ### Mandatory Features (25/25 ✅)
 - **JSON-RPC 2.0 Transport**: Complete compliance with error codes
-- **Agent Card**: All required fields and validation  
+- **Agent Card**: All required fields and validation
 - **Message Send**: Text messages, task continuation, error handling
 - **Task Management**: Get, cancel, state transitions, history
 - **Protocol Violations**: Proper error responses
 
-### Capability Features (14/14 ✅)  
+### Capability Features (14/14 ✅)
 - **Message Capabilities**: Context continuation, multiple parts
 - **Push Notifications**: Full CRUD operations (set/get/list/delete)
 - **Streaming Methods**: SSE streaming, task resubscription
@@ -58,8 +57,8 @@ This implementation has been thoroughly tested against the official A2A Test Com
 ## 🏗️ Architecture
 
 ### Core Protocol Support
-- **A2A Protocol v0.2.5**: Complete implementation with all methods
-- **JSON-RPC 2.0**: Transport layer with A2A-specific error codes  
+- **A2A Protocol v0.3.0**: Complete implementation with all methods
+- **JSON-RPC 2.0**: Transport layer with A2A-specific error codes
 - **Message Handling**: Text, file, and data parts with validation
 - **Task Lifecycle**: Full state management (pending → working → completed)
 - **Agent Discovery**: AgentCard with capabilities and metadata
@@ -70,7 +69,7 @@ This implementation has been thoroughly tested against the official A2A Test Com
 - **Task Streaming**: Live status and artifact updates
 - **Reconnection Logic**: Automatic reconnection and resubscription
 
-### Advanced Features  
+### Advanced Features
 - **AgentExecutor Framework**: Complex multi-step agent logic
 - **RequestContext System**: Execution state and context management
 - **Push Notifications**: Complete CRUD API for notification configs
@@ -79,7 +78,7 @@ This implementation has been thoroughly tested against the official A2A Test Com
 ### Technical Excellence
 - **Modern PHP 8.0+**: Strict typing, enums, and modern patterns
 - **PSR Compliance**: PSR-4 autoloading, PSR-3 logging
-- **Comprehensive Testing**: Unit, integration, and end-to-end tests  
+- **Comprehensive Testing**: Unit, integration, and end-to-end tests
 - **HTTP Client**: Abstracted with Guzzle for flexibility
 
 ## 📋 API Examples
@@ -87,7 +86,7 @@ This implementation has been thoroughly tested against the official A2A Test Com
 ### Creating an Agent
 
 ```php
-use A2A\Models\AgentCard;
+use A2A\Models\v0_3_0\AgentCard;
 use A2A\Models\AgentCapabilities;
 
 // Create agent with full capabilities
@@ -95,13 +94,17 @@ $agentCard = new AgentCard(
     name: 'my-agent-001',
     description: 'Production-ready A2A agent',
     url: 'https://my-agent.com/api',
-    version: '1.0.0'
+    version: '1.0.0',
+    capabilities: new AgentCapabilities(),
+    defaultInputModes: ['text'],
+    defaultOutputModes: ['text'],
+    skills: []
 );
 
 // Add capabilities
 $capabilities = new AgentCapabilities();
 $capabilities->addInputMode('text');
-$capabilities->addInputMode('file'); 
+$capabilities->addInputMode('file');
 $capabilities->addOutputMode('text');
 $capabilities->addOutputMode('data');
 
@@ -110,14 +113,13 @@ $agentCard->setCapabilities($capabilities);
 // Add skills and metadata
 $agentCard->addSkill('data-processing');
 $agentCard->addSkill('file-analysis');
-$agentCard->setMetadata('environment', 'production');
 ```
 
 ### Using A2A Client
 
 ```php
 use A2A\A2AClient;
-use A2A\Models\Message;
+use A2A\Models\v0_3_0\Message;
 use A2A\Models\Parts\TextPart;
 
 $client = new A2AClient($agentCard);
@@ -140,10 +142,12 @@ $remoteCard = $client->getAgentCard('https://other-agent.com/api');
 
 ```php
 use A2A\A2AServer;
+use A2A\A2AProtocol_v0_3_0;
 use A2A\TaskManager;
 use A2A\Events\ExecutionEventBusImpl;
 
-$server = new A2AServer($agentCard);
+$protocol = new A2AProtocol_v0_3_0($agentCard);
+$server = new A2AServer($protocol);
 $taskManager = new TaskManager();
 $eventBus = new ExecutionEventBusImpl();
 
@@ -154,10 +158,10 @@ $server->addMessageHandler(function($message, $fromAgent, $context) use ($taskMa
         'message' => $message->getParts()[0]->getText(),
         'from' => $fromAgent
     ]);
-    
+
     // Process in background
     $task->setStatus(TaskState::WORKING);
-    
+
     // Return task reference
     return ['task' => $task->toArray()];
 });
@@ -173,7 +177,7 @@ echo json_encode($response);
 ### Task Management
 
 ```php
-use A2A\Models\Task;
+use A2A\Models\v0_3_0\Task;
 use A2A\Models\TaskStatus;
 use A2A\Enums\TaskState;
 
@@ -256,7 +260,7 @@ python3 run_tck.py --sut-url http://localhost:8081 --category all
 
 # Test specific categories
 python3 run_tck.py --sut-url http://localhost:8081 --category mandatory
-python3 run_tck.py --sut-url http://localhost:8081 --category capabilities  
+python3 run_tck.py --sut-url http://localhost:8081 --category capabilities
 python3 run_tck.py --sut-url http://localhost:8081 --category quality
 python3 run_tck.py --sut-url http://localhost:8081 --category features
 ```
@@ -264,7 +268,7 @@ python3 run_tck.py --sut-url http://localhost:8081 --category features
 ### Expected Results
 ```
 ✅ Mandatory Tests: 25/25 PASSED
-✅ Capability Tests: 14/14 PASSED  
+✅ Capability Tests: 14/14 PASSED
 ✅ Quality Tests: 12/12 PASSED
 ✅ Feature Tests: 15/15 PASSED
 
@@ -295,13 +299,13 @@ composer analyse
 # Code style checking
 composer style
 
-# Fix code style automatically  
+# Fix code style automatically
 composer style -- --fix
 ```
 
 ## 🔧 Protocol Methods
 
-All A2A Protocol v0.2.5 methods are implemented:
+All A2A Protocol v0.3.0 methods are implemented:
 
 ### Core Methods
 - ✅ **`message/send`** - Send messages with text, file, or data parts
@@ -309,7 +313,7 @@ All A2A Protocol v0.2.5 methods are implemented:
 - ✅ **`tasks/get`** - Retrieve task status and history
 - ✅ **`tasks/cancel`** - Cancel running tasks
 
-### Push Notification Methods  
+### Push Notification Methods
 - ✅ **`tasks/pushNotificationConfig/set`** - Configure webhooks
 - ✅ **`tasks/pushNotificationConfig/get`** - Retrieve configs
 - ✅ **`tasks/pushNotificationConfig/list`** - List all configs
@@ -317,7 +321,7 @@ All A2A Protocol v0.2.5 methods are implemented:
 
 ### Streaming Methods
 - ✅ **`tasks/resubscribe`** - Reconnect to task streams
-- ✅ **Agent discovery** - Via `/.well-known/agent.json`
+- ✅ **Agent discovery** - Via `/.well-known/agent-card.json`
 - ✅ **Health checks** - Standard ping/pong
 
 ## 📊 Implementation Status
@@ -359,7 +363,7 @@ try {
     // A2A Error Code: -32001
     echo "Task not found: " . $e->getMessage();
 } catch (InvalidRequestException $e) {
-    // JSON-RPC Error Code: -32600  
+    // JSON-RPC Error Code: -32600
     echo "Invalid request: " . $e->getMessage();
 } catch (A2AException $e) {
     // General A2A protocol error
@@ -382,11 +386,11 @@ try {
 The `/examples` directory contains comprehensive working examples:
 
 ### Basic Examples
-- **`basic_agent.php`** - Simple agent implementation  
+- **`basic_agent.php`** - Simple agent implementation
 - **`client_server.php`** - Client-server communication
 - **`complete_agent_communication.php`** - Full agent-to-agent flow
 
-### Advanced Examples  
+### Advanced Examples
 - **`complete_a2a_server.php`** - **Production-ready server (TCK compliant)**
 - **`streaming_example.php`** - Real-time streaming and events
 - **`task_management.php`** - Task lifecycle management
@@ -415,7 +419,7 @@ php examples/implementation_status.php
 
 ### Requirements
 - **PHP 8.0+** with extensions: `curl`, `json`, `mbstring`
-- **Composer** for dependency management  
+- **Composer** for dependency management
 - **Web Server**: nginx, Apache, or PHP built-in server
 - **Memory**: 512MB+ recommended for production
 
@@ -444,20 +448,20 @@ server {
     listen 80;
     server_name your-a2a-agent.com;
     root /var/www/a2a-php;
-    
+
     location / {
         try_files $uri $uri/ @php;
     }
-    
+
     location @php {
         fastcgi_pass php-fpm:9000;
         fastcgi_index complete_a2a_server.php;
         fastcgi_param SCRIPT_FILENAME $document_root/examples/complete_a2a_server.php;
         include fastcgi_params;
     }
-    
+
     # Agent card endpoint
-    location /.well-known/agent.json {
+    location /.well-known/agent-card.json {
         add_header Content-Type application/json;
         add_header Access-Control-Allow-Origin *;
     }
@@ -478,7 +482,7 @@ server {
 
 ### Related Projects
 - **[a2a-python](https://github.com/a2aproject/a2a-python)** - Python implementation
-- **[a2a-js](https://github.com/a2aproject/a2a-js)** - JavaScript/TypeScript implementation  
+- **[a2a-js](https://github.com/a2aproject/a2a-js)** - JavaScript/TypeScript implementation
 - **[a2a-samples](https://github.com/a2aproject/a2a-samples)** - Example implementations
 
 ## 🤝 Contributing
@@ -507,10 +511,3 @@ composer test
 ## 📄 License
 
 This project is licensed under the **Apache License 2.0** - see the [LICENSE](LICENSE) file for details.
-
-
-
-
-
-
-

@@ -4,14 +4,16 @@ declare(strict_types=1);
 
 namespace A2A\Tests;
 
+use A2A\A2AProtocol_v0_3_0;
+use A2A\Interfaces\MessageHandlerInterface;
 use A2A\Models\TextPart;
 use PHPUnit\Framework\TestCase;
 use A2A\A2AClient;
 use A2A\A2AServer;
-use A2A\Models\AgentCard;
+use A2A\Models\v0_3_0\AgentCard;
 use A2A\Models\AgentCapabilities;
 use A2A\Models\AgentSkill;
-use A2A\Models\Message;
+use A2A\Models\v0_3_0\Message;
 use A2A\Utils\HttpClient;
 
 class EndToEndTest extends TestCase
@@ -34,12 +36,20 @@ class EndToEndTest extends TestCase
         );
 
         // Setup server
-        $server = new A2AServer($agentCard);
-        $messageReceived = false;
+        $protocol = new A2AProtocol_v0_3_0($agentCard);
+        $server = new A2AServer($protocol);
         
-        $server->addMessageHandler(
-            function (Message $message, $fromAgent) use (&$messageReceived) {
-                $messageReceived = true;
+        $messageHandler = new class implements MessageHandlerInterface {
+            public bool $messageReceived = false;
+
+            public function canHandle(Message $message): bool
+            {
+                return true;
+            }
+
+            public function handle(Message $message, string $fromAgent): array
+            {
+                $this->messageReceived = true;
                 $textContent = '';
                 foreach ($message->getParts() as $part) {
                     if ($part instanceof TextPart) {
@@ -47,9 +57,11 @@ class EndToEndTest extends TestCase
                         break;
                     }
                 }
-                $this->assertEquals('Hello Agent', $textContent);
+                TestCase::assertEquals('Hello Agent', $textContent);
+                return ['status' => 'handled'];
             }
-        );
+        };
+        $protocol->addMessageHandler($messageHandler);
 
         // Setup client with mock HTTP
         $httpClient = new class extends HttpClient {
@@ -73,7 +85,7 @@ class EndToEndTest extends TestCase
         $message = Message::createUserMessage('Hello Agent');
         $response = $client->sendMessage('http://test', $message);
         
-        $this->assertTrue($messageReceived);
-        $this->assertEquals('received', $response['result']['status']);
+        $this->assertTrue($messageHandler->messageReceived);
+        $this->assertEquals(['status' => 'handled'], $response['result']);
     }
 }

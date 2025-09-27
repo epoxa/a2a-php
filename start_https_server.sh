@@ -26,7 +26,7 @@ start_http_server() {
     
     if check_port 8081; then
         echo "Starting A2A server on HTTP port 8081..."
-        echo "Agent Card: http://localhost:8081/.well-known/agent.json"
+        echo "Agent Card: http://localhost:8081/.well-known/agent-card.json"
         echo "Server Info: http://localhost:8081/server-info"
         echo
         echo "Press Ctrl+C to stop the server"
@@ -44,7 +44,7 @@ start_https_server() {
     if check_port 8443; then
         echo "Generating SSL certificates..."
         echo "Starting A2A server on HTTPS port 8443..."
-        echo "Agent Card: https://localhost:8443/.well-known/agent.json"
+        echo "Agent Card: https://localhost:8443/.well-known/agent-card.json"
         echo "Server Info: https://localhost:8443/server-info"
         echo
         echo "⚠️  Note: You may see SSL warnings for self-signed certificates"
@@ -64,7 +64,7 @@ run_tests() {
     
     # Test HTTP server
     echo "Testing HTTP server..."
-    if curl -s http://localhost:8081/.well-known/agent.json > /dev/null 2>&1; then
+    if curl -s http://localhost:8081/.well-known/agent-card.json > /dev/null 2>&1; then
         echo "✅ HTTP server is responding"
     else
         echo "❌ HTTP server is not responding"
@@ -72,7 +72,7 @@ run_tests() {
     
     # Test HTTPS server (skip SSL verification for self-signed certs)
     echo "Testing HTTPS server..."
-    if curl -k -s https://localhost:8443/.well-known/agent.json > /dev/null 2>&1; then
+    if curl -k -s https://localhost:8443/.well-known/agent-card.json > /dev/null 2>&1; then
         echo "✅ HTTPS server is responding"
     else
         echo "❌ HTTPS server is not responding"

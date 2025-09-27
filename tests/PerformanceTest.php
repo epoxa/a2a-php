@@ -4,13 +4,16 @@ declare(strict_types=1);
 
 namespace A2A\Tests;
 
+use A2A\A2AProtocol_v0_3_0;
+use A2A\Interfaces\MessageHandlerInterface;
 use PHPUnit\Framework\TestCase;
 use A2A\A2AServer;
-use A2A\Models\AgentCard;
+use A2A\Models\v0_3_0\AgentCard;
 use A2A\Models\AgentCapabilities;
 use A2A\Models\AgentSkill;
-use A2A\Models\Message;
+use A2A\Models\v0_3_0\Message;
 use A2A\TaskManager;
+use A2A\Storage\Storage;
 
 class PerformanceTest extends TestCase
 {
@@ -30,14 +33,23 @@ class PerformanceTest extends TestCase
             [$skill]
         );
         
-        $server = new A2AServer($agentCard);
+        $protocol = new A2AProtocol_v0_3_0($agentCard);
+        $server = new A2AServer($protocol);
         
-        $processedCount = 0;
-        $server->addMessageHandler(
-            function ($message, $fromAgent) use (&$processedCount) {
-                $processedCount++;
+        $messageHandler = new class implements MessageHandlerInterface {
+            public int $processedCount = 0;
+
+            public function canHandle(Message $message): bool
+            {
+                return true;
             }
-        );
+            public function handle(Message $message, string $fromAgent): array
+            {
+                $this->processedCount++;
+                return ['status' => 'ok'];
+            }
+        };
+        $protocol->addMessageHandler($messageHandler);
 
         $startTime = microtime(true);
         
@@ -59,13 +71,13 @@ class PerformanceTest extends TestCase
         $endTime = microtime(true);
         $duration = $endTime - $startTime;
         
-        $this->assertEquals(1000, $processedCount);
+        $this->assertEquals(1000, $messageHandler->processedCount);
         $this->assertLessThan(6.0, $duration, 'Processing 1000 messages should take less than 6 seconds');
     }
 
     public function testTaskManagerMemoryUsage(): void
     {
-        $taskManager = new TaskManager();
+        $taskManager = new TaskManager(new Storage('array'));
         $initialMemory = memory_get_usage();
         
         // Create many tasks

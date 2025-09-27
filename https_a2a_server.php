@@ -511,7 +511,7 @@ class A2AHttpsServer
                 'key_file' => $this->httpsConfig->getKeyFile(),
                 'cert_file' => $this->httpsConfig->getCertFile()
             ] : null,
-            'agent_card_url' => ($this->httpsMode ? 'https' : 'http') . "://localhost:{$this->port}/.well-known/agent.json"
+            'agent_card_url' => ($this->httpsMode ? 'https' : 'http') . "://localhost:{$this->port}/.well-known/agent-card.json"
         ];
     }
 }
@@ -522,7 +522,7 @@ $server = new A2AHttpsServer();
 // Handle well-known agent card endpoint
 if (
     ($_SERVER['REQUEST_METHOD'] ?? '') === 'GET' &&
-    ($_SERVER['REQUEST_URI'] ?? '') === '/.well-known/agent.json'
+    ($_SERVER['REQUEST_URI'] ?? '') === '/.well-known/agent-card.json'
 ) {
     header('Content-Type: application/json');
     header('Access-Control-Allow-Origin: *');
