@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace A2A;
 
-use A2A\Models\v0_3_0\AgentCard;
-use A2A\Models\v0_3_0\Message;
+use A2A\Models\v030\AgentCard;
+use A2A\Models\v030\Message;
 use A2A\Models\Task;
 use A2A\Models\PushNotificationConfig;
 use A2A\Utils\HttpClient;

@@ -2,19 +2,19 @@
 
 require_once __DIR__ . '/../vendor/autoload.php';
 
-use A2A\Models\v0_3_0\AgentCard;
+use A2A\Models\v030\AgentCard;
 use A2A\Models\AgentCapabilities;
 use A2A\Models\AgentSkill;
 use A2A\Models\AgentProvider;
-use A2A\Models\v0_3_0\Message;
-use A2A\Models\v0_3_0\Task;
+use A2A\Models\v030\Message;
+use A2A\Models\v030\Task;
 use A2A\Models\TaskState;
 use A2A\Models\TaskStatus;
 use A2A\Models\TextPart;
 use A2A\Models\FilePart;
 use A2A\Models\DataPart;
 use A2A\Models\FileWithBytes;
-use A2A\A2AProtocol_v0_3_0;
+use A2A\A2AProtocol_v030;
 use A2A\A2AClient;
 use A2A\A2AServer;
 
@@ -110,7 +110,7 @@ test("DataPart has 'data' field", isset($dataArray['data']));
 
 // 5. Protocol Methods Implementation
 echo "\n5. A2A Protocol Methods:\n";
-$protocol = new A2AProtocol_v0_3_0($agentCard);
+$protocol = new A2AProtocol_v030($agentCard);
 $server = new A2AServer($protocol);
 $client = new A2AClient($agentCard);
 

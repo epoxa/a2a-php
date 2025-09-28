@@ -18,7 +18,7 @@ A2A PHP is a complete implementation of the A2A Protocol v0.3.0. It provides a J
 ```text
 A2A PHP Architecture
 ├── A2AServer           # HTTP entry point handling JSON-RPC requests
-├── A2AProtocol_v0_3_0  # Dispatches protocol methods and orchestrates managers
+├── A2AProtocol_v030  # Dispatches protocol methods and orchestrates managers
 ├── TaskManager         # Creates, updates, and cancels tasks with persistence
 ├── PushNotificationMgr # Persists webhook configurations in shared storage
 ├── StreamingServer     # Emits SSE events for live processing and resubscribe

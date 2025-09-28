@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace A2A\Models\v0_3_0;
+namespace A2A\Models\v030;
 
 use A2A\Models\Artifact;
 use A2A\Models\TaskStatus;

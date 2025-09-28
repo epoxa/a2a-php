@@ -2,11 +2,11 @@
 
 require_once __DIR__ . '/../vendor/autoload.php';
 
-use A2A\A2AProtocol_v0_3_0;
-use A2A\Models\v0_3_0\AgentCard;
+use A2A\A2AProtocol_v030;
+use A2A\Models\v030\AgentCard;
 use A2A\Models\AgentCapabilities;
 use A2A\Models\AgentSkill;
-use A2A\Models\v0_3_0\Task;
+use A2A\Models\v030\Task;
 use A2A\Models\TaskState;
 use A2A\Models\TaskStatus;
 
@@ -27,7 +27,7 @@ $agentCard = new AgentCard(
     [$skill]
 );
 
-$protocol = new A2AProtocol_v0_3_0($agentCard);
+$protocol = new A2AProtocol_v030($agentCard);
 
 // Create multiple tasks
 echo "Creating tasks...\n";

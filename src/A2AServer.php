@@ -4,18 +4,18 @@ declare(strict_types=1);
 
 namespace A2A;
 
-use A2A\Models\v0_3_0\AgentCard;
+use A2A\Models\v030\AgentCard;
 use A2A\Interfaces\MessageHandlerInterface;
 use Psr\Log\LoggerInterface;
 use Psr\Log\NullLogger;
 
 class A2AServer
 {
-    private A2AProtocol_v0_3_0 $protocol;
+    private A2AProtocol_v030 $protocol;
     private LoggerInterface $logger;
 
     public function __construct(
-        A2AProtocol_v0_3_0 $protocol,
+        A2AProtocol_v030 $protocol,
         ?LoggerInterface $logger = null
     ) {
         $this->protocol = $protocol;

@@ -4,16 +4,16 @@ declare(strict_types=1);
 
 namespace A2A\Tests;
 
-use A2A\A2AProtocol_v0_3_0;
+use A2A\A2AProtocol_v030;
 use A2A\Interfaces\MessageHandlerInterface;
 use A2A\Models\TextPart;
 use PHPUnit\Framework\TestCase;
 use A2A\A2AClient;
 use A2A\A2AServer;
-use A2A\Models\v0_3_0\AgentCard;
+use A2A\Models\v030\AgentCard;
 use A2A\Models\AgentCapabilities;
 use A2A\Models\AgentSkill;
-use A2A\Models\v0_3_0\Message;
+use A2A\Models\v030\Message;
 use A2A\Utils\HttpClient;
 
 class EndToEndTest extends TestCase
@@ -36,7 +36,7 @@ class EndToEndTest extends TestCase
         );
 
         // Setup server
-        $protocol = new A2AProtocol_v0_3_0($agentCard);
+        $protocol = new A2AProtocol_v030($agentCard);
         $server = new A2AServer($protocol);
         
         $messageHandler = new class implements MessageHandlerInterface {

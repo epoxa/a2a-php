@@ -2,13 +2,13 @@
 
 require_once __DIR__ . '/../vendor/autoload.php';
 
-use A2A\Models\v0_3_0\AgentCard;
+use A2A\Models\v030\AgentCard;
 use A2A\Models\AgentCapabilities;
 use A2A\Models\AgentSkill;
 use A2A\Models\AgentProvider;
 use A2A\Models\AgentExtension;
 use A2A\Models\AgentInterface;
-use A2A\Models\v0_3_0\Task;
+use A2A\Models\v030\Task;
 use A2A\Models\TaskState;
 use A2A\Models\TaskStatus;
 use A2A\Client\GrpcClient;

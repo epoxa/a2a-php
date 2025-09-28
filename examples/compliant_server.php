@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 require_once __DIR__ . '/vendor/autoload.php';
 
-use A2A\Models\v0_3_0\AgentCard;
+use A2A\Models\v030\AgentCard;
 use A2A\Models\AgentCapabilities;
 use A2A\Models\AgentSkill;
 

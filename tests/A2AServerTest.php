@@ -4,16 +4,16 @@ declare(strict_types=1);
 
 namespace A2A\Tests;
 
-use A2A\A2AProtocol_v0_3_0;
+use A2A\A2AProtocol_v030;
 use A2A\Interfaces\MessageHandlerInterface;
 use A2A\Models\TaskStatus;
 use A2A\Models\TextPart;
 use PHPUnit\Framework\TestCase;
 use A2A\A2AServer;
-use A2A\Models\v0_3_0\AgentCard;
+use A2A\Models\v030\AgentCard;
 use A2A\Models\AgentCapabilities;
 use A2A\Models\AgentSkill;
-use A2A\Models\v0_3_0\Message;
+use A2A\Models\v030\Message;
 use A2A\TaskManager;
 use A2A\Models\TaskState;
 use A2A\Utils\HttpClient;
@@ -24,7 +24,7 @@ class A2AServerTest extends TestCase
     private AgentCard $agentCard;
     private TestLogger $logger;
     private TaskManager $taskManager;
-    private A2AProtocol_v0_3_0 $protocol;
+    private A2AProtocol_v030 $protocol;
 
     protected function setUp(): void
     {
@@ -46,7 +46,7 @@ class A2AServerTest extends TestCase
         $this->taskManager = new TaskManager();
         $httpClient = $this->createMock(HttpClient::class);
 
-        $this->protocol = new A2AProtocol_v0_3_0(
+        $this->protocol = new A2AProtocol_v030(
             $this->agentCard,
             $httpClient,
             $this->logger,

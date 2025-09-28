@@ -4,11 +4,11 @@ declare(strict_types=1);
 
 namespace A2A\Tests;
 
-use A2A\A2AProtocol_v0_3_0;
+use A2A\A2AProtocol_v030;
 use A2A\A2AServer;
-use A2A\Models\v0_3_0\AgentCard;
+use A2A\Models\v030\AgentCard;
 use A2A\Models\AgentCapabilities;
-use A2A\Models\v0_3_0\Message;
+use A2A\Models\v030\Message;
 use A2A\TaskManager;
 use PHPUnit\Framework\TestCase;
 use Psr\Log\LoggerInterface;
@@ -38,7 +38,7 @@ class TasksSendTest extends TestCase
 
         $this->logger = new NullLogger();
         $this->taskManager = new TaskManager(new Storage('array'));
-        $protocol = new A2AProtocol_v0_3_0($this->agentCard, null, $this->logger, $this->taskManager);
+        $protocol = new A2AProtocol_v030($this->agentCard, null, $this->logger, $this->taskManager);
         $this->server = new A2AServer($protocol, $this->logger);
     }
 

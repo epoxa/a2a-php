@@ -14,9 +14,9 @@ use A2A\Models\Task as StreamTask;
 use A2A\Models\TaskState;
 use A2A\Models\TaskStatus;
 use A2A\Models\TaskStatusUpdateEvent;
-use A2A\Models\v0_3_0\AgentCard;
-use A2A\Models\v0_3_0\Message;
-use A2A\Models\v0_3_0\Task;
+use A2A\Models\v030\AgentCard;
+use A2A\Models\v030\Message;
+use A2A\Models\v030\Task;
 use A2A\PushNotificationManager;
 use A2A\Streaming\StreamingServer;
 use A2A\TaskManager;
@@ -29,7 +29,7 @@ use Ramsey\Uuid\Uuid;
 use Psr\Log\LoggerInterface;
 use Psr\Log\NullLogger;
 
-class A2AProtocol_v0_3_0
+class A2AProtocol_v030
 {
     private HttpClient $httpClient;
     private LoggerInterface $logger;

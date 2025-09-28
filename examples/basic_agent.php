@@ -2,11 +2,11 @@
 
 require_once __DIR__ . '/../vendor/autoload.php';
 
-use A2A\A2AProtocol_v0_3_0;
-use A2A\Models\v0_3_0\AgentCard;
+use A2A\A2AProtocol_v030;
+use A2A\Models\v030\AgentCard;
 use A2A\Models\AgentCapabilities;
 use A2A\Models\AgentSkill;
-use A2A\Models\v0_3_0\Message;
+use A2A\Models\v030\Message;
 use Monolog\Logger;
 use Monolog\Handler\StreamHandler;
 
@@ -30,7 +30,7 @@ $agentCard = new AgentCard(
 );
 
 // Initialize the protocol
-$protocol = new A2AProtocol_v0_3_0($agentCard, null, $logger);
+$protocol = new A2AProtocol_v030($agentCard, null, $logger);
 
 echo "=== Basic Agent Example ===\n\n";
 

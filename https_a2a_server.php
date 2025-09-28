@@ -31,7 +31,7 @@ use A2A\Events\EventBusManager;
 use A2A\Execution\DefaultAgentExecutor;
 use A2A\Exceptions\A2AErrorCodes;
 use A2A\Models\AgentCapabilities;
-use A2A\Models\v0_3_0\AgentCard;
+use A2A\Models\v030\AgentCard;
 use A2A\PushNotificationManager;
 use A2A\Storage\Storage;
 use A2A\Streaming\StreamingServer;
@@ -320,7 +320,7 @@ class A2AHttpsServer
 
         // Initialize server with enhanced components and shared TaskManager
         // Enable A2A Protocol compliance mode for TCK tests
-        $protocol = new \A2A\A2AProtocol_v0_3_0(
+        $protocol = new \A2A\A2AProtocol_v030(
             $this->agentCard,
             null,
             $this->logger,
@@ -353,11 +353,11 @@ class A2AHttpsServer
                 $this->httpsMode = $httpsMode;
             }
             
-            public function canHandle(\A2A\Models\v0_3_0\Message $message): bool {
+            public function canHandle(\A2A\Models\v030\Message $message): bool {
                 return true;
             }
             
-            public function handle(\A2A\Models\v0_3_0\Message $message, string $fromAgent): array {
+            public function handle(\A2A\Models\v030\Message $message, string $fromAgent): array {
                 $this->logger->info('Processing message', [
                     'from' => $fromAgent,
                     'message_id' => $message->getMessageId(),

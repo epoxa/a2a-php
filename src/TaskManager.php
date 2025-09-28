@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace A2A;
 
 use A2A\Exceptions\A2AErrorCodes;
-use A2A\Models\v0_3_0\Task;
+use A2A\Models\v030\Task;
 use A2A\Models\TaskState;
 use A2A\Models\TaskStatus;
 use A2A\Storage\Storage;

@@ -24,11 +24,11 @@ declare(strict_types=1);
 require_once __DIR__ . '/../vendor/autoload.php';
 
 use A2A\A2AServer;
-use A2A\A2AProtocol_v0_3_0;
+use A2A\A2AProtocol_v030;
 use A2A\TaskManager;
-use A2A\Models\v0_3_0\AgentCard;
+use A2A\Models\v030\AgentCard;
 use A2A\Models\AgentCapabilities;
-use A2A\Models\v0_3_0\Message;
+use A2A\Models\v030\Message;
 use A2A\Events\EventBusManager;
 use A2A\Execution\DefaultAgentExecutor;
 use A2A\PushNotificationManager;
@@ -180,7 +180,7 @@ class CompleteA2AServer
 
         // Initialize server with enhanced components and shared TaskManager
         // Enable A2A Protocol compliance mode for TCK tests
-        $protocol = new A2AProtocol_v0_3_0(
+        $protocol = new A2AProtocol_v030(
             $this->agentCard,
             null,
             $this->logger,

@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace A2A\Interfaces;
 
-use A2A\Models\v0_3_0\Message;
+use A2A\Models\v030\Message;
 
 interface MessageHandlerInterface
 {

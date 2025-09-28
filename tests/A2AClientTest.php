@@ -6,8 +6,8 @@ namespace A2A\Tests;
 
 use PHPUnit\Framework\TestCase;
 use A2A\A2AClient;
-use A2A\Models\v0_3_0\AgentCard;
-use A2A\Models\v0_3_0\Message;
+use A2A\Models\v030\AgentCard;
+use A2A\Models\v030\Message;
 use A2A\Models\AgentCapabilities;
 use A2A\Models\AgentSkill;
 use A2A\Utils\HttpClient;

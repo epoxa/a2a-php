@@ -4,10 +4,10 @@ require_once __DIR__ . '/../vendor/autoload.php';
 
 use A2A\A2AClient;
 use A2A\A2AServer;
-use A2A\Models\v0_3_0\AgentCard;
+use A2A\Models\v030\AgentCard;
 use A2A\Models\AgentCapabilities;
 use A2A\Models\AgentSkill;
-use A2A\Models\v0_3_0\Message;
+use A2A\Models\v030\Message;
 use A2A\Utils\HttpClient;
 
 echo "=== Client-Server Communication Example ===\n\n";
@@ -27,7 +27,7 @@ $serverCard = new AgentCard(
     [$skill]
 );
 
-$protocol = new \A2A\A2AProtocol_v0_3_0($serverCard);
+$protocol = new \A2A\A2AProtocol_v030($serverCard);
 $server = new A2AServer($protocol);
 
 // Add message handler to server
