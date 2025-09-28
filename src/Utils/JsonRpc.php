@@ -52,8 +52,12 @@ class JsonRpc
             throw new InvalidRequestException('Invalid JSON-RPC version');
         }
 
-        if (!isset($request['method']) || !is_string($request['method']) || $request['method'] === '') {
-            throw new InvalidRequestException('Missing or invalid method');
+        if (!array_key_exists('method', $request)) {
+            throw new InvalidRequestException('Missing method');
+        }
+
+        if (!is_string($request['method']) || trim($request['method']) === '') {
+            throw new InvalidRequestException('Invalid method');
         }
 
         if (array_key_exists('id', $request) && $request['id'] !== null && !is_string($request['id']) && !is_int($request['id'])) {

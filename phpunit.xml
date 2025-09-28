@@ -4,6 +4,9 @@
          bootstrap="vendor/autoload.php"
          colors="true"
          testdox="true">
+    <php>
+        <env name="XDEBUG_MODE" value="coverage"/>
+    </php>
     <testsuites>
         <testsuite name="A2A PHP SDK Test Suite">
             <directory>tests</directory>
@@ -14,9 +17,4 @@
             <directory>src</directory>
         </include>
     </source>
-    <coverage>
-        <report>
-            <html outputDirectory="coverage"/>
-        </report>
-    </coverage>
 </phpunit>

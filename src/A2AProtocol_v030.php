@@ -168,10 +168,10 @@ class A2AProtocol_v030
             case 'ping':
                 return $jsonRpc->createResponse($parsedRequest['id'], ['status' => 'pong']);
             default:
-                $this->logger->warning('Method not found', ['method' => $parsedRequest['method']]);
+                $this->logger->warning('Unknown method requested', ['method' => $parsedRequest['method']]);
                 return $jsonRpc->createError(
                     $parsedRequest['id'],
-                    A2AErrorCodes::getErrorMessage(A2AErrorCodes::METHOD_NOT_FOUND),
+                    'Unknown method: ' . $parsedRequest['method'],
                     A2AErrorCodes::METHOD_NOT_FOUND
                 );
             }
@@ -559,37 +559,53 @@ class A2AProtocol_v030
 
     private function handleResubscribeTask(array $params, $requestId): array
     {
+        $jsonRpc = new JsonRpc();
         $taskId = $params['id'] ?? null;
 
         if (!$taskId) {
             $this->streamingServer->streamResubscribeError(
-                $requestId,
+                (string) ($requestId ?? ''),
                 A2AErrorCodes::INVALID_PARAMS,
                 'Task ID is required for resubscription'
             );
 
-            return [];
+            return $jsonRpc->createError(
+                $requestId,
+                'Task ID is required for resubscription',
+                A2AErrorCodes::INVALID_PARAMS
+            );
         }
 
         $task = $this->taskManager->getTask($taskId);
         if (!$task) {
             $this->streamingServer->streamResubscribeError(
-                $requestId,
+                (string) ($requestId ?? ''),
                 A2AErrorCodes::TASK_NOT_FOUND,
                 'Task not found',
                 $taskId
             );
 
-            return [];
+            return $jsonRpc->createError(
+                $requestId,
+                'Task not found',
+                A2AErrorCodes::TASK_NOT_FOUND
+            );
         }
 
         $this->streamingServer->streamResubscribeSnapshot(
-            $requestId,
+            (string) ($requestId ?? ''),
             $taskId,
             $task->toArray()
         );
 
-        return [];
+        return $jsonRpc->createResponse(
+            $requestId,
+            [
+                'status' => 'resubscribed',
+                'taskId' => $taskId,
+                'task' => $task->toArray()
+            ]
+        );
     }
 
     private function handleMessageStream(array $parsedRequest, array $rawRequest): array

@@ -11,20 +11,25 @@ class Part
 {
     public static function fromArray(array $data): PartInterface
     {
-        if (!isset($data['kind'])) {
-            if (isset($data['type'])) {
-                $data['kind'] = $data['type'];
-            } else {
-                // For backward compatibility, if 'kind' is missing, assume it's a TextPart
-                // and the content is in a 'content' or 'text' field.
-                $content = $data['content'] ?? $data['text'] ?? '';
-                return new TextPart($content, $data['metadata'] ?? null);
+        $kind = $data['kind'] ?? $data['type'] ?? null;
+
+        if ($kind === null) {
+            // For backward compatibility, if neither 'kind' nor 'type' is provided,
+            // assume a text part and attempt to map common content keys.
+            $content = $data['content'] ?? $data['text'] ?? '';
+            if (!is_string($content)) {
+                $content = is_scalar($content) ? (string) $content : '';
             }
+            return new TextPart($content, $data['metadata'] ?? null);
         }
 
-        switch ($data['kind']) {
+        switch ($kind) {
             case 'text':
-                return new TextPart($data['text'], $data['metadata'] ?? null);
+                $text = $data['text'] ?? $data['content'] ?? '';
+                if (!is_string($text)) {
+                    $text = is_scalar($text) ? (string) $text : '';
+                }
+                return new TextPart($text, $data['metadata'] ?? null);
             case 'file':
                 $fileData = $data['file'];
                 $uri = $fileData['uri'] ?? $fileData['url'] ?? $fileData['href'] ?? null;
@@ -40,7 +45,7 @@ class Part
             case 'data':
                 return new DataPart($data['data'], $data['metadata'] ?? null);
             default:
-                throw new \InvalidArgumentException("Unknown part kind: {$data['kind']}");
+        throw new \InvalidArgumentException("Unknown part kind: {$kind}");
         }
     }
 }
