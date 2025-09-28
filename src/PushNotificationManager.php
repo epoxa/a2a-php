@@ -55,9 +55,18 @@ class PushNotificationManager
     /**
      * List all push notification configs
      */
-    public function listConfigs(): array
+    public function listConfigs(?string $taskId = null): array
     {
-        return $this->storage->listPushConfigs();
+        $configs = $this->storage->listPushConfigs();
+
+        if ($taskId === null) {
+            return $configs;
+        }
+
+        return array_values(array_filter(
+            $configs,
+            fn(array $config) => ($config['taskId'] ?? null) === $taskId
+        ));
     }
 
     /**
@@ -65,8 +74,7 @@ class PushNotificationManager
      */
     public function listConfigsForTask(string $taskId): array
     {
-        $config = $this->getConfig($taskId);
-        return $config ? [$config] : [];
+        return $this->listConfigs($taskId);
     }
 
     /**

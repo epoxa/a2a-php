@@ -27,18 +27,16 @@ declare(strict_types=1);
 require_once __DIR__ . '/vendor/autoload.php';
 
 use A2A\A2AServer;
-use A2A\TaskManager;
-use A2A\Models\v0_3_0\AgentCard;
-use A2A\Models\AgentCapabilities;
-use A2A\Models\v0_3_0\Message;
-use A2A\Models\TaskState;
 use A2A\Events\EventBusManager;
-use A2A\Events\ExecutionEventBusImpl;
 use A2A\Execution\DefaultAgentExecutor;
-use A2A\Streaming\StreamingServer;
-use A2A\Streaming\SSEStreamer;
-use A2A\Utils\JsonRpc;
 use A2A\Exceptions\A2AErrorCodes;
+use A2A\Models\AgentCapabilities;
+use A2A\Models\v0_3_0\AgentCard;
+use A2A\PushNotificationManager;
+use A2A\Storage\Storage;
+use A2A\Streaming\StreamingServer;
+use A2A\TaskManager;
+use A2A\Utils\JsonRpc;
 use Psr\Log\LoggerInterface;
 
 /**
@@ -230,6 +228,10 @@ class A2AHttpsServer
     private bool $httpsMode;
     private HttpsConfigManager $httpsConfig;
     private int $port;
+    private PushNotificationManager $pushNotificationManager;
+    private EventBusManager $eventBusManager;
+    private DefaultAgentExecutor $executor;
+    private StreamingServer $streamingServer;
 
     public function __construct()
     {
@@ -254,8 +256,14 @@ class A2AHttpsServer
 
     private function initializeServer(): void
     {
-        // Initialize shared storage and task manager
-        $this->taskManager = new TaskManager();
+        // Initialize shared storage and core components
+        $storage = new Storage('array');
+
+        $this->taskManager = new TaskManager($storage);
+        $this->pushNotificationManager = new PushNotificationManager($storage);
+        $this->eventBusManager = new EventBusManager();
+        $this->executor = new DefaultAgentExecutor();
+        $this->streamingServer = new StreamingServer();
 
         $this->logger->info('A2A Server components initialized', [
             'https_mode' => $this->httpsMode,
@@ -308,9 +316,20 @@ class A2AHttpsServer
             '0.3.0'                                                         // protocolVersion
         );
 
+        $this->agentCard->setSupportsAuthenticatedExtendedCard(true);
+
         // Initialize server with enhanced components and shared TaskManager
         // Enable A2A Protocol compliance mode for TCK tests
-        $protocol = new \A2A\A2AProtocol_v0_3_0($this->agentCard, null, $this->logger, $this->taskManager);
+        $protocol = new \A2A\A2AProtocol_v0_3_0(
+            $this->agentCard,
+            null,
+            $this->logger,
+            $this->taskManager,
+            $this->pushNotificationManager,
+            $this->eventBusManager,
+            $this->executor,
+            $this->streamingServer
+        );
         $this->server = new A2AServer($protocol, $this->logger);
 
         $this->logger->info('Agent card configured', [
@@ -359,7 +378,16 @@ class A2AHttpsServer
                     }
                 }
                 
-                return ['status' => 'processed'];
+                return [
+                    'status' => [
+                        'state' => 'completed',
+                        'timestamp' => date('c')
+                    ],
+                    'metadata' => [
+                        'secure' => $this->httpsMode,
+                        'message' => 'HTTPS server processed the request'
+                    ]
+                ];
             }
         };
         

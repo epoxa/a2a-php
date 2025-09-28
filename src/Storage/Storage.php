@@ -148,7 +148,10 @@ class Storage
             $configData = $this->cache->get($this->pushConfigsPrefix . $taskId);
             if ($configData !== null) {
                 $config = PushNotificationConfig::fromArray($configData);
-                $configs[] = array_merge($config->toArray(), ['taskId' => $taskId]);
+                $configs[] = [
+                    'taskId' => $taskId,
+                    'pushNotificationConfig' => $config->toArray()
+                ];
             }
         }
 
@@ -249,18 +252,6 @@ class Storage
      */
     private function createMemcachedStore(array $config): Repository
     {
-        if (!class_exists('\Memcached')) {
-            throw new \RuntimeException('Memcached extension is required');
-        }
-
-        $memcached = new \Memcached();
-
-        $servers = $config['servers'] ?? [['127.0.0.1', 11211]];
-        foreach ($servers as $server) {
-            $memcached->addServer($server[0], $server[1] ?? 11211);
-        }
-
-        $store = new \Illuminate\Cache\MemcachedStore($memcached, 'a2a');
-        return new Repository($store);
+        throw new \RuntimeException('Memcached support requires the memcached PHP extension');
     }
 }

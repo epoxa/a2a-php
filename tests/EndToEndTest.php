@@ -40,8 +40,6 @@ class EndToEndTest extends TestCase
         $server = new A2AServer($protocol);
         
         $messageHandler = new class implements MessageHandlerInterface {
-            public bool $messageReceived = false;
-
             public function canHandle(Message $message): bool
             {
                 return true;
@@ -49,7 +47,6 @@ class EndToEndTest extends TestCase
 
             public function handle(Message $message, string $fromAgent): array
             {
-                $this->messageReceived = true;
                 $textContent = '';
                 foreach ($message->getParts() as $part) {
                     if ($part instanceof TextPart) {
@@ -58,7 +55,13 @@ class EndToEndTest extends TestCase
                     }
                 }
                 TestCase::assertEquals('Hello Agent', $textContent);
-                return ['status' => 'handled'];
+                return [
+                    'status' => ['state' => 'completed'],
+                    'metadata' => [
+                        'handled' => true,
+                        'fromAgent' => $fromAgent
+                    ]
+                ];
             }
         };
         $protocol->addMessageHandler($messageHandler);
@@ -85,7 +88,11 @@ class EndToEndTest extends TestCase
         $message = Message::createUserMessage('Hello Agent');
         $response = $client->sendMessage('http://test', $message);
         
-        $this->assertTrue($messageHandler->messageReceived);
-        $this->assertEquals(['status' => 'handled'], $response['result']);
+    $result = $response['result'];
+    $this->assertSame('task', $result['kind']);
+    $this->assertEquals('completed', $result['status']['state']);
+    $this->assertNotEmpty($result['history']);
+    $this->assertTrue($result['metadata']['handled']);
+    $this->assertSame('E2E Agent', $result['metadata']['fromAgent'] ?? null);
     }
 }

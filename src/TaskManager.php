@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace A2A;
 
+use A2A\Exceptions\A2AErrorCodes;
 use A2A\Models\v0_3_0\Task;
 use A2A\Models\TaskState;
 use A2A\Models\TaskStatus;
@@ -48,8 +49,17 @@ class TaskManager
         if (!$task) {
             return [
                 'error' => [
-                    'code' => -32001,
+                    'code' => A2AErrorCodes::TASK_NOT_FOUND,
                     'message' => 'Task not found'
+                ]
+            ];
+        }
+
+        if ($task->getStatus()->getState() === TaskState::CANCELED) {
+            return [
+                'error' => [
+                    'code' => A2AErrorCodes::TASK_NOT_CANCELABLE,
+                    'message' => 'Task has already been canceled'
                 ]
             ];
         }
@@ -57,7 +67,7 @@ class TaskManager
         if ($task->getStatus()->getState()->isTerminal()) {
             return [
                 'error' => [
-                    'code' => -32004,
+                    'code' => A2AErrorCodes::TASK_NOT_CANCELABLE,
                     'message' => 'Task is already in a terminal state'
                 ]
             ];
@@ -67,10 +77,7 @@ class TaskManager
         $this->updateTask($task);
 
         return [
-            'result' => [
-                'status' => 'canceled',
-                'taskId' => $taskId
-            ]
+            'result' => $task->toArray()
         ];
     }
 }

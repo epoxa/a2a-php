@@ -55,7 +55,13 @@ class IntegrationTest extends TestCase
                         break;
                     }
                 }
-                return ['status' => 'processed', 'echo' => $textContent];
+                return [
+                    'status' => ['state' => 'completed'],
+                    'metadata' => [
+                        'echo' => $textContent,
+                        'fromAgent' => $fromAgent
+                    ]
+                ];
             }
         };
         $protocol->addMessageHandler($messageHandler);
@@ -72,7 +78,8 @@ class IntegrationTest extends TestCase
             [$skill]
         );
         
-        $mockHttpClient = $this->createMock(HttpClient::class);
+    /** @var HttpClient&\PHPUnit\Framework\MockObject\MockObject $mockHttpClient */
+    $mockHttpClient = $this->createMock(HttpClient::class);
         $client = new A2AClient($clientCard, $mockHttpClient);
 
         // Test message flow
@@ -89,9 +96,14 @@ class IntegrationTest extends TestCase
 
         $response = $server->handleRequest($request);
 
-        $this->assertEquals('2.0', $response['jsonrpc']);
-        $this->assertEquals(1, $response['id']);
-        $this->assertEquals(['status' => 'processed', 'echo' => 'Hello Server'], $response['result']);
+    $this->assertEquals('2.0', $response['jsonrpc']);
+    $this->assertEquals(1, $response['id']);
+
+    $result = $response['result'];
+    $this->assertSame('task', $result['kind']);
+    $this->assertEquals('completed', $result['status']['state']);
+    $this->assertSame('Hello Server', $result['metadata']['echo']);
+    $this->assertSame('Test Client', $result['metadata']['fromAgent']);
     }
 
     public function testProtocolTaskManagement(): void

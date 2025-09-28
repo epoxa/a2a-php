@@ -89,17 +89,22 @@ class A2AServerTest extends TestCase
     public function testHandleMessageRequest(): void
     {
         $messageHandler = new class implements MessageHandlerInterface {
-            public bool $wasCalled = false;
             public function canHandle(Message $message): bool
             {
                 return true;
             }
             public function handle(Message $message, string $fromAgent): array
             {
-                $this->wasCalled = true;
                 TestCase::assertEquals('Hello Server', $message->getParts()[0]->getText());
                 TestCase::assertEquals('client-agent', $fromAgent);
-                return ['status' => 'handled'];
+
+                return [
+                    'status' => ['state' => 'completed'],
+                    'metadata' => [
+                        'handled' => true,
+                        'echo' => $message->getParts()[0]->getText()
+                    ]
+                ];
             }
         };
         $this->server->addMessageHandler($messageHandler);
@@ -117,11 +122,18 @@ class A2AServerTest extends TestCase
 
         $response = $this->server->handleRequest($request);
 
-        $this->assertEquals('2.0', $response['jsonrpc']);
-        $this->assertEquals(3, $response['id']);
-        $this->assertEquals(['status' => 'handled'], $response['result']);
-        $this->assertTrue($this->logger->hasRecordThatContains('info', 'Message received'));
-        $this->assertTrue($messageHandler->wasCalled);
+    $this->assertEquals('2.0', $response['jsonrpc']);
+    $this->assertEquals(3, $response['id']);
+
+    $result = $response['result'];
+    $this->assertSame('task', $result['kind']);
+    $this->assertArrayHasKey('id', $result);
+    $this->assertEquals('completed', $result['status']['state']);
+    $this->assertSame('message/send', $result['metadata']['source']);
+    $this->assertNotEmpty($result['history']);
+        $this->assertTrue($this->logger->hasRecordThatContains('info', 'Message processed'));
+            $this->assertTrue($result['metadata']['handled']);
+            $this->assertSame('Hello Server', $result['metadata']['echo']);
     }
 
     public function testHandleInvalidRequest(): void
@@ -168,7 +180,9 @@ class A2AServerTest extends TestCase
 
         $response = $this->server->handleRequest($request);
 
-        $this->assertEquals('received', $response['result']['status']);
+    $result = $response['result'];
+    $this->assertEquals('submitted', $result['status']['state']);
+    $this->assertSame('message/send', $result['metadata']['source']);
         $this->assertTrue($this->logger->hasRecordThatContains('error', 'Message handler failed'));
     }
 
@@ -196,28 +210,27 @@ class A2AServerTest extends TestCase
     public function testMultipleMessageHandlers(): void
     {
         $handler1 = new class implements MessageHandlerInterface {
-            public bool $wasCalled = false;
             public function canHandle(Message $message): bool
             {
                 return true;
             }
             public function handle(Message $message, string $fromAgent): array
             {
-                $this->wasCalled = true;
-                return ['handled_by' => 'handler1'];
+                return [
+                    'status' => ['state' => 'completed'],
+                    'metadata' => ['handled_by' => 'handler1']
+                ];
             }
         };
 
         $handler2 = new class implements MessageHandlerInterface {
-            public bool $wasCalled = false;
             public function canHandle(Message $message): bool
             {
                 return true;
             }
             public function handle(Message $message, string $fromAgent): array
             {
-                $this->wasCalled = true;
-                return ['handled_by' => 'handler2'];
+                TestCase::fail('Second handler should not be invoked when first matches.');
             }
         };
 
@@ -237,9 +250,9 @@ class A2AServerTest extends TestCase
 
         $response = $this->server->handleRequest($request);
 
-        $this->assertTrue($handler1->wasCalled);
-        $this->assertFalse($handler2->wasCalled);
-        $this->assertEquals(['handled_by' => 'handler1'], $response['result']);
+    $result = $response['result'];
+    $this->assertEquals('completed', $result['status']['state']);
+    $this->assertSame('handler1', $result['metadata']['handled_by']);
     }
 
     public function testHandleTasksSendRequest(): void
