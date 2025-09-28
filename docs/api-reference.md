@@ -1,863 +1,489 @@
 # A2A PHP API Reference
 
-## Table of Contents
+This document describes the JSON-RPC API exposed by the reference A2A PHP server (`examples/complete_a2a_server.php`). All methods follow the A2A Protocol v0.3.0 specification and are available through an HTTP POST request to the server root (`/`).
 
-1. [Core Classes](#core-classes)
-2. [Models](#models)
-3. [Security](#security)
-4. [Utilities](#utilities)
-5. [Exceptions](#exceptions)
-6. [Interfaces](#interfaces)
+## Transport overview
 
-## Core Classes
+- **Protocol**: JSON-RPC 2.0 over HTTP POST.
+- **Endpoint**: `http://<host>/` (for development the default is `http://localhost:8081/`).
+- **Content type**: `application/json`.
+- **Batch requests**: Not currently supported; send one request per HTTP call.
+- **Authentication**: Only the authenticated extended card method requires credentials.
 
-### A2AServer
+### Sample request
 
-Main server implementation for hosting A2A agents.
-
-```php
-class A2AServer
+```json
 {
-    public function __construct(
-        A2AProtocol_v0_3_0 $protocol,
-        ?LoggerInterface $logger = null
-    );
-    
-    public function addMessageHandler(MessageHandlerInterface $handler): void;
-    public function handleRequest(array $request): array;
-    public function getAgentCard(): AgentCard;
+  "jsonrpc": "2.0",
+  "id": "req-123",
+  "method": "message/send",
+  "params": {
+    "from": "client-agent",
+    "message": {
+      "kind": "message",
+      "messageId": "msg-1",
+      "role": "user",
+      "parts": [
+        { "kind": "text", "text": "Process the sample payload." }
+      ]
+    }
+  }
 }
 ```
 
-**Example Usage:**
-```php
-$agentCard = new AgentCard(/* ... */);
-$server = new A2AServer($agentCard);
-$server->addMessageHandler(new EchoMessageHandler());
-$server->start();
-```
+### Sample success response
 
-### A2AClient
-
-Client for connecting to and communicating with A2A agents.
-
-```php
-class A2AClient
+```json
 {
-    public function __construct(
-        AgentCard $agentCard,
-        ?HttpClient $httpClient = null,
-        ?LoggerInterface $logger = null
-    );
-    
-    public function sendMessage(string $agentUrl, Message $message): array;
-    public function getAgentCard(string $agentUrl): AgentCard;
-    public function getAuthenticatedExtendedCard(string $agentUrl): AgentCard;
-    public function ping(string $agentUrl): bool;
-    public function getTask(string $taskId, ?int $historyLength = null): ?Task;
-    public function cancelTask(string $taskId): bool;
-    public function sendTask(string $taskId, Message $message, array $metadata = []): ?Task;
-    public function setPushNotificationConfig(string $taskId, PushNotificationConfig $config): bool;
-    public function getPushNotificationConfig(string $taskId): ?PushNotificationConfig;
-    public function listPushNotificationConfigs(): array;
-    public function deletePushNotificationConfig(string $taskId): bool;
-    public function resubscribeTask(string $taskId): bool;
+  "jsonrpc": "2.0",
+  "id": "req-123",
+  "result": {
+    "kind": "task",
+    "id": "task-42",
+    "contextId": "ctx-1",
+    "status": {
+      "state": "working",
+      "timestamp": "2024-07-18T17:42:11Z"
+    },
+    "metadata": {
+      "message": "Task is still in progress",
+      "interactionCount": 1
+    }
+  }
 }
 ```
 
-**Example Usage:**
-```php
-$client = new A2AClient('https://agent.example.com');
-$agentCard = $client->getAgentCard();
-$response = $client->sendMessage($message);
-```
+### Sample error response
 
-### A2AProtocol_v0_3_0
-
-Core protocol handler for A2A Protocol v0.3.0 compliance.
-
-```php
-class A2AProtocol_v0_3_0
+```json
 {
-    public function __construct(
-        AgentCard $agentCard,
-        ?HttpClient $httpClient = null,
-        ?LoggerInterface $logger = null,
-        ?TaskManager $taskManager = null
-    );
-    
-    public function getAgentCard(): AgentCard;
-    public function createTask(string $description, array $context = []): Task;
-    public function sendMessage(string $recipientUrl, Message $message): array;
-    public function handleRequest(array $request): array;
-    public function addMessageHandler(MessageHandlerInterface $handler): void;
-    public function getTaskManager(): TaskManager;
+  "jsonrpc": "2.0",
+  "id": "req-123",
+  "error": {
+    "code": -32602,
+    "message": "Invalid or missing message payload"
+  }
 }
 ```
 
-### TaskManager
-
-Manages task lifecycle and persistence.
-
-```php
-class TaskManager
-{
-    public function __construct(?Storage $storage = null);
-    
-    public function createTask(string $description, array $context = [], ?string $taskId = null): Task;
-    public function getTask(string $taskId): ?Task;
-    public function updateTask(Task $task): void;
-    public function cancelTask(string $taskId): array;
-}
-```
-
-## Models
+## Data models
 
 ### AgentCard
 
-Describes agent capabilities and metadata.
+The agent card follows the A2A specification and is returned by `get_agent_card` and `agent/getAuthenticatedExtendedCard`.
 
-```php
-class AgentCard
-{
-    public function __construct(
-        string $name,
-        string $description,
-        string $url,
-        string $version,
-        AgentCapabilities $capabilities,
-        array $defaultInputModes,
-        array $defaultOutputModes,
-        array $skills,
-        string $protocolVersion = '0.3.0',
-        ?string $preferredTransport = 'JSONRPC'
-    );
-    
-    // Getters
-    public function getName(): string;
-    public function getDescription(): string;
-    public function getUrl(): string;
-    public function getVersion(): string;
-    public function getProtocolVersion(): string;
-    public function getCapabilities(): AgentCapabilities;
-    public function getDefaultInputModes(): array;
-    public function getDefaultOutputModes(): array;
-    public function getSkills(): array;
-    
-    // Optional properties
-    public function setProvider(AgentProvider $provider): void;
-    public function setSecuritySchemes(array $securitySchemes): void;
-    public function setSecurity(array $security): void;
-    public function setAdditionalInterfaces(array $additionalInterfaces): void;
-    public function addAdditionalInterface(AgentInterface $interface): void;
-    
-    // Serialization
-    public function toArray(): array;
-    public static function fromArray(array $data): self;
-}
-```
+Key fields:
 
-### AgentCapabilities
-
-Defines what an agent can do.
-
-```php
-class AgentCapabilities
-{
-    public function __construct(
-        bool $canReceiveMessages = true,
-        bool $canSendMessages = false,
-        bool $canManageTasks = false,
-        bool $supportsStreaming = false,
-        bool $supportsPushNotifications = false
-    );
-    
-    public function canReceiveMessages(): bool;
-    public function canSendMessages(): bool;
-    public function canManageTasks(): bool;
-    public function supportsStreaming(): bool;
-    public function supportsPushNotifications(): bool;
-    
-    public function toArray(): array;
-    public static function fromArray(array $data): self;
-}
-```
-
-### AgentSkill
-
-Represents a specific capability or skill of an agent.
-
-```php
-class AgentSkill
-{
-    public function __construct(
-        string $id,
-        string $name,
-        string $description,
-        array $inputModes = [],
-        array $outputModes = [],
-        ?array $parameters = null
-    );
-    
-    public function getId(): string;
-    public function getName(): string;
-    public function getDescription(): string;
-    public function getInputModes(): array;
-    public function getOutputModes(): array;
-    public function getParameters(): ?array;
-    
-    public function toArray(): array;
-    public static function fromArray(array $data): self;
-}
-```
+| Field | Type | Notes |
+| ----- | ---- | ----- |
+| `name` | string | Unique agent name. |
+| `description` | string | Human-readable description. |
+| `url` | string | Base URL for the agent. |
+| `version` | string | Agent version string. |
+| `protocolVersion` | string | Always `0.3.0` for this implementation. |
+| `capabilities` | object | Includes `canReceiveMessages`, `canSendMessages`, `canManageTasks`, `supportsStreaming`, `supportsPushNotifications`. |
+| `defaultInputModes` | array | Content types accepted by default. |
+| `defaultOutputModes` | array | Content types produced by default. |
+| `skills` | array | Describes available skills. |
+| `supportsAuthenticatedExtendedCard` | bool | Indicates whether the authenticated endpoint is available. |
 
 ### Message
 
-Represents a communication message between agents.
+Messages must contain at least one part.
 
-```php
-class Message
-{
-    public function __construct(
-        string $role,
-        array $parts,
-        ?string $id = null
-    );
-    
-    public function getRole(): string;
-    public function getParts(): array;
-    public function getId(): ?string;
-    public function getMetadata(): ?array;
-    public function getExtensions(): ?array;
-    public function getReferenceTaskIds(): ?array;
-    public function getContextTaskIds(): ?array;
-    
-    public function setMetadata(?array $metadata): void;
-    public function setExtensions(?array $extensions): void;
-    public function setReferenceTaskIds(?array $taskIds): void;
-    public function setContextTaskIds(?array $taskIds): void;
-    public function addPart(PartInterface $part): void;
-    
-    public function toArray(): array;
-    public static function fromArray(array $data): self;
-}
-```
+| Field | Type | Notes |
+| ----- | ---- | ----- |
+| `kind` | string | Must be `message`. |
+| `messageId` | string | Unique identifier; generated if omitted in handlers. |
+| `role` | string | Usually `user` or `agent`. |
+| `parts` | array | Each entry contains a `kind` and payload. |
+| `taskId` | string (optional) | Associates the message with a task. Generated automatically when absent. |
+| `contextId` | string (optional) | Logical context identifier, generated when absent. |
+| `referenceTaskIds` | array (optional) | Related task identifiers. |
+| `metadata` | object (optional) | Additional user-defined metadata. |
+
+Supported part kinds:
+
+- `text`: `{ "kind": "text", "text": "...", "metadata": { ... } }`
+- `file`: `{ "kind": "file", "file": { "uri": "https://..." } }` or `{ "kind": "file", "file": { "bytes": "<base64>" } }`
+- `data`: `{ "kind": "data", "data": { ... } }`
+
+Legacy payloads with `type` instead of `kind`, or `content` instead of `text`, are normalised where possible.
 
 ### Task
 
-Represents an asynchronous task.
+Tasks are returned by `message/send`, `tasks/send`, `tasks/get`, and SSE resubscribe snapshots.
 
-```php
-class Task
+| Field | Type | Notes |
+| ----- | ---- | ----- |
+| `kind` | string | Always `task`. |
+| `id` | string | Task identifier. |
+| `contextId` | string | Context identifier associated with the task. |
+| `status` | object | Contains `state` (submitted, working, completed, failed, cancelled) and `timestamp`. |
+| `history` | array | Contains message objects; returned on demand or during resubscribe. |
+| `artifacts` | array | Optional; contains artifact descriptors created by handlers. |
+| `metadata` | object | Optional; includes handler-provided metadata. |
+
+### PushNotificationConfig
+
+Configuration persisted through the `tasks/pushNotificationConfig/*` methods.
+
+| Field | Type | Notes |
+| ----- | ---- | ----- |
+| `url` | string | Destination webhook URL. |
+| `id` | string (optional) | User-provided identifier. |
+| `token` | string (optional) | Token returned in callbacks. |
+| `authentication` | object (optional) | Contains `schemes` (string array) and optional `credentials`. |
+
+## Method reference
+
+### get_agent_card
+
+Returns the public agent card.
+
+#### Request (get_agent_card)
+
+```json
 {
-    public function __construct(
-        string $id,
-        Message $message,
-        TaskStatus $status = TaskStatus::PENDING
-    );
-    
-    public function getId(): string;
-    public function getMessage(): Message;
-    public function getStatus(): TaskStatus;
-    public function getResult(): mixed;
-    public function getError(): ?array;
-    public function getProgress(): ?float;
-    public function getCreatedAt(): DateTimeInterface;
-    public function getUpdatedAt(): DateTimeInterface;
-    
-    public function setStatus(TaskStatus $status): void;
-    public function setResult(mixed $result): void;
-    public function setError(?array $error): void;
-    public function setProgress(?float $progress): void;
-    
-    public function toArray(): array;
-    public static function fromArray(array $data): self;
+  "jsonrpc": "2.0",
+  "id": "agent-card-1",
+  "method": "get_agent_card"
 }
 ```
 
-### TaskStatus
+#### Response (get_agent_card)
 
-Enumeration of task statuses.
+`result` contains the agent card object described above.
 
-```php
-enum TaskStatus: string
+#### Error handling (get_agent_card)
+
+None under normal circumstances.
+
+---
+
+### agent/getAuthenticatedExtendedCard
+
+Returns the same card as `get_agent_card`, but only when the caller provides credentials. It demonstrates the authenticated extended card flow.
+
+#### Headers (agent/getAuthenticatedExtendedCard)
+
+Provide either `Authorization: Bearer <token>` or `X-API-Key: <token>`. The token must match the `A2A_DEMO_AUTH_TOKEN` environment variable value.
+
+#### Request (agent/getAuthenticatedExtendedCard)
+
+```json
 {
-    case PENDING = 'pending';
-    case RUNNING = 'running';
-    case COMPLETED = 'completed';
-    case FAILED = 'failed';
-    case CANCELLED = 'cancelled';
+  "jsonrpc": "2.0",
+  "id": "agent-card-extended",
+  "method": "agent/getAuthenticatedExtendedCard"
 }
 ```
 
-## Message Parts
+#### Responses (agent/getAuthenticatedExtendedCard)
 
-### TextPart
+- Success: Same payload as `get_agent_card`.
+- Missing credentials: Error with code `-32007` and message "Authentication required for authenticated extended card". The server sets `WWW-Authenticate: Bearer realm="A2A"`.
+- Invalid credentials: Error with code `-32007` and message "Invalid authentication credentials". The server sets `WWW-Authenticate: Bearer realm="A2A", error="invalid_token"`.
 
-Plain text message content.
+---
 
-```php
-class TextPart implements PartInterface
+### ping
+
+Simple health check returning `{"status": "pong"}`.
+
+#### Request (ping)
+
+```json
 {
-    public function __construct(string $text);
-    
-    public function getText(): string;
-    public function getKind(): string; // Returns 'text'
-    
-    public function toArray(): array;
-    public static function fromArray(array $data): self;
+  "jsonrpc": "2.0",
+  "id": "ping-1",
+  "method": "ping"
 }
 ```
 
-### FilePart
+#### Response (ping)
 
-File attachment with metadata.
-
-```php
-class FilePart implements PartInterface
+```json
 {
-    public function __construct(
-        string $name,
-        string $mimeType,
-        FileInterface $file
-    );
-    
-    public function getName(): string;
-    public function getMimeType(): string;
-    public function getFile(): FileInterface;
-    public function getKind(): string; // Returns 'file'
-    
-    public function toArray(): array;
-    public static function fromArray(array $data): self;
+  "jsonrpc": "2.0",
+  "id": "ping-1",
+  "result": {
+    "status": "pong"
+  }
 }
 ```
 
-### DataPart
+---
 
-Structured data content.
+### message/send
 
-```php
-class DataPart implements PartInterface
+Processes an inbound message, updates or creates the associated task, and returns the task snapshot.
+
+#### Parameters (message/send)
+
+| Name | Type | Required | Notes |
+| ---- | ---- | -------- | ----- |
+| `from` | string | Optional | Identifier for the calling agent. Defaults to `"unknown"` when omitted. |
+| `message` | object | Required | Message object. Must include `parts`. |
+
+#### Response (message/send)
+
+`result` is the updated task. The server sets the task status to `working` while the registered handler processes the message and may change it to `completed` or `failed`.
+
+#### Error handling (message/send)
+
+- `-32602` when `message` is missing, not an object, or has no parts.
+- `-32602` when the message structure cannot be parsed (invalid part kinds, missing role, and similar issues).
+- `-32603` or more specific A2A error codes when handlers raise exceptions.
+
+---
+
+### message/stream
+
+Initiates a Server-Sent Events (SSE) stream. The request body matches `message/send`, but the HTTP response remains open and emits JSON-RPC envelopes encoded as SSE events.
+
+#### Usage (message/stream)
+
+1. Send an HTTP POST request with `Accept: text/event-stream`.
+2. Keep the connection open to observe events.
+3. Events include:
+   - `event: message` for message history entries.
+   - `event: task-status` for task status updates.
+   - `event: error` when failures occur.
+
+#### Event stream example (message/stream)
+
+```text
+event: message
+data: {"jsonrpc":"2.0","id":"stream-1","result":{"kind":"message","messageId":"msg-1",...}}
+
+event: task-status
+data: {"jsonrpc":"2.0","id":"stream-1","result":{"kind":"task","id":"task-42","status":{"state":"completed"}}}
+```
+
+#### Error handling (message/stream)
+
+- The server emits an `error` event with code `-32602` when `message` is missing.
+- Connection closes after the stream is completed or an error occurs.
+
+---
+
+### tasks/send
+
+Ensures a specific task ID exists, appends the provided message to the history, runs handlers, and returns the resulting task snapshot. This mirrors `message/send` but requires a task identifier supplied by the caller.
+
+#### Parameters (tasks/send)
+
+| Name | Type | Required | Notes |
+| ---- | ---- | -------- | ----- |
+| `id` | string | Required | Task identifier to create or reuse. |
+| `message` | object | Required | Message object. |
+| `sessionId` | string | Optional | Recorded in metadata. |
+| `pushNotification` | object | Optional | Currently logged but not required. |
+| `historyLength` | integer | Optional | Currently ignored; history is always persisted. |
+| `metadata` | object | Optional | Merged into task metadata. |
+
+#### Response (tasks/send)
+
+Same as `message/send`.
+
+#### Error handling (tasks/send)
+
+- `-32602` if `id` or `message` is missing.
+- `-32602` if the message fails validation.
+
+---
+
+### tasks/get
+
+Returns the latest task snapshot. Optionally limits the number of history entries returned.
+
+#### Parameters (tasks/get)
+
+| Name | Type | Required | Notes |
+| ---- | ---- | -------- | ----- |
+| `id` | string | Required | Task identifier. |
+| `historyLength` | integer | Optional | When set, only the most recent `historyLength` messages are returned. Must be zero or positive. |
+
+#### Response (tasks/get)
+
+`result` is the task object. When `historyLength` is provided, the `history` array is truncated accordingly.
+
+#### Error handling (tasks/get)
+
+- `-32001` when the task does not exist.
+- `-32602` when `id` is missing or when `historyLength` is negative.
+
+---
+
+### tasks/cancel
+
+Cancels a running task by ID.
+
+#### Parameters (tasks/cancel)
+
+| Name | Type | Required | Notes |
+| ---- | ---- | -------- | ----- |
+| `id` | string | Required | Task identifier. |
+
+#### Response (tasks/cancel)
+
+On the first successful cancellation the server returns the task snapshot with status `cancelled`.
+
+#### Error handling (tasks/cancel)
+
+- `-32606` (`INVALID_AGENT_RESPONSE`) when `id` is missing.
+- `-32002` when the task is already completed or has been cancelled previously.
+- `-32001` when the task does not exist.
+
+---
+
+### tasks/resubscribe
+
+Replays stored task history and emits the latest status over an SSE stream. Useful for clients that lost their streaming connection.
+
+#### Parameters (tasks/resubscribe)
+
+| Name | Type | Required | Notes |
+| ---- | ---- | -------- | ----- |
+| `id` | string | Required | Task identifier. |
+
+#### Behaviour (tasks/resubscribe)
+
+1. The server emits one SSE event per stored history entry (`event: message`).
+2. A final `task-status` event is emitted with the complete task snapshot.
+3. The stream closes after the snapshot is sent.
+
+#### Error handling (tasks/resubscribe)
+
+- If `id` is missing, the server emits an `error` event with code `-32602`.
+- If the task does not exist, the server emits an `error` event with code `-32001`.
+
+---
+
+### tasks/pushNotificationConfig/set
+
+Stores a push notification configuration for the given task.
+
+#### Parameters (tasks/pushNotificationConfig/set)
+
+| Name | Type | Required | Notes |
+| ---- | ---- | -------- | ----- |
+| `taskId` | string | Required | Task identifier. Accepts the alias `id`. |
+| `pushNotificationConfig` | object | Required | Configuration payload described in the PushNotificationConfig section. |
+
+#### Response (tasks/pushNotificationConfig/set)
+
+```json
 {
-    public function __construct(mixed $data);
-    
-    public function getData(): mixed;
-    public function getKind(): string; // Returns 'data'
-    
-    public function toArray(): array;
-    public static function fromArray(array $data): self;
+  "jsonrpc": "2.0",
+  "id": "config-set-1",
+  "result": {
+    "taskId": "task-42",
+    "pushNotificationConfig": {
+      "url": "https://example.com/webhook",
+      "token": "secret"
+    }
+  }
 }
 ```
 
-## File Types
+#### Error handling (tasks/pushNotificationConfig/set)
 
-### FileWithBytes
+- `-32602` when parameters are missing or malformed.
+- `-32603` when persistence fails.
 
-File with inline binary data.
+---
 
-```php
-class FileWithBytes implements FileInterface
-{
-    public function __construct(string $data);
-    
-    public function getData(): string;
-    public function getType(): string; // Returns 'bytes'
-    
-    public function toArray(): array;
-    public static function fromArray(array $data): self;
-}
+### tasks/pushNotificationConfig/get
+
+Retrieves the configuration for a task.
+
+#### Parameters (tasks/pushNotificationConfig/get)
+
+| Name | Type | Required | Notes |
+| ---- | ---- | -------- | ----- |
+| `taskId` | string | Required | Accepts alias `id`. |
+
+#### Response (tasks/pushNotificationConfig/get)
+
+`result` contains `taskId` and `pushNotificationConfig`. The configuration is `null` when none is stored.
+
+#### Error handling (tasks/pushNotificationConfig/get)
+
+- `-32602` when `taskId` is missing.
+- `-32001` when the task does not exist.
+
+---
+
+### tasks/pushNotificationConfig/list
+
+Lists all stored push notification configurations. When `taskId` is supplied, the list is filtered to that task.
+
+#### Parameters (tasks/pushNotificationConfig/list)
+
+| Name | Type | Required | Notes |
+| ---- | ---- | -------- | ----- |
+| `taskId` | string | Optional | Accepts alias `id`. |
+
+#### Response (tasks/pushNotificationConfig/list)
+
+An array of objects:
+
+```json
+[
+  {
+    "taskId": "task-42",
+    "pushNotificationConfig": {
+      "url": "https://example.com/webhook",
+      "token": "secret"
+    }
+  }
+]
 ```
 
-### FileWithUri
+#### Error handling (tasks/pushNotificationConfig/list)
 
-File referenced by URI.
+None. When no configurations exist, an empty array is returned.
 
-```php
-class FileWithUri implements FileInterface
-{
-    public function __construct(string $uri);
-    
-    public function getUri(): string;
-    public function getType(): string; // Returns 'uri'
-    
-    public function toArray(): array;
-    public static function fromArray(array $data): self;
-}
-```
+---
 
-## Security
+### tasks/pushNotificationConfig/delete
 
-### Security Schemes
+Deletes the stored configuration for the specified task.
 
-#### SecurityScheme (Interface)
+#### Parameters (tasks/pushNotificationConfig/delete)
 
-Base interface for all security schemes.
+| Name | Type | Required | Notes |
+| ---- | ---- | -------- | ----- |
+| `id` | string | Required | Task identifier. |
 
-```php
-interface SecurityScheme
-{
-    public function toArray(): array;
-}
-```
+#### Response (tasks/pushNotificationConfig/delete)
 
-#### APIKeySecurityScheme
+`result` is `null` on success.
 
-API key authentication.
+#### Error handling (tasks/pushNotificationConfig/delete)
 
-```php
-class APIKeySecurityScheme implements SecurityScheme
-{
-    public function __construct(
-        string $name,
-        string $in, // 'header', 'query', 'cookie'
-        ?string $description = null
-    );
-    
-    public function toArray(): array;
-    public static function fromArray(array $data): self;
-}
-```
+- `-32602` when `id` is missing.
+- `-32001` when the configuration does not exist.
 
-#### HTTPAuthSecurityScheme
+---
 
-HTTP authentication (Basic, Bearer, etc.).
+## Error codes
 
-```php
-class HTTPAuthSecurityScheme implements SecurityScheme
-{
-    public function __construct(
-        string $scheme, // 'basic', 'bearer', 'digest'
-        ?string $bearerFormat = null,
-        ?string $description = null
-    );
-    
-    public function toArray(): array;
-    public static function fromArray(array $data): self;
-}
-```
+| Code | Name | Description |
+| ---- | ---- | ----------- |
+| `-32700` | `PARSE_ERROR` | Invalid JSON received by the server. |
+| `-32600` | `INVALID_REQUEST` | JSON-RPC envelope failed validation (missing method, wrong version, invalid id). |
+| `-32601` | `METHOD_NOT_FOUND` | Unknown method name. |
+| `-32602` | `INVALID_PARAMS` | Request parameters failed validation. |
+| `-32603` | `INTERNAL_ERROR` | Generic server error; check logs for details. |
+| `-32001` | `TASK_NOT_FOUND` | Task does not exist in storage. |
+| `-32002` | `TASK_NOT_CANCELABLE` | Task has already completed or was previously cancelled. |
+| `-32003` | `PUSH_NOTIFICATION_NOT_SUPPORTED` | Reserved for future use when push notifications are disabled. |
+| `-32004` | `UNSUPPORTED_OPERATION` | Reserved for future use. |
+| `-32005` | `CONTENT_TYPE_NOT_SUPPORTED` | Returned when a message part type cannot be processed. |
+| `-32006` | `INVALID_AGENT_RESPONSE` | Used when required task identifiers are missing. |
+| `-32007` | `AUTHENTICATED_EXTENDED_CARD_NOT_CONFIGURED` | Authentication is required or failed for the extended card method.
 
-#### OAuth2SecurityScheme
-
-OAuth 2.0 authentication.
-
-```php
-class OAuth2SecurityScheme implements SecurityScheme
-{
-    public function __construct(
-        OAuthFlows $flows,
-        ?string $description = null
-    );
-    
-    public function toArray(): array;
-    public static function fromArray(array $data): self;
-}
-```
-
-#### OpenIdConnectSecurityScheme
-
-OpenID Connect authentication.
-
-```php
-class OpenIdConnectSecurityScheme implements SecurityScheme
-{
-    public function __construct(
-        string $openIdConnectUrl,
-        ?string $description = null
-    );
-    
-    public function toArray(): array;
-    public static function fromArray(array $data): self;
-}
-```
-
-#### MutualTLSSecurityScheme
-
-Mutual TLS authentication.
-
-```php
-class MutualTLSSecurityScheme implements SecurityScheme
-{
-    public function __construct(?string $description = null);
-    
-    public function toArray(): array;
-    public static function fromArray(array $data): self;
-}
-```
-
-## Utilities
-
-### HttpClient
-
-HTTP client for making requests.
-
-```php
-class HttpClient
-{
-    public function __construct(int $timeout = 30);
-    
-    public function post(string $url, array $data): array;
-    public function get(string $url): array;
-}
-```
-
-### GrpcClient
-
-gRPC client for high-performance A2A communication.
-
-```php
-class GrpcClient
-{
-    public function __construct(
-        AgentCard $agentCard,
-        string $serverAddress,
-        ?LoggerInterface $logger = null
-    );
-    
-    public function connect(): void;
-    public function sendMessage(Message $message): array;
-    public function getAgentCard(): AgentCard;
-    public function ping(): bool;
-    public function getTask(string $taskId, ?int $historyLength = null): ?Task;
-    public function cancelTask(string $taskId): bool;
-    public function setPushNotificationConfig(string $taskId, PushNotificationConfig $config): bool;
-    public function getPushNotificationConfig(string $taskId): ?PushNotificationConfig;
-    public function listPushNotificationConfigs(): array;
-    public function deletePushNotificationConfig(string $taskId): bool;
-    public function resubscribeTask(string $taskId): bool;
-    public function disconnect(): void;
-    
-    public static function isAvailable(): bool;
-    public static function getGrpcInfo(): array;
-}
-```
-
-### StreamingClient
-
-Client for streaming A2A communication.
-
-```php
-class StreamingClient
-{
-    public function __construct(AgentCard $agentCard, ?LoggerInterface $logger = null);
-    
-    public function sendMessageStream(string $agentUrl, Message $message, callable $eventHandler): void;
-    public function resubscribeTask(string $agentUrl, string $taskId, callable $eventHandler): void;
-}
-```
-
-### JsonRpc
-
-JSON-RPC 2.0 utilities.
-
-```php
-class JsonRpc
-{
-    public static function createRequest(
-        string $method,
-        mixed $params = null,
-        mixed $id = null
-    ): array;
-    
-    public static function createResponse(mixed $result, mixed $id): array;
-    public static function createError(int $code, string $message, mixed $id = null, mixed $data = null): array;
-    public static function parseRequest(string $json): array;
-    public static function isValidRequest(array $request): bool;
-}
-```
-
-## Exceptions
-
-### A2AException
-
-Base exception for A2A-related errors.
-
-```php
-class A2AException extends Exception
-{
-    public function __construct(
-        string $message = '',
-        int $code = 0,
-        ?Throwable $previous = null,
-        ?array $data = null
-    );
-    
-    public function getData(): ?array;
-    public function toArray(): array;
-}
-```
-
-### InvalidRequestException
-
-Exception for invalid requests.
-
-```php
-class InvalidRequestException extends A2AException
-{
-    public function __construct(
-        string $message = 'Invalid request',
-        ?array $data = null
-    );
-}
-```
-
-### TaskNotFoundException
-
-Exception for missing tasks.
-
-```php
-class TaskNotFoundException extends A2AException
-{
-    public function __construct(string $taskId);
-    
-    public function getTaskId(): string;
-}
-```
-
-## Error Codes
-
-### A2AErrorCodes
-
-Standard JSON-RPC error codes.
-
-```php
-class A2AErrorCodes
-{
-    public const PARSE_ERROR = -32700;
-    public const INVALID_REQUEST = -32600;
-    public const METHOD_NOT_FOUND = -32601;
-    public const INVALID_PARAMS = -32602;
-    public const INTERNAL_ERROR = -32603;
-}
-```
-
-### A2ASpecificErrors
-
-A2A-specific error codes.
-
-```php
-class A2ASpecificErrors
-{
-    public const AGENT_NOT_AVAILABLE = -40001;
-    public const TASK_NOT_FOUND = -40002;
-    public const INVALID_MESSAGE_FORMAT = -40003;
-    public const AUTHENTICATION_FAILED = -40004;
-    public const RATE_LIMIT_EXCEEDED = -40005;
-}
-```
-
-## Interfaces
-
-### MessageHandlerInterface
-
-Interface for message handlers.
-
-```php
-interface MessageHandlerInterface
-{
-    public function canHandle(Message $message): bool;
-    public function handle(Message $message): Message;
-}
-```
-
-### PartInterface
-
-Interface for message parts.
-
-```php
-interface PartInterface
-{
-    public function getKind(): string;
-    public function toArray(): array;
-    public static function fromArray(array $data): self;
-}
-```
-
-### FileInterface
-
-Interface for file types.
-
-```php
-interface FileInterface
-{
-    public function getType(): string;
-    public function toArray(): array;
-    public static function fromArray(array $data): self;
-}
-```
-
-### AgentExecutor
-
-Interface for agent execution.
-
-```php
-interface AgentExecutor
-{
-    public function execute(Task $task): void;
-    public function cancel(string $taskId): void;
-}
-```
-
-## Storage
-
-### Storage
-
-Laravel Cache-based storage for task and push notification persistence.
-
-```php
-class Storage
-{
-    public function __construct(
-        string $driver = 'file',
-        string $dataDir = '/tmp/a2a_storage',
-        array $config = []
-    );
-    
-    public function saveTask(Task $task): void;
-    public function getTask(string $taskId): ?Task;
-    public function taskExists(string $taskId): bool;
-    public function updateTaskStatus(string $taskId, string $status): bool;
-    public function savePushConfig(string $taskId, PushNotificationConfig $config): void;
-    public function getPushConfig(string $taskId): ?PushNotificationConfig;
-    public function listPushConfigs(): array;
-    public function deletePushConfig(string $taskId): bool;
-}
-```
-
-## Streaming
-
-### SSEStreamer
-
-Server-Sent Events streamer for real-time communication.
-
-```php
-class SSEStreamer
-{
-    public function sendEvent(string $data, ?string $event = null, ?string $id = null): void;
-    public function startStream(): void;
-    public function endStream(): void;
-}
-```
-
-### StreamingServer
-
-Server for handling streaming requests.
-
-```php
-class StreamingServer
-{
-    public function __construct();
-    
-    public function handleStreamRequest(
-        array $request,
-        AgentExecutor $executor,
-        ExecutionEventBus $eventBus
-    ): void;
-}
-```
-
-## Factory Classes
-
-### PartFactory
-
-Factory for creating message parts.
-
-```php
-class PartFactory
-{
-    public static function fromArray(array $data): PartInterface;
-}
-```
-
-### FileFactory
-
-Factory for creating file objects.
-
-```php
-class FileFactory
-{
-    public static function fromArray(array $data): FileInterface;
-}
-```
-
-## Usage Examples
-
-### Basic Agent Setup
-
-```php
-use A2A\A2AServer;
-use A2A\Models\{AgentCard, AgentCapabilities, AgentSkill};
-
-$capabilities = new AgentCapabilities(
-    canReceiveMessages: true,
-    canSendMessages: true,
-    canManageTasks: true
-);
-
-$skills = [
-    new AgentSkill(
-        id: 'text_processing',
-        name: 'Text Processing',
-        description: 'Process and analyze text content',
-        inputModes: ['text/plain'],
-        outputModes: ['text/plain', 'application/json']
-    )
-];
-
-$agentCard = new AgentCard(
-    name: 'Text Processor',
-    description: 'An agent that processes text',
-    url: 'https://my-agent.com',
-    version: '1.0.0',
-    capabilities: $capabilities,
-    defaultInputModes: ['text/plain'],
-    defaultOutputModes: ['text/plain'],
-    skills: $skills
-);
-
-$server = new A2AServer($agentCard);
-$server->start();
-```
-
-### Client Communication
-
-```php
-use A2A\A2AClient;
-use A2A\Models\{Message, TextPart};
-
-$client = new A2AClient('https://agent.example.com');
-
-// Get agent info
-$agentCard = $client->getAgentCard();
-
-// Send message
-$message = new Message('user', [
-    new TextPart('Hello, agent!')
-]);
-
-$response = $client->sendMessage($message);
-```
-
-### Task Management
-
-```php
-use A2A\TaskManager;
-use A2A\Models\{Message, TextPart, TaskStatus};
-
-$taskManager = new TaskManager();
-
-// Create task
-$message = new Message('user', [
-    new TextPart('Process this data')
-]);
-
-$task = $taskManager->createTask($message);
-
-// Update task
-$taskManager->updateTask(
-    $task->getId(),
-    TaskStatus::COMPLETED,
-    ['result' => 'Processing complete']
-);
-```
-
-This API reference provides comprehensive documentation for all public classes, methods, and interfaces in the A2A PHP implementation.
+All responses strictly follow the JSON-RPC structure: `{"jsonrpc":"2.0","id":<same as request>,"result":...}` on success or include an `error` object otherwise.
