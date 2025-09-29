@@ -7,18 +7,18 @@ namespace A2A\Utils;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\GuzzleException;
 use A2A\Exceptions\A2AException;
+use Psr\Http\Client\ClientInterface;
 
 class HttpClient
 {
-    private Client $client;
-    private int $timeout;
+    private ClientInterface $client;
 
-    public function __construct(int $timeout = 30)
+    public function __construct(int $timeout = 30, ?string $agentUrl = '', ?ClientInterface $psrHttpClient = null)
     {
-        $this->timeout = $timeout;
-        $this->client = new Client(
+        $this->client = $psrHttpClient ?? new Client(
             [
             'timeout' => $timeout,
+            'base_url' => $agentUrl,
             'headers' => [
                 'Content-Type' => 'application/json',
                 'User-Agent' => 'A2A-PHP-SDK/1.0.0'
