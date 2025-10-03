@@ -9,10 +9,9 @@ namespace A2A\Models;
  *
  * @see https://a2a-protocol.org/dev/specification/#651-textpart-object
  */
-class TextPart implements PartInterface
+class TextPart extends PartBase implements PartInterface
 {
     private string $text;
-    private ?array $metadata;
 
     public function __construct(string $text, ?array $metadata = null)
     {
