@@ -9,11 +9,10 @@ namespace A2A\Models;
  *
  * @see https://a2a-protocol.org/dev/specification/#652-filepart-object
  */
-class FilePart implements PartInterface
+class FilePart extends PartBase implements PartInterface
 {
     /** @var FileWithBytes|FileWithUri */
     private FileBase $file;
-    private ?array $metadata;
 
     /**
      * @param FileWithBytes|FileWithUri $file

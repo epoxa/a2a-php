@@ -82,4 +82,12 @@ class Artifact
             $data['extensions'] ?? null
         );
     }
+
+    /**
+     * @return Part[]
+     */
+    public function getParts(): array
+    {
+        return $this->parts;
+    }
 }

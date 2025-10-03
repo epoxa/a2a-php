@@ -9,10 +9,9 @@ namespace A2A\Models;
  *
  * @see https://a2a-protocol.org/dev/specification/#653-datapart-object
  */
-class DataPart implements PartInterface
+class DataPart extends PartBase implements PartInterface
 {
     private array $data;
-    private ?array $metadata;
 
     public function __construct(array $data, ?array $metadata = null)
     {

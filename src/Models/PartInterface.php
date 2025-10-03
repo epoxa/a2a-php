@@ -12,4 +12,6 @@ interface PartInterface
     public function getKind(): string;
 
     public function toArray(): array;
+    
+    public function getMetadata(): ?array;
 }
