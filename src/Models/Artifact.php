@@ -14,7 +14,7 @@ class Artifact
     private string $artifactId;
     private ?string $name;
     private ?string $description;
-    /** @var Part[] */
+    /** @var PartInterface[] */
     private array $parts;
     private ?array $metadata;
     private ?array $extensions;
@@ -84,7 +84,7 @@ class Artifact
     }
 
     /**
-     * @return Part[]
+     * @return PartInterface[]
      */
     public function getParts(): array
     {
